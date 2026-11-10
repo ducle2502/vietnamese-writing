@@ -247,11 +247,12 @@ class TestViScannerV2(unittest.TestCase):
             '<img src="a.svg" alt="Giao diện terminal của ứng dụng hiển thị kết quả quét dải mạng nội bộ và trạng thái cổng TCP trên 5 thiết bị">\n'
             "<table><tr><td><b>01</b> A</td><td><b>02</b> B</td></tr><tr><td><b>03</b> C</td><td><b>04</b> D</td></tr></table>\n\n"
             "Hệ thống áp dụng khung hợp đồng cho các phân hệ.\n"
-            "Nhóm thiết lập khung vận hành cho toàn bộ dịch vụ.\n"
-            "Trưởng nhóm khóa hợp đồng kèm khung chạy sẵn.\n\n"
+            "Nhóm thiết lập khung vận hành cho toàn bộ dịch vụ và không cần cài thêm thư viện ngoài.\n"
+            "Trưởng nhóm khóa hợp đồng kèm khung chạy sẵn và hỗ trợ lọc dữ liệu.\n"
+            "Tài liệu docs/architecture.md mô tả chi tiết cấu trúc, còn ADR-0001 ghi lại lý do chọn.\n\n"
             "```text\n"
             "project/\n"
-            "└── include/  # Các tệp khai báo lớp và giao kèo dữ liệu giữa 5 thành viên\n"
+            "└── include/  # Các tệp khai báo lớp và giao kèo dữ liệu dùng chung giữa 5 thành viên trong nhóm\n"
             "```\n\n"
             "| Mã | Công việc lập trình |\n"
             "| --- | --- |\n"
@@ -265,6 +266,8 @@ class TestViScannerV2(unittest.TestCase):
         self.assertEqual(len(rep.stylometry), 18)
         rule_ids = {f.rule_id for f in rep.findings}
         self.assertIn("VIS-LEX-001", rule_ids)
+        self.assertIn("VIS-TRANS-005", rule_ids)
+        self.assertIn("VIS-STRUCT-001", rule_ids)
         self.assertIn("VIS-FMT-005", rule_ids)
         self.assertIn("VIS-STRUCT-002", rule_ids)
         matched_all = " | ".join(f.matched_text for f in rep.findings)
@@ -272,6 +275,8 @@ class TestViScannerV2(unittest.TestCase):
         self.assertIn("khung vận hành", matched_all)
         self.assertIn("khóa hợp đồng", matched_all)
         self.assertIn("giao kèo dữ liệu", matched_all)
+        self.assertIn("hỗ trợ lọc", matched_all)
+        self.assertIn("ghi lại lý do chọn", matched_all)
         self.assertIn("Xoay vòng động từ", matched_all)
 
     def test_semantic_invariants_and_verify_safety(self) -> None:

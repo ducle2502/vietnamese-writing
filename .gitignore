@@ -14,6 +14,8 @@ build/
 
 # Raw reference materials & local workspace files
 raw/
+readme_ver*.md
+lesson_from_*.md
 *.docx
 *.pdf
 *.xlsx

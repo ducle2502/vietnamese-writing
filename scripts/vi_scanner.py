@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""vi_scanner.py (v2.1.0) - Công cụ rà lỗi câu chữ máy móc, sáo rỗng và dịch thô tiếng Việt.
+"""vi_scanner.py (v2.2.0) - Công cụ rà lỗi câu chữ máy móc, sáo rỗng, dịch thô và đo dấu vân tay giọng văn tiếng Việt.
 
 Nguyên tắc thiết kế:
 1. Chỉ chỉ ra vị trí câu chữ cần người viết hoặc Agent đọc lại. Công cụ không đoán ai là tác giả và không chấm phần trăm văn bản do AI tạo.
 2. Không tự ý sửa tệp gốc. Khi biên tập phải giữ nguyên số liệu, từ phủ định, điều kiện, mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn.
-3. Chạy nhanh bằng thư viện chuẩn Python 3.11+ (tự dùng google-re2 nếu máy có sẵn), không dùng biểu thức lặp lồng nhau gây treo máy (ReDoS).
-4. Mặc định lệnh `scan` chạy và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản (`--profile all`), kèm chỉ số nhịp câu (stylometry) và nhãn nhóm áp dụng để Agent tự chọn lọc theo ngữ cảnh.
+3. Chạy nhanh bằng thư viện chuẩn Python 3.11+ (tự dùng google-re2 nếu máy có sẵn), đọc trực tiếp cả `.md`, `.txt` và `.docx`, không dùng biểu thức lặp lồng nhau gây treo máy (ReDoS).
+4. Mặc định lệnh `scan` chạy và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản (`--profile all`), kèm chỉ số nhịp câu (stylometry), kỷ luật bằng chứng DHDNA và nhãn nhóm áp dụng để Agent tự chọn lọc theo ngữ cảnh.
 
 Cách dùng:
   python scripts/vi_scanner.py scan FILE.md
-  python scripts/vi_scanner.py scan FILE.md --json
-  python scripts/vi_scanner.py scan FILE.md --profile audit_report
+  python scripts/vi_scanner.py scan BAO_CAO.docx --profile audit_report --ignore-table-cols 2,3
+  python scripts/vi_scanner.py profile BAO_CAO.docx --ignore-table-cols 2,3 --json
   python scripts/vi_scanner.py verify TRUOC.md SAU.md
   python scripts/vi_scanner.py list-rules
   python scripts/vi_scanner.py check-maintenance
@@ -33,6 +33,8 @@ import statistics
 import sys
 import time
 from typing import Any, Sequence
+import xml.etree.ElementTree as ET
+import zipfile
 import zlib
 
 try:
@@ -42,8 +44,8 @@ except ImportError:
     import re as regex_engine
     USING_RE2 = False
 
-VERSION = "2.1.0"
-SCHEMA_VERSION = "2.1.0"
+VERSION = "2.2.0"
+SCHEMA_VERSION = "2.2.0"
 
 # ============================================================================
 # DANH SÁCH TỪ TIẾNG ANH ĐÃ QUEN DÙNG TRONG TIẾNG VIỆT (CẦN CẬP NHẬT ĐỊNH KỲ)
@@ -748,8 +750,8 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-TONE-001", "VOICE_AND_STRUCTURE", "regex",
-            "Lệch giọng văn trang trọng: chào sồn sã, dùng khẩu ngữ/kịch tính hóa, tự khoe xếp loại hoặc khen xã giao dư thừa.",
-            r"(?i)(?:(?:^|[.!?]\s+)(?:anh|chị|sếp)\s+[a-zà-ỹđ]+\s+ơi\s*[,!]|\b(?:rủi ro\s+sát sườn|cố\s+bấm nút|cố đấm\s+ăn xôi|nhắm mắt\s+đưa chân|vỡ trận|vỡ trần|tê liệt\s+hoàn toàn|tử huyệt|quả bom\s+nổ chậm|gót chân\s+achilles|chữa cháy\s+tạm thời|vá víu|đắp chiếu|cưỡi ngựa\s+xem hoa|đánh trống\s+bỏ dùi|làm cho có|tốt nghiệp\s+loại giỏi|xếp loại\s+very good|ghi nhận\s+(?:sự\s+)?(?:nỗ lực|cố gắng)\s+(?:rất lớn|đáng kể|không ngừng)\s+của)\b)",
+            "Lệch giọng văn trang trọng: chào sồn sã, dùng khẩu ngữ/kịch tính hóa hiện trường, tự khoe xếp loại hoặc khen xã giao dư thừa.",
+            r"(?i)(?:(?:^|[.!?]\s+)(?:anh|chị|sếp)\s+[a-zà-ỹđ]+\s+ơi\s*[,!]|\b(?:rủi ro\s+sát sườn|cố\s+bấm nút|cố đấm\s+ăn xôi|nhắm mắt\s+đưa chân|vỡ trận|vỡ trần|tê liệt\s+hoàn toàn|sập\s+toàn\s+tuyến|khủng\s+hoảng\s+(?:khóa\s+tài\s+khoản|hệ\s+thống|dữ\s+liệu|vận\s+hành)|trực\s+chiến(?:\s+24/7)?|cứu\s+nguy\s+ngoạn\s+mục|thảm\s+họa\s+vận\s+hành|cuộc\s+tập\s+dượt\s+vô\s+cùng\s+đắt\s+giá|tử huyệt|quả bom\s+nổ chậm|gót chân\s+achilles|chữa cháy\s+tạm thời|vá víu|đắp chiếu|cưỡi ngựa\s+xem hoa|đánh trống\s+bỏ dùi|làm cho có|tốt nghiệp\s+loại giỏi|xếp loại\s+very good|ghi nhận\s+(?:sự\s+)?(?:nỗ lực|cố gắng)\s+(?:rất lớn|đáng kể|không ngừng)\s+của)\b)",
             Severity.WARNING, 0.65,
             "audit_report|academic|legal",
             "1/doc", "none",
@@ -1275,74 +1277,94 @@ class ViScanner:
             return float(cleaned.replace(".", ""))
         return float(cleaned.replace(",", "."))
 
+    _PARSE_NUM_RE = stdlib_re.compile(r"^[+-]?\d+(?:[.,]\d+)*$")
+    _QUICK_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, list[str] | None], ...] = (
+        (
+            stdlib_re.compile(r"[\u200b\u200c\u200d\ufeff]"),
+            "Xóa ký tự khoảng trắng ẩn (zero-width space / BOM) gây lệch lề danh sách.",
+            None,
+        ),
+        (
+            stdlib_re.compile(r"\*\*\*\*"),
+            "Xóa dấu in đậm bị chồng `****`.",
+            None,
+        ),
+        (
+            stdlib_re.compile(r"#(?:REF|VALUE|NAME|N/A)!"),
+            "Xóa lỗi công thức bảng tính bị rò rỉ ra văn bản.",
+            None,
+        ),
+        (
+            stdlib_re.compile(r"(?i)\bthiếu\s+-\s*\d"),
+            "Bỏ dấu trừ sau chữ 'Thiếu' (viết 'Còn thiếu X%' thay vì 'Thiếu -X%').",
+            None,
+        ),
+        (
+            stdlib_re.compile(r"->"),
+            "Thay mũi tên ASCII `->` trong câu văn xuôi bằng từ nối nhân quả hoặc thứ tự tự nhiên.",
+            ["general", "audit_report", "academic", "legal", "social_media", "translation"],
+        ),
+        (
+            stdlib_re.compile(r"(?m)(?:^[^;\n]*;){2,}"),
+            "Tách câu có nhiều dấu chấm phẩy `;` liên tiếp thành các câu ngắn độc lập.",
+            ["general", "marketing", "social_media", "translation"],
+        ),
+        (
+            stdlib_re.compile(r"[🚀💡✨🎯🔥📌✅⭐🌟💪🎉👉⚡🔍📊🏆💎🌈]"),
+            "Gỡ emoji trang trí kiểu bài mẫu AI khỏi văn bản chuyên môn/kỹ thuật.",
+            ["general", "audit_report", "academic", "legal", "translation"],
+        ),
+    )
+    _VI_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, list[str] | None], ...] = (
+        (
+            stdlib_re.compile(r"\b\d+\.\d+%"),
+            "Dùng dấu phẩy cho số thập phân phần trăm trong tiếng Việt (ví dụ: '59,9%' thay vì '59.9%').",
+            ["general", "audit_report", "academic", "legal", "translation"],
+        ),
+        (
+            stdlib_re.compile(r"\([A-Za-zÀ-ỹĐđ0-9\s,+/-]{2,60}=[A-Za-zÀ-ỹĐđ0-9\s,+/%-]{1,60}\)"),
+            "Diễn đạt phép tính trong ngoặc đơn bằng lời tự nhiên ('tương ứng', 'gồm') thay vì dấu `=`.",
+            ["audit_report", "social_media"],
+        ),
+        (
+            stdlib_re.compile(r"(?:“[^”\n]{1,25}”[^.\n]{0,40}){2,}“[^”\n]{1,25}”"),
+            "Gỡ dấu ngoặc kép cong '“...”' bọc quanh các từ khóa thông thường không phải lời trích dẫn.",
+            ["general", "audit_report", "academic", "legal", "translation"],
+        ),
+        (
+            stdlib_re.compile(
+                r"(?i)\b(?:hoàn\s+thành|thực\s+hiện\s+được|đạt\s+yêu\s+cầu|thành\s+công)[^.;!\n]{0,60}\b(?:kể\s+cả|bao\s+gồm\s+cả|gộp\s+cả|tính\s+cả)\s+(?:các\s+)?(?:trường\s+hợp|giao\s+dịch|hạng\s+mục|nội\s+dung|kịch\s+bản|phiếu|hồ\s+sơ)\s+(?:còn\s+|đang\s+|có\s+)?(?:lỗi|vướng\s+mắc|tồn\s+đọng|khiếm\s+khuyết|chưa\s+đạt)\b"
+            ),
+            "Tách riêng tỷ lệ hoàn thành không lỗi và tỷ lệ còn lỗi/vướng mắc, không cộng gộp mục còn lỗi vào chỉ số hoàn thành.",
+            ["general", "audit_report", "academic", "legal"],
+        ),
+        (
+            stdlib_re.compile(
+                r"(?i)\b(?:đã\s+đóng\s+lỗi|đánh\s+dấu\s+(?:đã\s+)?(?:xử\s+lý|hoàn\s+thành)|chuyển\s+trạng\s+thái\s+(?:hoàn\s+thành|đã\s+xử\s+lý)|xác\s+nhận\s+hoàn\s+thành)\s+(?:bằng\s+cách|thông\s+qua\s+việc|nhờ\s+việc|sau\s+khi|do\s+đã|qua\s+việc)\s+(?:nhắc\s+lại|hướng\s+dẫn\s+lại|phản\s+hồi\s+trên\s+(?:bảng|hệ\s+thống)|gửi\s+email\s+nhắc|họp\s+bàn|đang\s+trình|trình\s+xin\s+ý\s+kiến)\b"
+            ),
+            "Không tính hoạt động trung gian (nhắc lại, hướng dẫn lại, đang trình, họp bàn) là đã hoàn thành hoặc đã đóng lỗi khi chưa có đầu ra kiểm chứng.",
+            ["general", "audit_report", "academic", "legal"],
+        ),
+        (
+            stdlib_re.compile(
+                r"(?i)\b(?:bù\s+trừ\s+(?:đúng\s+)?nhau|tự\s+triệt\s+tiêu\s+nhau)[^.;!\n]{0,50}\b(?:nên|do\s+đó|vì\s+vậy)\s+(?:tổng\s+chênh\s+lệch\s+bằng\s+0|không\s+còn\s+sai\s+lệch|đảm\s+bảo\s+khớp\s+đúng|hoàn\s+toàn\s+cân\s+đối)\b"
+            ),
+            "Tổng chênh lệch ròng bằng 0 do bù trừ qua lại không chứng minh dữ liệu khớp đúng ở cấp giao dịch đơn lẻ; cần đối soát theo tổng giá trị tuyệt đối của chênh lệch.",
+            ["general", "audit_report", "academic", "legal"],
+        ),
+    )
+    _BARE_PCT_RE = stdlib_re.compile(
+        r"(?i)\b(?:tỷ\s+lệ|mức\s+độ)\s+(?:hoàn\s+thành|nghiệm\s+thu|khắc\s+phục\s+dứt\s+điểm)\s+(?:chung\s+)?(?:đạt|là|ở\s+mức)\s+\d+(?:[.,]\d+)?%\s*[.!]"
+    )
+
     def _run_document_and_table_hygiene(
         self, rule: RuleDefinition, raw_text: str, masked_full: str, masked_prose: str, prof: Profile | None
     ) -> list[Finding]:
         findings: list[Finding] = []
         has_vi = bool(self._VI_DIACRITIC_RE.search(masked_prose))
 
-        # 1. Ký tự khoảng trắng ẩn, lỗi công thức, chồng dấu sao, mũi tên ASCII, phủ định kép
-        quick_checks: list[tuple[stdlib_re.Pattern[str], str, list[str] | None]] = [
-            (
-                stdlib_re.compile(r"[\u200b\u200c\u200d\ufeff]"),
-                "Xóa ký tự khoảng trắng ẩn (zero-width space / BOM) gây lệch lề danh sách.",
-                None,
-            ),
-            (
-                stdlib_re.compile(r"\*\*\*\*"),
-                "Xóa dấu in đậm bị chồng `****`.",
-                None,
-            ),
-            (
-                stdlib_re.compile(r"#(?:REF|VALUE|NAME|N/A)!"),
-                "Xóa lỗi công thức bảng tính bị rò rỉ ra văn bản.",
-                None,
-            ),
-            (
-                stdlib_re.compile(r"(?i)\bthiếu\s+-\s*\d"),
-                "Bỏ dấu trừ sau chữ 'Thiếu' (viết 'Còn thiếu X%' thay vì 'Thiếu -X%').",
-                None,
-            ),
-            (
-                stdlib_re.compile(r"->"),
-                "Thay mũi tên ASCII `->` trong câu văn xuôi bằng từ nối nhân quả hoặc thứ tự tự nhiên.",
-                ["general", "audit_report", "academic", "legal", "social_media", "translation"],
-            ),
-            (
-                stdlib_re.compile(r"(?m)(?:^[^;\n]*;){2,}"),
-                "Tách câu có nhiều dấu chấm phẩy `;` liên tiếp thành các câu ngắn độc lập.",
-                ["general", "marketing", "social_media", "translation"],
-            ),
-            (
-                stdlib_re.compile(r"[🚀💡✨🎯🔥📌✅⭐🌟💪🎉👉⚡🔍📊🏆💎🌈]"),
-                "Gỡ emoji trang trí kiểu bài mẫu AI khỏi văn bản chuyên môn/kỹ thuật.",
-                ["general", "audit_report", "academic", "legal", "translation"],
-            ),
-        ]
-        if has_vi:
-            quick_checks.append(
-                (
-                    stdlib_re.compile(r"\b\d+\.\d+%"),
-                    "Dùng dấu phẩy cho số thập phân phần trăm trong tiếng Việt (ví dụ: '59,9%' thay vì '59.9%').",
-                    ["general", "audit_report", "academic", "legal", "translation"],
-                )
-            )
-            quick_checks.append(
-                (
-                    stdlib_re.compile(r"\([A-Za-zÀ-ỹĐđ0-9\s,+/-]{2,60}=[A-Za-zÀ-ỹĐđ0-9\s,+/%-]{1,60}\)"),
-                    "Diễn đạt phép tính trong ngoặc đơn bằng lời tự nhiên ('tương ứng', 'gồm') thay vì dấu `=`.",
-                    ["audit_report", "social_media"],
-                )
-            )
-            quick_checks.append(
-                (
-                    stdlib_re.compile(r"(?:“[^”\n]{1,25}”[^.\n]{0,40}){2,}“[^”\n]{1,25}”"),
-                    "Gỡ dấu ngoặc kép cong '“...”' bọc quanh các từ khóa thông thường không phải lời trích dẫn.",
-                    ["general", "audit_report", "academic", "legal", "translation"],
-                )
-            )
-
-        for pat, advice, sub_profs in quick_checks:
+        # 1. Ký tự khoảng trắng ẩn, lỗi công thức, chồng dấu sao, mũi tên ASCII, phủ định kép, kỷ luật số liệu
+        for pat, advice, sub_profs in self._QUICK_HYGIENE_CHECKS:
             if prof is not None and sub_profs is not None and prof.value not in sub_profs:
                 continue
             m = pat.search(masked_prose)
@@ -1357,6 +1379,58 @@ class ViScanner:
                         override_profiles=sub_profs,
                     )
                 )
+
+        if has_vi:
+            prose_lower = masked_prose.lower()
+            vi_gates = (
+                "%" in masked_prose,
+                "=" in masked_prose,
+                "“" in masked_prose,
+                any(k in prose_lower for k in ("kể cả", "bao gồm cả", "gộp cả", "tính cả")),
+                any(k in prose_lower for k in ("đóng lỗi", "đánh dấu", "chuyển trạng thái", "xác nhận hoàn thành")),
+                any(k in prose_lower for k in ("bù trừ", "triệt tiêu")),
+            )
+            for (pat, advice, sub_profs), gate_ok in zip(self._VI_HYGIENE_CHECKS, vi_gates):
+                if not gate_ok:
+                    continue
+                if prof is not None and sub_profs is not None and prof.value not in sub_profs:
+                    continue
+                m = pat.search(masked_prose)
+                if m:
+                    findings.append(
+                        self._make_finding(
+                            rule,
+                            raw_text,
+                            m.start(),
+                            repr(raw_text[m.start() : m.end()]) if m.group(0).strip() == "" else raw_text[m.start() : m.end()],
+                            advice,
+                            override_profiles=sub_profs,
+                        )
+                    )
+
+        # Kiểm tra tỷ lệ % hoàn thành/nghiệm thu đứng trơ không kèm Tử số/Mẫu số trong đoạn văn báo cáo
+        if has_vi and "%" in masked_prose and (prof is None or prof == Profile.AUDIT_REPORT):
+            for p_start, _, p_chunk in self._paragraph_spans(masked_prose):
+                if "%" not in p_chunk:
+                    continue
+                m_bp = self._BARE_PCT_RE.search(p_chunk)
+                if (
+                    m_bp
+                    and not stdlib_re.search(r"\b\d+(?:[.,]\d+)*\s*/\s*\d+(?:[.,]\d+)*\b", p_chunk)
+                    and not stdlib_re.search(r"(?i)\b(?:trên|trong)\s+tổng\s+số\s+\d", p_chunk)
+                ):
+                    abs_off = p_start + m_bp.start()
+                    findings.append(
+                        self._make_finding(
+                            rule,
+                            raw_text,
+                            abs_off,
+                            raw_text[abs_off : p_start + m_bp.end()].strip(),
+                            "Nêu kèm 'Tử số/Mẫu số (Tỷ lệ %)' khi chốt tỷ lệ hoàn thành hoặc nghiệm thu để tránh hiệu ứng phóng đại mẫu số nhỏ.",
+                            override_profiles=["audit_report"],
+                        )
+                    )
+                    break
 
         # 2. Tiêu đề tiếng Việt viết hoa từng chữ kiểu tiếng Anh (Title Case) & mục con đơn độc
         headings: list[tuple[int, int, str]] = []
@@ -1763,12 +1837,20 @@ class ViScanner:
                 target_text = stdlib_re.sub(r"(?<=\d),(?=\d)", ".", target_text)
 
             compiled_re = self._compiled[rid]
-            valid_matches = [
-                m
-                for m in compiled_re.finditer(target_text)
-                if not self._is_linguistically_exempt(rid, target_text, m.start(), m.end())
-                and not self._is_profile_exempt(rid, target_text, m.start(), m.end(), prof)
-            ]
+            thresh = rule.threshold
+            single_hit_per_line = (thresh.per_para == 1 and thresh.per_1000_words is None) or thresh.per_doc == 1
+            valid_matches: list[Any] = []
+            valid_line_end = -1
+            for m in compiled_re.finditer(target_text):
+                if single_hit_per_line and m.start() <= valid_line_end:
+                    continue
+                if not self._is_linguistically_exempt(rid, target_text, m.start(), m.end()) and not self._is_profile_exempt(
+                    rid, target_text, m.start(), m.end(), prof
+                ):
+                    valid_matches.append(m)
+                    if single_hit_per_line:
+                        nl_idx = target_text.find("\n", m.start())
+                        valid_line_end = len(target_text) if nl_idx == -1 else nl_idx
 
             # Riêng VIS-RHET-001 kiểm tra thêm mật độ cụm phủ định bắc cầu >= 3 lần/bài
             if rid == "VIS-RHET-001" and not valid_matches:
@@ -1790,7 +1872,6 @@ class ViScanner:
                 continue
 
             triggered_matches: list[Any] = []
-            thresh = rule.threshold
             if thresh.per_para is not None:
                 for p_start, p_end, _ in para_spans:
                     in_para = [m for m in valid_matches if p_start <= m.start() < p_end]
@@ -1810,7 +1891,12 @@ class ViScanner:
                 triggered_matches.extend(valid_matches)
 
             seen_lines: set[int] = set()
+            last_line_end = -1
             for tm in triggered_matches:
+                if tm.start() <= last_line_end:
+                    continue
+                nl_pos = text.find("\n", tm.start())
+                last_line_end = len(text) if nl_pos == -1 else nl_pos
                 ln_no, _ = self._offset_to_line_col(text, tm.start())
                 if ln_no in seen_lines:
                     continue
@@ -1837,7 +1923,12 @@ class ViScanner:
         inv_summary = {k: len(v) for k, v in invariants.items()}
         cat_counts = dict(collections.Counter(f.category for f in findings))
         maint = check_loanwords_maintenance()
-        stylo = self._compute_stylometry(masked_prose)
+        prose_only = "\n".join(
+            ln
+            for ln in masked_full.splitlines()
+            if not (ln.strip().startswith("|") and ln.strip().endswith("|"))
+        )
+        stylo = self._compute_stylometry(prose_only)
 
         return ScanReport(
             schema_version=self.SCHEMA_VERSION,
@@ -1894,10 +1985,413 @@ def verify_text(before: str, after: str) -> dict[str, Any]:
     }
 
 
-def read_utf8(path: Path | str) -> str:
+def parse_ignore_cols(raw: str | None) -> set[int]:
+    if not raw:
+        return set()
+    cols: set[int] = set()
+    for part in raw.split(","):
+        part = part.strip()
+        if part.isdigit() and int(part) >= 1:
+            cols.add(int(part))
+    return cols
+
+
+def filter_markdown_table_columns(text: str, ignore_cols: set[int]) -> str:
+    """Xóa nội dung các cột bảng được chỉ định (đánh số từ 1) bằng khoảng trắng
+    cùng độ dài để giữ nguyên vị trí dòng và cột của toàn bộ tệp."""
+    if not ignore_cols:
+        return text
+    out_lines: list[str] = []
+    in_table = False
+    row_idx = 0
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        if stripped.startswith("|") and stripped.endswith("|"):
+            if not in_table:
+                in_table = True
+                row_idx = 0
+            else:
+                row_idx += 1
+            if stdlib_re.match(r"^\|[\s:\-|]+\|$", stripped) or row_idx == 0:
+                out_lines.append(line)
+                continue
+            parts = line.split("|")
+            # parts[0] là trước dấu `|` đầu, parts[1..-2] là các cột 1..N
+            for col_1based in ignore_cols:
+                if 1 <= col_1based <= len(parts) - 2:
+                    parts[col_1based] = " " * len(parts[col_1based])
+            out_lines.append("|".join(parts))
+        else:
+            in_table = False
+            row_idx = 0
+            out_lines.append(line)
+    return "".join(out_lines)
+
+
+def extract_docx_text_and_meta(
+    path: Path, ignore_cols: set[int] | None = None
+) -> tuple[str, dict[str, Any]]:
+    """Đọc trực tiếp tệp .docx bằng thư viện chuẩn (zipfile + ElementTree),
+    chuyển đoạn văn và bảng sang định dạng Markdown chuẩn và trích xuất thuộc tính tệp."""
+    ns = {
+        "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+        "dc": "http://purl.org/dc/elements/1.1/",
+        "cp": "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+        "dcterms": "http://purl.org/dc/terms/",
+    }
+    meta: dict[str, Any] = {
+        "core_title": "",
+        "creator": "",
+        "modified": "",
+        "paragraph_blocks": 0,
+        "table_blocks": 0,
+        "template_title_mismatch": None,
+    }
+    ig = ignore_cols or set()
+    blocks: list[str] = []
+
+    with zipfile.ZipFile(path, "r") as zf:
+        if "docProps/core.xml" in zf.namelist():
+            try:
+                core_root = ET.fromstring(zf.read("docProps/core.xml"))
+                t_el = core_root.find("dc:title", ns)
+                c_el = core_root.find("dc:creator", ns)
+                m_el = core_root.find("dcterms:modified", ns)
+                meta["core_title"] = (t_el.text or "").strip() if t_el is not None else ""
+                meta["creator"] = (c_el.text or "").strip() if c_el is not None else ""
+                meta["modified"] = (m_el.text or "").strip() if m_el is not None else ""
+            except ET.ParseError:
+                pass
+
+        doc_xml = zf.read("word/document.xml")
+        root = ET.fromstring(doc_xml)
+        body = root.find("w:body", ns)
+        if body is None:
+            return "", meta
+
+        w_p = f"{{{ns['w']}}}p"
+        w_tbl = f"{{{ns['w']}}}tbl"
+        w_t = f"{{{ns['w']}}}t"
+        w_tab = f"{{{ns['w']}}}tab"
+        w_br = f"{{{ns['w']}}}br"
+
+        def _para_text(p_elem: ET.Element) -> tuple[str, int]:
+            lvl = 0
+            p_pr = p_elem.find("w:pPr", ns)
+            if p_pr is not None:
+                p_style = p_pr.find("w:pStyle", ns)
+                if p_style is not None:
+                    val = p_style.attrib.get(f"{{{ns['w']}}}val", "")
+                    m_h = stdlib_re.match(r"(?i)^heading\s*([1-6])$", val)
+                    if m_h:
+                        lvl = int(m_h.group(1))
+            chunks: list[str] = []
+            for node in p_elem.iter():
+                if node.tag == w_t and node.text:
+                    chunks.append(node.text)
+                elif node.tag == w_tab:
+                    chunks.append(" ")
+                elif node.tag == w_br:
+                    chunks.append(" ")
+            txt = " ".join("".join(chunks).split())
+            return txt, lvl
+
+        for child in body:
+            if child.tag == w_p:
+                txt, lvl = _para_text(child)
+                if txt:
+                    meta["paragraph_blocks"] += 1
+                    prefix = f"{'#' * lvl} " if lvl > 0 else ""
+                    blocks.append(f"{prefix}{txt}")
+            elif child.tag == w_tbl:
+                rows_md: list[str] = []
+                for r_idx, tr in enumerate(child.findall("w:tr", ns)):
+                    cells: list[str] = []
+                    for c_idx, tc in enumerate(tr.findall("w:tc", ns), 1):
+                        if r_idx >= 1 and c_idx in ig:
+                            cells.append("")
+                            continue
+                        p_texts = []
+                        for p_el in tc.findall("w:p", ns):
+                            pt, _ = _para_text(p_el)
+                            if pt:
+                                p_texts.append(pt.replace("|", "/"))
+                        cells.append("; ".join(p_texts))
+                    if any(c.strip() for c in cells):
+                        rows_md.append("| " + " | ".join(cells) + " |")
+                        if len(rows_md) == 1:
+                            rows_md.append("| " + " | ".join("---" for _ in cells) + " |")
+                if rows_md:
+                    meta["table_blocks"] += 1
+                    blocks.append("\n".join(rows_md))
+
+    full_text = "\n\n".join(blocks)
+    # Kiểm tra lệch kỳ báo cáo giữa thuộc tính Title của tệp .docx và nội dung mở đầu (Template Carry-Over)
+    if meta["core_title"]:
+        m_title_wave = stdlib_re.search(
+            r"(?i)\b(đợt|kỳ|quý|tháng)\s+(\d+|[ivx]+)\b", meta["core_title"]
+        )
+        head_sample = "\n".join(blocks[:8])
+        if m_title_wave:
+            unit_name = m_title_wave.group(1).lower()
+            title_num = m_title_wave.group(2).upper()
+            m_body_wave = stdlib_re.search(
+                rf"(?i)\b{stdlib_re.escape(unit_name)}\s+(\d+|[ivx]+)\b", head_sample
+            )
+            if m_body_wave and m_body_wave.group(1).upper() != title_num:
+                meta["template_title_mismatch"] = (
+                    f"Thuộc tính Title của tệp .docx ghi '{meta['core_title']}' "
+                    f"({unit_name} {title_num}) nhưng tiêu đề văn bản là "
+                    f"{unit_name} {m_body_wave.group(1).upper()} (nguy cơ sót số liệu từ tệp mẫu kỳ trước)."
+                )
+    return full_text, meta
+
+
+def read_utf8(path: Path | str, ignore_cols: set[int] | None = None) -> str:
     if str(path) == "-":
-        return sys.stdin.read()
-    return Path(path).read_text(encoding="utf-8-sig")
+        raw = sys.stdin.read()
+        return filter_markdown_table_columns(raw, ignore_cols or set())
+    p = Path(path)
+    if p.suffix.lower() == ".docx":
+        txt, _ = extract_docx_text_and_meta(p, ignore_cols=ignore_cols)
+        return txt
+    raw = p.read_text(encoding="utf-8-sig")
+    return filter_markdown_table_columns(raw, ignore_cols or set())
+
+
+def profile_text(
+    text: str,
+    label: str = "-",
+    docx_meta: dict[str, Any] | None = None,
+    ignore_cols: set[int] | None = None,
+) -> dict[str, Any]:
+    """Đo lường tất định 18 chỉ số nhịp câu (stylometry) và 12 chỉ số kỷ luật lập luận /
+    bằng chứng theo khung DHDNA v2.0 trên văn bản tiếng Việt."""
+    masked_full = SemanticMasker.mask_preserve_offsets(text, mask_quotes=True)
+    # Tách riêng văn xuôi (không gồm dòng bảng `| ... |`) để đo nhịp câu chính xác
+    prose_only_lines = [
+        ln
+        for ln in masked_full.splitlines()
+        if not (ln.strip().startswith("|") and ln.strip().endswith("|"))
+    ]
+    prose_only_text = "\n".join(prose_only_lines)
+    masked_all_text = SemanticMasker.flatten_markdown_tables_preserve_lines(masked_full)
+
+    stylo = ViScanner._compute_stylometry(prose_only_text)
+    all_words = stdlib_re.findall(r"\S+", masked_all_text)
+    prose_words = stdlib_re.findall(r"\S+", prose_only_text)
+    total_wc = max(len(all_words), 1)
+    prose_wc = len(prose_words)
+
+    # 1. Mật độ con số trên 1.000 từ
+    num_tokens = stdlib_re.findall(r"\b\d+(?:[.,/]\d+)*%?\b", masked_all_text)
+    num_per_1k = round((len(num_tokens) * 1000.0) / total_wc, 1)
+
+    # 2. Tỷ lệ phần trăm đi kèm Tử số/Mẫu số (A/B) hoặc số lượng tuyệt đối trong cùng câu văn xuôi
+    raw_sents = [
+        s.strip()
+        for s in stdlib_re.split(r"(?<=[.!?…])\s+|\n+", prose_only_text)
+        if len(s.strip().split()) >= 2
+    ]
+    pct_sents = [s for s in raw_sents if stdlib_re.search(r"\b\d+(?:[.,]\d+)?%", s)]
+    paired_pct_sents = [
+        s
+        for s in pct_sents
+        if stdlib_re.search(
+            r"\b\d+(?:[.,]\d+)*\s*/\s*\d+(?:[.,]\d+)*\b|\b\d+(?:\.\d+)*\s+(?:đơn vị|hồ sơ|mục|nội dung|phiếu|bản ghi|giao dịch|kịch bản|hành trình|chỉ đạo|hợp đồng|lượt|mẫu|khách hàng|tài khoản|bút toán|nhiệm vụ|văn bản|tờ trình|báo cáo|khoản|tình huống)\b",
+            s,
+            stdlib_re.IGNORECASE,
+        )
+    ]
+    pct_pairing_ratio = (
+        round(len(paired_pct_sents) / len(pct_sents), 2) if pct_sents else 1.0
+    )
+
+    # 3. Các chỉ dấu DHDNA: Ranh giới bằng chứng (D12), Cổng chặn điều kiện (D6),
+    # Tách hoạt động trung gian vs đầu ra (D1), Neo thời gian trễ hạn (D11)
+    evidence_boundary_hits = len(
+        stdlib_re.findall(
+            r"(?i)\b(?:chưa\s+(?:có|đủ|nhận\s+được)\s+(?:bằng\s+chứng|cơ\s+sở|căn\s+cứ|hồ\s+sơ|dữ\s+liệu)|tự\s+báo\s+cáo|chưa\s+(?:được\s+)?kiểm\s+(?:tra|chứng)\s+độc\s+lập|giả\s+định\s+tạm\s+thời|giới\s+hạn\s+của\s+kết\s+luận|không\s+suy\s+diễn\s+trạng\s+thái)\b",
+            masked_all_text,
+        )
+    )
+    gatekeeping_hits = len(
+        stdlib_re.findall(
+            r"(?i)\b(?:chỉ\s+(?:ghi\s+nhận|xác\s+nhận|phê\s+duyệt|nghiệm\s+thu|đóng\s+lỗi|chấp\s+thuận)\s+khi|không\s+được\s+(?:xem|tính|coi)\s+là\s+(?:hoàn\s+thành|kết\s+quả)|điều\s+kiện\s+(?:chặn|tiên\s+quyết|bắt\s+buộc)|nếu\s+[^.\n]{3,60}\s+chưa\s+đạt[^.\n]{0,40}\s+(?:phải|cần)\s+(?:dời|giảm\s+phạm\s+vi|dừng))\b",
+            masked_all_text,
+        )
+    )
+    intermediate_vs_output_hits = len(
+        stdlib_re.findall(
+            r"(?i)\b(?:hoạt\s+động\s+trung\s+gian|đầu\s+ra\s+kiểm\s+chứng|chỉ\s+phản\s+ánh\s+tiến\s+độ|chưa\s+chứng\s+minh\s+[^.\n]{1,35}\s+sản\s+phẩm\s+cuối\s+cùng)\b",
+            masked_all_text,
+        )
+    )
+    temporal_delay_hits = len(
+        stdlib_re.findall(
+            r"(?i)\b(?:quá\s+hạn\s+\d+\s+ngày|lùi\s+(?:hạn\s+)?\d+\s+ngày|còn\s+\d+\s+ngày\s+đến\s+hạn|kéo\s+dài\s+\d+\s+(?:ngày|giờ)|trước\s+\d+\s+giờ|t-\d+h)\b",
+            masked_all_text,
+        )
+    )
+    triangulation_hits = len(
+        stdlib_re.findall(
+            r"(?i)\b(?:trong\s+khi\s+[^.\n]{2,50}\s+ghi\s+nhận|so\s+với\s+(?:số\s+liệu|báo\s+cáo)\s+của|tuy\s+nhiên\s+(?:nhật\s+ký|thực\s+tế|kết\s+quả\s+đối\s+chiếu)\s+ghi\s+nhận)\b",
+            masked_all_text,
+        )
+    )
+
+    # 4. Cấu trúc tiêu đề hai vế đối sánh & nhãn phân đoạn kết thúc bằng dấu chấm
+    headings = [
+        ln.lstrip("#").strip()
+        for ln in masked_full.splitlines()
+        if ln.lstrip().startswith("#")
+    ]
+    two_part_headings = [
+        h
+        for h in headings
+        if ":" in h
+        and stdlib_re.search(r"(?i),\s*(?:nhưng|tuy\s+nhiên|trong\s+khi)\s+", h)
+    ]
+    period_leadins = len(
+        stdlib_re.findall(
+            r"(?m)^\s*(?:Cơ\s+sở\s+kết\s+luận|Giới\s+hạn\s+của\s+kết\s+luận|Điều\s+kiện\s+thay\s+đổi\s+ý\s+kiến|Thực\s+trạng(?:\s+và\s+bằng\s+chứng)?|Yêu\s+cầu(?:\s+cần\s+đạt)?|Nguyên\s+nhân(?:\s+kiểm\s+soát)?|Rủi\s+ro(?:\s+và\s+ảnh\s+hưởng)?|Kiến\s+nghị(?:\s+kiểm\s+toán)?)\.\s+",
+            prose_only_text,
+        )
+    )
+    single_co_the = len(stdlib_re.findall(r"(?i)\bcó\s+thể\b", masked_all_text))
+    stacked_hedging = len(
+        stdlib_re.findall(
+            r"(?i)\b(?:có\s+thể\s+có\s+khả\s+năng|dường\s+như\s+có\s+vẻ|khả\s+năng\s+có\s+thể)\b",
+            masked_all_text,
+        )
+    )
+
+    # 5. Phát hiện xung đột mẫu số (Denominator Drift Detector) trên quy mô mẫu >= 50
+    denom_map: dict[str, set[str]] = collections.defaultdict(set)
+    for m_ratio in stdlib_re.finditer(
+        r"\b(\d+(?:[.,]\d+)*)\s*/\s*(\d+(?:[.,]\d+)*)\s+([a-zà-ỹđ]+(?:\s+[a-zà-ỹđ]+)?)\b",
+        masked_all_text,
+        stdlib_re.IGNORECASE,
+    ):
+        denom_val = m_ratio.group(2)
+        denom_digits = denom_val.replace(".", "").replace(",", "")
+        if not denom_digits.isdigit() or int(denom_digits) < 50:
+            continue
+        noun_phrase = m_ratio.group(3).lower().strip()
+        head_noun = noun_phrase.split()[0]
+        if head_noun in {
+            "đơn", "nội", "hợp", "chỉ", "hành", "kịch", "phiếu", "mục", "bản", "tình", "khoản",
+        }:
+            denom_map[noun_phrase].add(denom_val)
+    denom_drift = {
+        k: sorted(v) for k, v in denom_map.items() if len(v) >= 2
+    }
+
+    # 6. Phân loại tất định kiểu giọng văn (4 mẫu DHDNA chuẩn)
+    mean_sent = float(stylo.get("dai_cau_tb", 0.0))
+    sent_cv = float(stylo.get("bien_dong_do_dai_cau_cv", 0.0))
+    if (
+        12.0 <= mean_sent <= 26.0
+        and sent_cv >= 0.40
+        and (evidence_boundary_hits + gatekeeping_hits + intermediate_vs_output_hits) >= 5
+    ):
+        archetype = "DIRECT_EXECUTIVE_GATEKEEPER"
+        archetype_desc = (
+            "Giọng Kiểm toán / Quản trị Trực diện: câu ngắn cô đọng, "
+            "biên độ nhịp câu rộng, mở đoạn bằng kết luận, khóa chặt ranh giới bằng chứng (D12) và cổng điều kiện (D6)."
+        )
+    elif len(two_part_headings) >= 2 or triangulation_hits >= 3:
+        archetype = "BALANCED_COMPARATIVE_SUPERVISORY"
+        archetype_desc = (
+            "Giọng Giám sát Đối sánh Hai chiều: tiêu đề hai vế đối lập "
+            "(điểm đạt được vs điểm nghẽn), tam giác đối chứng đa nguồn và cặp Tử số/Mẫu số (%)."
+        )
+    elif num_per_1k >= 35.0 and mean_sent <= 20.0:
+        archetype = "TECHNICAL_RCA_ASSURANCE"
+        archetype_desc = (
+            "Giọng Bảo đảm Kỹ thuật & Truy vết Nguyên nhân gốc: "
+            "câu ngắn giàu thông số kỹ thuật, khung giờ và phân rã cơ chế."
+        )
+    elif mean_sent > 28.0 or (sent_cv < 0.30 and stylo.get("so_cau", 0) >= 6):
+        archetype = "BUREAUCRATIC_OR_MONOTONE_DRAFT"
+        archetype_desc = (
+            "Bản nháp hành chính câu dài hoặc nhịp đều: cần tách câu mở đầu nêu kết luận ngắn (6-14 từ) "
+            "và gọt bỏ cụm danh từ hóa/rào đón."
+        )
+    else:
+        archetype = "CLEAN_GENERAL_VIETNAMESE"
+        archetype_desc = "Văn xuôi tiếng Việt mạch lạc, nhịp câu cân đối."
+
+    return {
+        "version": VERSION,
+        "file": label,
+        "sha256_16": hashlib.sha256(text.encode("utf-8")).hexdigest()[:16],
+        "word_count_total": total_wc,
+        "word_count_prose": prose_wc,
+        "ignored_table_cols": sorted(ignore_cols) if ignore_cols else [],
+        "docx_metadata": docx_meta or {},
+        "stylometry": stylo,
+        "dhdna_voice_metrics": {
+            "mat_do_so_tren_1000_tu": num_per_1k,
+            "tong_so_ty_le_phan_tram": len(pct_sents),
+            "ty_le_phan_tram_kem_tu_mau": pct_pairing_ratio,
+            "ranh_gioi_bang_chung_d12": evidence_boundary_hits,
+            "cong_chan_dieu_kien_d6": gatekeeping_hits,
+            "tach_hoat_dong_trung_gian_d1": intermediate_vs_output_hits,
+            "neo_thoi_gian_tre_han_d11": temporal_delay_hits,
+            "tam_giac_doi_chung_da_nguon": triangulation_hits,
+            "tieu_de_hai_ve_doi_sanh": len(two_part_headings),
+            "nhan_doan_ket_thuc_dau_cham": period_leadins,
+            "tu_tinh_thai_don_co_the": single_co_the,
+            "chong_tu_rao_don": stacked_hedging,
+            "ung_vien_lech_mau_so": denom_drift,
+        },
+        "voice_archetype": {
+            "code": archetype,
+            "description_vi": archetype_desc,
+        },
+    }
+
+
+def print_profile_report(prof_data: dict[str, Any]) -> None:
+    st = prof_data["stylometry"]
+    dm = prof_data["dhdna_voice_metrics"]
+    va = prof_data["voice_archetype"]
+    print(
+        f"HỒ SƠ GIỌNG VĂN (DHDNA & STYLOMETRY): {prof_data['file']} "
+        f"(SHA256[:16]={prof_data['sha256_16']})"
+    )
+    print(
+        f"  Tổng số từ: {prof_data['word_count_total']} "
+        f"(Văn xuôi: {prof_data['word_count_prose']} từ, {st.get('so_doan', 0)} đoạn, "
+        f"TB {st.get('cau_trung_binh_doan', 0)} câu/đoạn)"
+    )
+    print(
+        f"  Nhịp câu: {st.get('so_cau', 0)} câu | TB {st.get('dai_cau_tb', 0)} từ/câu "
+        f"(CV={st.get('bien_dong_do_dai_cau_cv', 0)}) | MATTR-50={st.get('mattr_cua_so_50', 0)}"
+    )
+    print(
+        f"  Mật độ số liệu: {dm['mat_do_so_tren_1000_tu']}/1.000 từ | "
+        f"Tỷ lệ % kèm Tử/Mẫu số: {int(dm['ty_le_phan_tram_kem_tu_mau'] * 100)}%"
+    )
+    print(
+        f"  Chỉ dấu DHDNA: Ranh giới bằng chứng (D12)={dm['ranh_gioi_bang_chung_d12']} | "
+        f"Cổng chặn (D6)={dm['cong_chan_dieu_kien_d6']} | "
+        f"Tách hoạt động trung gian (D1)={dm['tach_hoat_dong_trung_gian_d1']} | "
+        f"Neo trễ hạn (D11)={dm['neo_thoi_gian_tre_han_d11']}"
+    )
+    print(
+        f"  Cấu trúc: Nhãn đoạn dấu chấm={dm['nhan_doan_ket_thuc_dau_cham']} | "
+        f"Tiêu đề 2 vế={dm['tieu_de_hai_ve_doi_sanh']} | "
+        f"Đối chứng đa nguồn={dm['tam_giac_doi_chung_da_nguon']} | "
+        f"Tình thái 'có thể'={dm['tu_tinh_thai_don_co_the']} (chồng rào đón={dm['chong_tu_rao_don']})"
+    )
+    if dm["ung_vien_lech_mau_so"]:
+        print(f"  [CẢNH BÁO MẪU SỐ] Các cụm có nhiều mẫu số khác nhau: {dm['ung_vien_lech_mau_so']}")
+    meta = prof_data.get("docx_metadata") or {}
+    if meta.get("template_title_mismatch"):
+        print(f"  [CẢNH BÁO TỆP MẪU] {meta['template_title_mismatch']}")
+    print(f"  Nhận diện giọng văn: [{va['code']}] {va['description_vi']}")
 
 
 def print_scan_report(report: ScanReport, label: str) -> None:
@@ -1957,6 +2451,9 @@ def selftest() -> int:
     assert rep_clean.findings_count == 0, f"Báo nhầm trên câu sạch: {rep_clean.findings}"
     assert not verify_text("Tỷ lệ đạt 59,92% ngày 25/09/2026.", "Tỷ lệ đạt 60% ngày 25/09/2026.")["passed"]
     assert verify_text("Tỷ lệ đạt 59,92% ngày 25/09/2026.", "Ngày 25/09/2026, tỷ lệ đạt 59,92%.")["passed"]
+    prof = profile_text(clean, label="selftest")
+    assert prof["stylometry"]["so_cau"] == 2
+    assert "dhdna_voice_metrics" in prof
     print("SELFTEST: PASS")
     return 0
 
@@ -1964,19 +2461,24 @@ def selftest() -> int:
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="vi_scanner",
-        description="Công cụ rà lỗi câu chữ máy móc, sáo rỗng, dịch thô tiếng Việt và đối soát dữ kiện.",
+        description="Công cụ rà lỗi câu chữ máy móc, sáo rỗng, dịch thô tiếng Việt, đo hồ sơ giọng văn DHDNA và đối soát dữ kiện.",
     )
     p.add_argument("--version", action="version", version=VERSION)
     sub = p.add_subparsers(dest="command", required=True)
 
     profile_choices = ["all", *[pr.value for pr in ALL_PROFILES]]
-    scan_p = sub.add_parser("scan", help="Quét tệp UTF-8 (mặc định xuất đủ 100%% các nhóm văn bản)")
-    scan_p.add_argument("file", nargs="?", default="-", help="Đường dẫn tệp UTF-8 hoặc '-' để đọc stdin")
+    scan_p = sub.add_parser("scan", help="Quét tệp UTF-8 hoặc .docx (mặc định xuất đủ 100%% các nhóm văn bản)")
+    scan_p.add_argument("file", nargs="?", default="-", help="Đường dẫn tệp (.md, .txt, .docx) hoặc '-' để đọc stdin")
     scan_p.add_argument(
         "--profile",
         choices=profile_choices,
         default="all",
         help="Mặc định 'all' xuất đủ 100%% tín hiệu mọi nhóm; chọn 1 nhóm cụ thể khi cần lọc hẹp.",
+    )
+    scan_p.add_argument(
+        "--ignore-table-cols",
+        default="",
+        help="Danh sách số thứ tự cột bảng (đánh số từ 1, cách nhau dấu phẩy, ví dụ '2,3') cần bỏ qua khi cột đó là văn bản trích lục của bên thứ ba.",
     )
     scan_p.add_argument("--custom-rules", type=Path, help="Tệp JSON chứa quy tắc bổ sung riêng")
     scan_p.add_argument("--json", action="store_true", help="Xuất kết quả JSON ra stdout")
@@ -1987,6 +2489,19 @@ def build_parser() -> argparse.ArgumentParser:
         default="any",
         help="Mức tín hiệu trả mã thoát 1 (mặc định: any)",
     )
+
+    prof_p = sub.add_parser(
+        "profile",
+        help="Đo lường tất định 18 chỉ số nhịp câu (stylometry) và 12 chỉ số kỷ luật bằng chứng / giọng văn DHDNA",
+    )
+    prof_p.add_argument("file", nargs="?", default="-", help="Đường dẫn tệp (.md, .txt, .docx) hoặc '-' để đọc stdin")
+    prof_p.add_argument(
+        "--ignore-table-cols",
+        default="",
+        help="Danh sách cột bảng (từ 1, ví dụ '2,3') cần loại trừ khỏi thống kê giọng văn tác giả.",
+    )
+    prof_p.add_argument("--json", action="store_true", help="Xuất kết quả JSON ra stdout")
+    prof_p.add_argument("--output", type=Path, help="Ghi kết quả JSON ra tệp")
 
     ver_p = sub.add_parser("verify", help="Đối soát dữ kiện và từ phủ định/điều kiện trước - sau biên tập")
     ver_p.add_argument("before", type=Path)
@@ -2066,11 +2581,56 @@ def main(argv: Sequence[str] | None = None) -> int:
                     print(f"{r.rule_id} [{r.severity.value}] ({r.category}): {r.description_vi}")
             return 0
 
+        if args.command == "profile":
+            ig_cols = parse_ignore_cols(args.ignore_table_cols)
+            docx_meta: dict[str, Any] = {}
+            if str(args.file) != "-" and Path(args.file).suffix.lower() == ".docx":
+                text, docx_meta = extract_docx_text_and_meta(Path(args.file), ignore_cols=ig_cols)
+            else:
+                text = read_utf8(args.file, ignore_cols=ig_cols)
+            prof_data = profile_text(
+                text,
+                label=str(args.file),
+                docx_meta=docx_meta,
+                ignore_cols=ig_cols,
+            )
+            payload = json.dumps(prof_data, ensure_ascii=False, indent=2)
+            if args.output:
+                args.output.write_text(payload, encoding="utf-8")
+            if args.json:
+                print(payload)
+            else:
+                print_profile_report(prof_data)
+            return 0
+
         if args.command == "scan":
+            ig_cols = parse_ignore_cols(args.ignore_table_cols)
             extra = ViScanner.load_custom_rules(args.custom_rules) if args.custom_rules else None
             scanner = ViScanner(extra_rules=extra)
-            text = read_utf8(args.file)
+            docx_meta_scan: dict[str, Any] = {}
+            if str(args.file) != "-" and Path(args.file).suffix.lower() == ".docx":
+                text, docx_meta_scan = extract_docx_text_and_meta(
+                    Path(args.file), ignore_cols=ig_cols
+                )
+            else:
+                text = read_utf8(args.file, ignore_cols=ig_cols)
             report = scanner.scan_text(text, profile=args.profile)
+            if docx_meta_scan.get("template_title_mismatch"):
+                rule_s2 = scanner.rules["VIS-STRUCT-002"]
+                report.findings.insert(
+                    0,
+                    scanner._make_finding(
+                        rule_s2,
+                        text,
+                        0,
+                        docx_meta_scan.get("core_title", "docProps/core.xml"),
+                        docx_meta_scan["template_title_mismatch"],
+                    ),
+                )
+                report.findings_count = len(report.findings)
+                report.warning_count = sum(
+                    1 for f in report.findings if f.severity == Severity.WARNING.value
+                )
             payload = report.to_json(indent=2)
             if args.output:
                 args.output.write_text(payload, encoding="utf-8")
@@ -2100,7 +2660,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     print(f"  - {err}")
                 print(result["note"])
             return 0 if result["passed"] else 1
-    except (OSError, UnicodeError, ValueError, KeyError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, ValueError, KeyError, json.JSONDecodeError, zipfile.BadZipFile) as exc:
         print(f"LỖI: {exc}", file=sys.stderr)
         return 2
     return 2

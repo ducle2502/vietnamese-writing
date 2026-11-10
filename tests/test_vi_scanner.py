@@ -26,7 +26,15 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 import vi_scanner  # noqa: E402
-from vi_scanner import SemanticMasker, ViScanner, check_loanwords_maintenance, main, verify_text  # noqa: E402
+from vi_scanner import (  # noqa: E402
+    SemanticMasker,
+    ViScanner,
+    check_loanwords_maintenance,
+    extract_docx_text_and_meta,
+    main,
+    profile_text,
+    verify_text,
+)
 
 
 # 100 mẫu kiểm thử độc lập (mã, rule mục tiêu, profile, kỳ vọng bắt lỗi, văn bản)
@@ -279,6 +287,104 @@ class TestViScannerV2(unittest.TestCase):
         self.assertIn("ghi lại lý do chọn", matched_all)
         self.assertIn("Xoay vòng động từ", matched_all)
 
+    def test_v2_2_deterministic_dhdna_docx_and_profile(self) -> None:
+        """Kiểm tra các quy tắc kỷ luật bằng chứng DHDNA, đọc tệp .docx, lọc cột bảng và lệnh profile v2.2.0."""
+        import zipfile
+
+        # 1. Kiểm tra bắt lỗi gộp mục còn lỗi vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn,
+        # dùng bù trừ ròng kết luận không sai lệch, tỷ lệ hoàn thành thiếu Tử/Mẫu số và từ kịch tính hiện trường
+        bad_evidence_doc = (
+            "Sự cố lúc 10:40 gây sập toàn tuyến khi đội ngũ trực chiến 24/7.\n\n"
+            "Trong mẫu khảo sát, 84,9% giao dịch được ghi nhận hoàn thành, kể cả trường hợp còn vướng mắc.\n\n"
+            "Nhóm hỗ trợ đã đóng lỗi bằng cách hướng dẫn lại thao tác trên bảng theo dõi.\n\n"
+            "Có 06 bút toán lệch tự triệt tiêu nhau nên tổng chênh lệch bằng 0.\n\n"
+            "Tỷ lệ hoàn thành chung đạt 91,5%.\n"
+        )
+        rep_ev = self.scanner.scan_text(bad_evidence_doc, profile="audit_report")
+        ev_rules = [f.rule_id for f in rep_ev.findings]
+        self.assertIn("VIS-TONE-001", ev_rules)
+        struct_hits = [f for f in rep_ev.findings if f.rule_id == "VIS-STRUCT-002"]
+        self.assertGreaterEqual(len(struct_hits), 4)
+
+        # 2. Kiểm tra lệnh profile tất định nhận diện giọng DIRECT_EXECUTIVE_GATEKEEPER và phát hiện lệch mẫu số
+        gatekeeper_doc = (
+            "Đến ngày 30/09/2026, dự án chưa đủ cơ sở phê duyệt đưa vào vận hành chính thức.\n\n"
+            "Thực trạng và bằng chứng. Có 3.009/6.196 nội dung đạt yêu cầu, tương đương 48,6%. "
+            "Đây là số liệu do đơn vị tự báo cáo, chưa được kiểm tra độc lập. "
+            "Ở trang sau, bảng tổng hợp lại ghi 3.100/7.477 nội dung đạt yêu cầu.\n\n"
+            "Giới hạn của kết luận. Các trạng thái họp bàn hoặc đang trình chỉ phản ánh tiến độ, "
+            "mới dừng ở hoạt động trung gian và không được xem là hoàn thành khi chưa có đầu ra kiểm chứng. "
+            "Hiện còn 12 hạng mục quá hạn 62 ngày.\n\n"
+            "Kiến nghị kiểm toán. Chỉ phê duyệt vận hành khi đóng hết lỗi nghiêm trọng. "
+            "Nếu điều kiện chặn chưa đạt trước 48 giờ, cần giảm phạm vi hoặc dời ngày vận hành vì khách hàng có thể bị tính sai số dư.\n"
+        )
+        prof = profile_text(gatekeeper_doc, label="gatekeeper_sample")
+        self.assertEqual(prof["voice_archetype"]["code"], "DIRECT_EXECUTIVE_GATEKEEPER")
+        dm = prof["dhdna_voice_metrics"]
+        self.assertGreaterEqual(dm["ranh_gioi_bang_chung_d12"], 2)
+        self.assertGreaterEqual(dm["cong_chan_dieu_kien_d6"], 2)
+        self.assertGreaterEqual(dm["tach_hoat_dong_trung_gian_d1"], 2)
+        self.assertGreaterEqual(dm["neo_thoi_gian_tre_han_d11"], 2)
+        self.assertGreaterEqual(dm["nhan_doan_ket_thuc_dau_cham"], 3)
+        self.assertEqual(dm["ung_vien_lech_mau_so"].get("nội dung"), ["6.196", "7.477"])
+
+        # 3. Kiểm tra tạo tệp .docx giả lập có thuộc tính Title lệch kỳ (Đợt 2 vs Đợt 6) và lọc cột bảng --ignore-table-cols
+        with tempfile.TemporaryDirectory() as tmp:
+            docx_path = Path(tmp) / "sample_report.docx"
+            core_xml = (
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" '
+                'xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">'
+                "<dc:title>Báo cáo tổng hợp diễn tập Đợt 2</dc:title>"
+                "<dc:creator>Kiểm toán viên</dc:creator>"
+                "</cp:coreProperties>"
+            )
+            doc_xml = (
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+                "<w:body>"
+                "<w:p><w:pPr><w:pStyle w:val=\"Heading1\"/></w:pPr><w:r><w:t>Báo cáo giám sát diễn tập Đợt 6</w:t></w:r></w:p>"
+                "<w:p><w:r><w:t>Có 138/213 đơn vị gửi báo cáo đánh giá đúng hạn, tương đương 64,8%.</w:t></w:r></w:p>"
+                "<w:tbl>"
+                "<w:tr><w:tc><w:p><w:r><w:t>STT</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Báo cáo đơn vị</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Nhận định độc lập</w:t></w:r></w:p></w:tc></w:tr>"
+                "<w:tr><w:tc><w:p><w:r><w:t>1</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Đã thực hiện kiểm tra -> dùng workaround</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Quá hạn 15 ngày, chưa có đầu ra kiểm chứng.</w:t></w:r></w:p></w:tc></w:tr>"
+                "</w:tbl>"
+                "</w:body></w:document>"
+            )
+            with zipfile.ZipFile(docx_path, "w") as zf:
+                zf.writestr("docProps/core.xml", core_xml)
+                zf.writestr("word/document.xml", doc_xml)
+
+            txt_ig, meta = extract_docx_text_and_meta(docx_path, ignore_cols={2})
+            self.assertIsNotNone(meta["template_title_mismatch"])
+            self.assertNotIn("workaround", txt_ig)
+
+            import contextlib
+            import io
+
+            out_scan = Path(tmp) / "scan_docx.json"
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc_scan = main(
+                    [
+                        "scan",
+                        str(docx_path),
+                        "--profile",
+                        "audit_report",
+                        "--ignore-table-cols",
+                        "2",
+                        "--fail-on",
+                        "never",
+                        "--json",
+                        "--output",
+                        str(out_scan),
+                    ]
+                )
+            self.assertEqual(rc_scan, 0)
+            scan_data = json.loads(out_scan.read_text(encoding="utf-8"))
+            # Chỉ còn đúng 1 cảnh báo lệch Title Đợt 2 vs Đợt 6; cột 2 chứa '->' và 'workaround' đã được bỏ qua
+            self.assertEqual(scan_data["findings_count"], 1)
+            self.assertIn("Đợt 2", scan_data["findings"][0]["matched_text"])
+
     def test_semantic_invariants_and_verify_safety(self) -> None:
         """Mọi ví dụ sửa mẫu trong bộ quy tắc phải bảo toàn số liệu, điều kiện và URL."""
         for rule in self.scanner.rules.values():
@@ -322,10 +428,14 @@ class TestViScannerV2(unittest.TestCase):
         self.assertTrue(overdue_y["overdue_annual_review"])
 
         with tempfile.TemporaryDirectory() as tmp:
+            import contextlib
+            import io
+
             sample = Path(tmp) / "clean.md"
             sample.write_text("Doanh thu quý IV đạt 120 tỷ đồng, tăng 10% so với kế hoạch.\n", encoding="utf-8")
             out_json = Path(tmp) / "report.json"
-            rc = main(["scan", str(sample), "--json", "--output", str(out_json)])
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = main(["scan", str(sample), "--json", "--output", str(out_json)])
             self.assertEqual(rc, 0)
             parsed = json.loads(out_json.read_text(encoding="utf-8"))
             self.assertEqual(parsed["profile"], "all")
@@ -389,6 +499,7 @@ class TestViScannerV2(unittest.TestCase):
             ROOT / "CHANGELOG.md",
             ROOT / ".github" / "PULL_REQUEST_TEMPLATE.md",
             ROOT / "references" / "rule-catalog.md",
+            ROOT / "references" / "voice-and-argument-patterns.md",
             ROOT / "references" / "loanwords-and-exceptions.md",
         ]
         link_re = re.compile(r"\[[^\]]+\]\(([^)#\s]+)")
@@ -406,6 +517,11 @@ class TestViScannerV2(unittest.TestCase):
                 rep.findings_count,
                 0,
                 f"Tài liệu {doc_path.name} của chính Skill bị gắn cờ: {[f.rule_id + ':' + f.matched_text for f in rep.findings]}",
+            )
+            self.assertEqual(
+                rep.stylometry.get("canh_bao", []),
+                [],
+                f"Tài liệu {doc_path.name} có cảnh báo nhịp câu stylometry: {rep.stylometry.get('canh_bao')}",
             )
 
         for rule in self.scanner.rules.values():
@@ -435,6 +551,7 @@ class TestViScannerV2(unittest.TestCase):
             ROOT / "README.md",
             ROOT / "LICENSE",
             ROOT / "references" / "rule-catalog.md",
+            ROOT / "references" / "voice-and-argument-patterns.md",
             ROOT / "references" / "loanwords-and-exceptions.md",
             ROOT / ".claude-plugin" / "plugin.json",
             ROOT / ".claude-plugin" / "marketplace.json",

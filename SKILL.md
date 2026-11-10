@@ -1,8 +1,15 @@
 ---
 name: vietnamese-writing
-description: Viết, biên tập và kiểm tra tiếng Việt tự nhiên theo người đọc và mục đích sử dụng. Tự động kích hoạt khi soạn thảo hoặc rà soát câu trả lời, email, báo cáo quản trị, bài báo học thuật, văn bản pháp lý, bài đăng mạng xã hội và bản dịch Anh - Việt. Đi kèm máy quét vi_scanner.py phát hiện câu chữ máy móc, dịch thô, sáo rỗng và đối soát bảo toàn dữ kiện.
+description: >-
+  Viết, biên tập và kiểm tra tiếng Việt tự nhiên theo người đọc và mục đích sử dụng.
+  Dùng khi soạn thảo hoặc rà soát câu trả lời, email, báo cáo quản trị, bài báo
+  học thuật, văn bản pháp lý, bài đăng mạng xã hội và bản dịch Anh - Việt. Đi kèm
+  công cụ scripts/vi_scanner.py rà câu chữ máy móc, dịch thô, sáo rỗng và đối soát
+  bảo toàn dữ kiện.
 license: MIT
+compatibility: Python 3.11+ (chỉ cần khi chạy công cụ scripts/vi_scanner.py)
 metadata:
+  author: ducle2502
   version: "2.0.0"
 ---
 
@@ -41,21 +48,21 @@ Chọn đúng từ theo thực tế công việc. Không dùng sai nghĩa từ H
 3. Cấm tự bịa từ đời thường ngô nghê trái cách gọi nơi làm việc (`in đúp` thay vì *lặp dòng*, `chép thiếu tiền` thay vì *chuyển thiếu số dư*, `cho máy tính ghép` thay vì *chạy đối soát tự động*).
 4. Giữ nguyên dữ kiện và mức độ chắc chắn khi rút gọn câu. Không đổi *có thể giảm* thành *giảm*, không đổi *sau khi* thành *nhờ*, không xóa điều kiện *nếu / trừ khi* và không coi việc chưa tìm thấy hồ sơ là bằng chứng đơn vị không thực hiện.
 
-## Quy trình quét và đối soát với `vi_scanner.py`
+## Quy trình quét và đối soát với `scripts/vi_scanner.py`
 
-Khi biên tập tệp hoặc bài viết dài, chạy công cụ đi kèm theo đúng trình tự ba bước (đường dẫn tính từ thư mục chứa kỹ năng này):
+Khi biên tập tệp hoặc bài viết dài, chạy công cụ [scripts/vi_scanner.py](scripts/vi_scanner.py) theo trình tự hai bước (đường dẫn tính từ thư mục chứa kỹ năng này):
 
 ```bash
-python vi_scanner.py scan TEP_CAN_RA.md --json
-python vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
+python scripts/vi_scanner.py scan TEP_CAN_RA.md --json
+python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 ```
 
-Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản. Mỗi tín hiệu trả về đều ghi rõ `applicable_profiles` (nhóm văn bản bị ảnh hưởng) và `exempt_profiles` (nhóm được miễn). Agent phải đọc hai trường này đối chiếu với loại tài liệu thực tế đang làm để quyết định sửa hay giữ nguyên, không xóa máy móc mọi chỗ bị gắn cờ. Chỉ truyền `--profile <tên_nhóm>` khi muốn lọc riêng cho một thể loại cố định trong đường ống kiểm thử tự động.
+Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản. Mỗi tín hiệu trả về đều ghi rõ `applicable_profiles` (nhóm văn bản bị ảnh hưởng) và `exempt_profiles` (nhóm được miễn). Agent đọc hai trường này đối chiếu với loại tài liệu thực tế đang làm để quyết định sửa hay giữ nguyên, không xóa máy móc mọi chỗ bị gắn cờ. Chỉ truyền `--profile <tên_nhóm>` khi muốn lọc riêng cho một thể loại cố định. Tra cứu danh mục đủ 30 mã quy tắc tại [references/rule-catalog.md](references/rule-catalog.md) và bảng ngoại lệ tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) khi cần xem ví dụ chi tiết.
 
-Ở bước hậu kiểm, luôn lưu bản gốc trước khi sửa để chạy lệnh `verify`. Công cụ này kiểm tra 6 nhóm dữ kiện phải giữ nguyên gồm con số (kể cả ngày tháng, tỷ lệ phần trăm), từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn cùng khối code và nguồn trích dẫn. Nếu bản sửa làm lệch bất kỳ nhóm nào ngoài chủ đích (trừ trường hợp cố ý gọt bớt cụm rào đón chồng chéo như *"dường như có vẻ như"*), phải khôi phục lại chính xác nghĩa gốc trước khi trả kết quả.
+Ở bước hậu kiểm, luôn lưu bản gốc trước khi sửa để chạy lệnh `verify`. Công cụ này kiểm tra 6 nhóm dữ kiện phải giữ nguyên gồm con số (kể cả ngày tháng, tỷ lệ phần trăm), từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn cùng khối code và nguồn trích dẫn. Nếu bản sửa làm lệch bất kỳ nhóm nào ngoài chủ đích (trừ trường hợp cố ý gọt bớt cụm rào đón chồng chéo như `dường như có vẻ như`), phải khôi phục lại chính xác nghĩa gốc trước khi trả kết quả.
 
-Khi viết câu trả lời cho người dùng, trả thẳng sản phẩm đã hoàn thiện. Không đính kèm bảng điểm máy quét hay kể lại quy trình biên tập trừ khi người dùng yêu cầu kiểm tra văn bản.
+Khi trả kết quả cho người dùng, đưa thẳng sản phẩm đã hoàn thiện. Không đính kèm bảng điểm máy quét hay kể lại quy trình biên tập trừ khi người dùng yêu cầu nhận xét văn bản.
 
 ## Bảo trì định kỳ danh sách từ mượn
 
-Mã nguồn [vi_scanner.py](vi_scanner.py) không gắn cứng tên dự án hay thuật ngữ riêng lẻ mà chỉ duy trì danh sách từ tiếng Anh đã quen dùng trong tiếng Việt (`UNIVERSAL_NATURALIZED_LOANWORDS` và `WORKPLACE_TECH_LOANWORDS`). Do từ vựng giao tiếp thay đổi theo thời gian, cần chạy lệnh `python vi_scanner.py check-maintenance` mỗi quý hoặc mỗi năm một lần và xem hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) để cập nhật danh sách này.
+Mã nguồn [scripts/vi_scanner.py](scripts/vi_scanner.py) không gắn cứng tên dự án hay thuật ngữ riêng lẻ mà chỉ duy trì danh sách từ tiếng Anh đã quen dùng trong tiếng Việt (`UNIVERSAL_NATURALIZED_LOANWORDS` và `WORKPLACE_TECH_LOANWORDS`). Do từ vựng giao tiếp thay đổi theo thời gian, định kỳ hàng quý hoặc hàng năm cần chạy lệnh `python scripts/vi_scanner.py check-maintenance` và rà soát theo hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).

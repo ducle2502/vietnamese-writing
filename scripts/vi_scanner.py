@@ -9,13 +9,13 @@ Nguyên tắc thiết kế:
 4. Mặc định lệnh `scan` chạy và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản (`--profile all`), kèm nhãn nhóm áp dụng để Agent tự chọn lọc theo ngữ cảnh.
 
 Cách dùng:
-  python vi_scanner.py scan FILE.md
-  python vi_scanner.py scan FILE.md --json
-  python vi_scanner.py scan FILE.md --profile audit_report
-  python vi_scanner.py verify TRUOC.md SAU.md
-  python vi_scanner.py list-rules
-  python vi_scanner.py check-maintenance
-  python vi_scanner.py selftest
+  python scripts/vi_scanner.py scan FILE.md
+  python scripts/vi_scanner.py scan FILE.md --json
+  python scripts/vi_scanner.py scan FILE.md --profile audit_report
+  python scripts/vi_scanner.py verify TRUOC.md SAU.md
+  python scripts/vi_scanner.py list-rules
+  python scripts/vi_scanner.py check-maintenance
+  python scripts/vi_scanner.py selftest
 """
 from __future__ import annotations
 
@@ -1567,7 +1567,7 @@ def print_scan_report(report: ScanReport, label: str) -> None:
     if report.maintenance_due:
         print(
             "[NHẮC BẢO TRÌ] Danh sách từ tiếng Anh quen dùng (NATURALIZED_EN_LOANWORDS) "
-            "đã đến kỳ rà soát hàng quý. Chạy `python vi_scanner.py check-maintenance` để xem chi tiết."
+            "đã đến kỳ rà soát hàng quý. Chạy `python scripts/vi_scanner.py check-maintenance` để xem chi tiết."
         )
     for idx, f in enumerate(report.findings, 1):
         profs_txt = (

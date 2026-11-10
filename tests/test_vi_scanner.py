@@ -21,8 +21,9 @@ import time
 import unittest
 
 ROOT = Path(__file__).resolve().parent.parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+SCRIPTS_DIR = ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 import vi_scanner  # noqa: E402
 from vi_scanner import SemanticMasker, ViScanner, check_loanwords_maintenance, main, verify_text  # noqa: E402
@@ -258,8 +259,8 @@ class TestViScannerV2(unittest.TestCase):
         self.assertFalse(v_drop_modal["passed"])
 
         v_drop_code = verify_text(
-            "Chạy lệnh `python vi_scanner.py scan a.md` ngày 10/11/2026.",
-            "Chạy lệnh `python vi_scanner.py scan b.md` ngày 10/11/2026.",
+            "Chạy lệnh `python scripts/vi_scanner.py scan a.md` ngày 10/11/2026.",
+            "Chạy lệnh `python scripts/vi_scanner.py scan b.md` ngày 10/11/2026.",
         )
         self.assertFalse(v_drop_code["passed"])
 
@@ -292,6 +293,60 @@ class TestViScannerV2(unittest.TestCase):
             self.assertEqual(parsed["profile"], "all")
             self.assertEqual(parsed["findings_count"], 0)
 
+    def test_skill_repo_structure_manifests_and_self_lint(self) -> None:
+        """Kiểm tra cấu trúc chuẩn Skill repo, manifest đa nền tảng, liên kết nội bộ và tự quét sạch 100% tài liệu."""
+        import re
+
+        skill_md = ROOT / "SKILL.md"
+        self.assertTrue(skill_md.exists(), "Thiếu SKILL.md ở thư mục gốc")
+        self.assertTrue((ROOT / "LICENSE").exists(), "Thiếu LICENSE")
+        self.assertTrue((ROOT / "AGENTS.md").exists(), "Thiếu AGENTS.md")
+        self.assertTrue((ROOT / "scripts" / "vi_scanner.py").exists(), "Thiếu scripts/vi_scanner.py")
+        self.assertTrue((ROOT / "references" / "rule-catalog.md").exists(), "Thiếu references/rule-catalog.md")
+        self.assertTrue((ROOT / "references" / "loanwords-and-exceptions.md").exists(), "Thiếu references/loanwords-and-exceptions.md")
+
+        skill_text = skill_md.read_text(encoding="utf-8")
+        fm_match = re.match(r"\A---\n([\s\S]+?)\n---\n", skill_text)
+        self.assertIsNotNone(fm_match, "SKILL.md thiếu YAML frontmatter")
+        fm = fm_match.group(1) if fm_match else ""
+        self.assertRegex(fm, r"(?m)^name:\s*vietnamese-writing\s*$")
+        self.assertRegex(fm, r"(?m)^description:")
+        self.assertRegex(fm, r"(?m)^license:\s*MIT\s*$")
+
+        for manifest_rel in (
+            ".claude-plugin/plugin.json",
+            ".claude-plugin/marketplace.json",
+            ".cursor-plugin/plugin.json",
+        ):
+            mpath = ROOT / manifest_rel
+            self.assertTrue(mpath.exists(), f"Thiếu {manifest_rel}")
+            mdata = json.loads(mpath.read_text(encoding="utf-8"))
+            self.assertEqual(mdata["name"], "vietnamese-writing")
+
+        md_docs = [
+            ROOT / "SKILL.md",
+            ROOT / "AGENTS.md",
+            ROOT / "README.md",
+            ROOT / "references" / "rule-catalog.md",
+            ROOT / "references" / "loanwords-and-exceptions.md",
+        ]
+        link_re = re.compile(r"\[[^\]]+\]\(([^)#\s]+)")
+        for doc_path in md_docs:
+            txt = doc_path.read_text(encoding="utf-8")
+            for m in link_re.finditer(txt):
+                target = m.group(1)
+                if "://" in target or target.startswith("mailto:"):
+                    continue
+                resolved = (doc_path.parent / target).resolve()
+                self.assertTrue(resolved.exists(), f"Liên kết hỏng '{target}' trong {doc_path.name}")
+
+            rep = self.scanner.scan_text(txt, profile="all")
+            self.assertEqual(
+                rep.findings_count,
+                0,
+                f"Tài liệu {doc_path.name} của chính Skill bị gắn cờ: {[f.rule_id + ':' + f.matched_text for f in rep.findings]}",
+            )
+
     def test_zero_hardcoded_project_leaks_in_repo(self) -> None:
         """Đảm bảo không tệp mã nguồn hay tài liệu nào trong repo chứa chuỗi dự án nội bộ cũ.
         Dùng mã băm SHA-256 của từng token nhạy cảm để ngay cả tệp test cũng không lưu chữ thô.
@@ -305,10 +360,16 @@ class TestViScannerV2(unittest.TestCase):
             "3ec20fe6b71dc063cbbd7c283c606c30fe10577857c34d2563f61400b49078ad",
         }
         tracked_files = [
-            ROOT / "vi_scanner.py",
+            ROOT / "scripts" / "vi_scanner.py",
             ROOT / "SKILL.md",
+            ROOT / "AGENTS.md",
             ROOT / "README.md",
+            ROOT / "LICENSE",
+            ROOT / "references" / "rule-catalog.md",
             ROOT / "references" / "loanwords-and-exceptions.md",
+            ROOT / ".claude-plugin" / "plugin.json",
+            ROOT / ".claude-plugin" / "marketplace.json",
+            ROOT / ".cursor-plugin" / "plugin.json",
             Path(__file__).resolve(),
         ]
         import re

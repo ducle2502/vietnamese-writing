@@ -20,40 +20,10 @@
 
 ## Tổng quan
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-`01` **Bắt đúng cấu trúc dịch thô và khuôn mẫu máy móc**
-
-Thay vì cấm từ Hán - Việt một cách cơ học, 30 quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) tập trung chỉ ra câu rào đón kiểu chatbot, cấu trúc bị động dịch từng chữ từ tiếng Anh (*"được thực hiện bởi"*), danh từ hóa nặng nề, nhãn in đậm lặp lại hàng loạt và lỗi dùng sai nghĩa từ Hán - Việt.
-
-</td>
-<td width="50%" valign="top">
-
-`02` **Quét đủ 100% tín hiệu kèm miễn trừ theo 7 ngữ cảnh**
-
-Lệnh `scan` mặc định chạy ở chế độ `all`, xuất toàn bộ tín hiệu kèm trường `applicable_profiles` và `exempt_profiles` trên 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`). Câu bị động hợp lệ trong hợp đồng pháp lý hoặc trích dẫn học thuật không bị ép sửa sai ngữ cảnh.
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-`03` **Che chắn vùng mã lệnh và đối soát bảo toàn dữ kiện**
-
-Lớp `SemanticMasker` tự động bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép mà không làm lệch số dòng hay số cột. Lệnh `verify` đối chiếu bản gốc và bản sửa để chặn lỗi làm rơi con số, từ phủ định, từ chỉ điều kiện hoặc mức độ chắc chắn.
-
-</td>
-<td width="50%" valign="top">
-
-`04` **Tách bạch từ mượn đã quen dùng với từ chêm vô lối**
-
-Bộ lọc âm vị nhận diện từ tiếng Anh chêm lẫn trong câu nhưng tự động loại trừ danh sách từ đã quen dùng hàng ngày (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`) và nhắc lịch rà soát định kỳ qua lệnh `check-maintenance`.
-
-</td>
-</tr>
-</table>
+- **Bắt đúng cấu trúc dịch thô và khuôn mẫu máy móc.** Thay vì cấm từ Hán - Việt một cách cơ học, 30 quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) tập trung chỉ ra câu rào đón kiểu chatbot, cấu trúc bị động dịch từng chữ từ tiếng Anh (*"được thực hiện bởi"*), danh từ hóa nặng nề, nhãn in đậm lặp lại hàng loạt và lỗi dùng sai nghĩa từ Hán - Việt.
+- **Quét đủ 100% tín hiệu kèm miễn trừ theo 7 ngữ cảnh.** Lệnh `scan` mặc định chạy ở chế độ `all`, xuất toàn bộ tín hiệu kèm trường `applicable_profiles` và `exempt_profiles` trên 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`). Câu bị động hợp lệ trong hợp đồng pháp lý hoặc trích dẫn học thuật không bị ép sửa sai ngữ cảnh.
+- **Che chắn vùng mã lệnh và đối soát bảo toàn dữ kiện.** Lớp `SemanticMasker` tự động bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép mà không làm lệch số dòng hay số cột. Lệnh `verify` đối chiếu bản gốc và bản sửa để chặn lỗi làm rơi con số, từ phủ định, từ chỉ điều kiện hoặc mức độ chắc chắn.
+- **Tách bạch từ mượn đã quen dùng với từ chêm vô lối.** Bộ lọc âm vị nhận diện từ tiếng Anh chêm lẫn trong câu nhưng tự động loại trừ danh sách từ đã quen dùng hàng ngày (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`) và nhắc lịch rà soát định kỳ qua lệnh `check-maintenance`.
 
 ## Cài đặt nhanh
 

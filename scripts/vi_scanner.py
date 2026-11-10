@@ -437,7 +437,7 @@ def build_default_rules() -> list[RuleDefinition]:
         (
             "VIS-AI-001", "AI_META_AND_STAGING", "regex",
             "Câu mở đầu, nịnh người dùng, kết thúc kiểu chatbot, lời tự xưng mô hình ngôn ngữ hoặc cảnh báo đạo đức/pháp lý tự phát của mô hình.",
-            r"(?i)\b(?:tất nhiên rồi!?\s+dưới đây là|chắc chắn rồi!?\s+dưới đây là|(?:đó\s+là\s+một\s+|một\s+)?câu hỏi\s+(?:rất\s+|cực kỳ\s+|vô cùng\s+)?(?:hay|tuyệt vời|thú vị|sâu sắc|đáng suy ngẫm)|bạn\s+(?:hoàn toàn\s+đúng|nói\s+đúng\s+điểm\s+then chốt|đã\s+chạm\s+đến\s+vấn đề\s+cốt lõi)|đúng\s+như\s+bạn\s+(?:nói|nhận xét|chia sẻ)|hy vọng\s+(?:bài viết|thông tin|nội dung|câu trả lời|phân tích|chia sẻ)\s+này\s+(?:sẽ\s+)?hữu ích(?:\s+(?:cho|với)\s+bạn)?|hãy cho tôi biết nếu bạn\s+(?:cần thêm|muốn chỉnh sửa|có câu hỏi)|đừng ngần ngại\s+(?:hỏi|liên hệ)|chúc bạn một ngày\s+tốt lành|là một mô hình ngôn ngữ(?:\s+AI)?|as an ai language model|chỉ\s+quét\s+dải\s+mạng\s+và\s+cổng\s+dịch vụ\s+trong\s+mạng\s+nội bộ\s+thuộc\s+quyền\s+quản lý\s+của\s+bạn|mạng\s+phòng\s+lab\s+được\s+phép)\b",
+            r"(?i)\b(?:tất nhiên rồi!?\s+dưới đây là|chắc chắn rồi!?\s+dưới đây là|(?:đó\s+là\s+một\s+|một\s+)?câu hỏi\s+(?:rất\s+|cực kỳ\s+|vô cùng\s+)?(?:hay|tuyệt vời|thú vị|sâu sắc|đáng suy ngẫm)|bạn\s+(?:hoàn toàn\s+đúng|nói\s+đúng\s+điểm\s+then chốt|đã\s+chạm\s+đến\s+vấn đề\s+cốt lõi)|đúng\s+như\s+bạn\s+(?:nói|nhận xét|chia sẻ)|hy vọng\s+(?:bài viết|thông tin|nội dung|câu trả lời|phân tích|chia sẻ)\s+này\s+(?:sẽ\s+)?hữu ích(?:\s+(?:cho|với)\s+bạn)?|hãy cho tôi biết nếu bạn\s+(?:cần thêm|muốn chỉnh sửa|có câu hỏi)|đừng ngần ngại\s+(?:hỏi|liên hệ)|chúc bạn một ngày\s+tốt lành|là một mô hình ngôn ngữ(?:\s+AI)?|as an ai language model|chỉ\s+(?:quét|kiểm thử|thử nghiệm|sử dụng|chạy|khai thác)\s+[^.\n]{3,90}\b(?:thuộc\s+quyền\s+(?:quản lý|sở hữu)\s+của\s+bạn|trong\s+phạm vi\s+được\s+phép|mạng\s+phòng\s+lab\s+được\s+phép|có\s+sự\s+cho\s+phép))\b",
             Severity.ERROR, 1.0,
             "general|audit_report|academic|legal|marketing|social_media|translation",
             "1/doc", "direct_quotes|code_block",
@@ -654,8 +654,8 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-TRANS-005", "TRANSLATIONESE_EN_VI", "regex",
-            "Chủ ngữ giả ('Nó là... để', 'Có một sự...'), đại từ quan hệ dịch thô ('nơi mà', 'điều mà'), lặp trạng từ 'vẫn... vẫn' hoặc đảo ngược bổ ngữ kiểu dịch từng chữ ('báo mất kết nối nhầm', 'kèm giới hạn thời gian chờ rõ ràng').",
-            r"(?i)(?:\bnó\s+(?:thì\s+)?là\s+(?:rất\s+|khá\s+|cực kỳ\s+|vô cùng\s+)?(?:quan trọng|cần thiết|bắt buộc|khó khăn|dễ dàng|hữu ích|tốt hơn)\s+(?:cho\s+\S+\s+)?để\s+|\bcó\s+một\s+sự\s+(?:gia tăng|sụt giảm|thay đổi|khác biệt|chậm trễ)\s+(?:lớn\s+|đáng kể\s+)?trong\s+việc\b|(?:[—–-]\s*nơi(?:\s+mà)?\b|,\s*(?:nơi mà|điều mà|cái mà|người mà|việc mà)\b)|^\s*(?:đúc kết từ|dẫn đến việc|xuất phát từ việc)\s+[^.!?\n]{5,60}|\b(?:phép cộng|phép tính|báo cáo|bảng dữ liệu|bảng tính|con số|dòng tổng|biểu đồ)\s+(?:[a-zà-ỹđ]+\s+){0,3}(?:vô tình|kết luận nhầm|tưởng nhầm|quên mất|chủ quan|bỏ quên|hiểu lầm)\b|\bvẫn\s+[^,.;:!?\n]{2,45}\s+vẫn\s+(?:được|bị|có|là|giữ|tiếp tục)\b|\bbáo\s+(?:mất\s+kết nối|lỗi|hỏng|ngắt\s+kết nối)\s+nhầm\b|\b(?:kèm|với)\s+giới hạn\s+thời gian\s+chờ\s+rõ ràng\b|\bcó\s+giới hạn\s+thời gian\s+tách biệt\s+với\b|\bmột\s+cách\s+(?:tất định|nguyên tử|bất biến|tường minh)\b)",
+            "Chủ ngữ giả ('Nó là... để', 'Có một sự...'), đại từ quan hệ dịch thô ('nơi mà', 'điều mà'), lặp trạng từ 'vẫn... vẫn' hoặc đảo ngược bổ ngữ kiểu dịch từng chữ ('báo mất kết nối nhầm', 'giới hạn thời gian chờ rõ ràng', 'hỗ trợ lọc/tìm kiếm').",
+            r"(?i)(?:\bnó\s+(?:thì\s+)?là\s+(?:rất\s+|khá\s+|cực kỳ\s+|vô cùng\s+)?(?:quan trọng|cần thiết|bắt buộc|khó khăn|dễ dàng|hữu ích|tốt hơn)\s+(?:cho\s+\S+\s+)?để\s+|\bcó\s+một\s+sự\s+(?:gia tăng|sụt giảm|thay đổi|khác biệt|chậm trễ)\s+(?:lớn\s+|đáng kể\s+)?trong\s+việc\b|(?:[—–-]\s*nơi(?:\s+mà)?\b|,\s*(?:nơi mà|điều mà|cái mà|người mà|việc mà)\b)|^\s*(?:đúc kết từ|dẫn đến việc|xuất phát từ việc)\s+[^.!?\n]{5,60}|\b(?:phép cộng|phép tính|báo cáo|bảng dữ liệu|bảng tính|con số|dòng tổng|biểu đồ)\s+(?:[a-zà-ỹđ]+\s+){0,3}(?:vô tình|kết luận nhầm|tưởng nhầm|quên mất|chủ quan|bỏ quên|hiểu lầm)\b|\bvẫn\s+[^,.;:!?\n]{2,45}\s+vẫn\s+(?:được|bị|có|là|giữ|tiếp tục)\b|\bbáo\s+(?:mất\s+kết nối|lỗi|hỏng|ngắt\s+kết nối)\s+nhầm\b|\bgiới hạn\s+thời gian(?:\s+chờ)?\s+(?:rõ ràng|tách biệt|hữu hạn|xác định)\b|\bmột\s+cách\s+(?:tất định|nguyên tử|bất biến|tường minh)\b|(?:và\s+|nên\s+[^,.;:\n]{0,35})\bkhông\s+(?:cần|phải)\s+cài\s+(?:đặt\s+)?thêm\s+(?:bất kỳ\s+)?(?:thư viện|gói|công cụ)\s+ngoài\b|\bhỗ trợ\s+(?:lọc|tìm kiếm|hủy|dừng|thêm|sửa|xóa|xuất|nhập|lưu|đọc|ghi)\b)",
             Severity.WARNING, 0.8,
             "general|audit_report|academic|legal|marketing|social_media|translation",
             "1/doc", "none",
@@ -727,7 +727,7 @@ def build_default_rules() -> list[RuleDefinition]:
         (
             "VIS-LEX-001", "VOICE_AND_STRUCTURE", "regex",
             "Dùng sai nghĩa từ Hán - Việt ('thực chứng', 'nhận thức luận'), dịch từng chữ thuật ngữ phần mềm ('khung hợp đồng', 'khung vận hành', 'khóa hợp đồng', 'giao kèo dữ liệu', 'khung chạy sẵn', 'hiện thực lớp', 'vệt sáng chọn') hoặc tự chế từ trái cách gọi thực tế.",
-            r"(?i)(?:\b(?:góc nhìn\s+thực chứng|hồ sơ\s+(?:dự án\s+)?thực chứng|ngôn ngữ\s+[^,.;:!?\n]{0,20}thực chứng|bằng chứng\s+thực chứng|kiểm toán\s+thực chứng|phản biện\s+thực chứng|nhận thức luận|mục tra cứu\s+nguyên tử|đơn vị\s+nguyên tử|in đúp|chép\s+(?:thiếu|thừa)\s+tiền|bản chốt sổ\s+cố định|tài liệu\s+trượt|khớp\s+(?:nhau\s+|tới\s+)?từng đồng|bỏ sót\s+sạch|vừa khít\s+bù|(?:dùng|cho)\s+máy(?:\s+tính)?\s+(?:đối chiếu|ghép)|máy tính\s+sẽ\s+trừ|kiểm tra\s+tự động\s+đối soát|điều gì\s+vẫn\s+có thể\s+sai|dấu ấn\s+công việc|điểm cốt lõi\s+vận hành|đọc nhanh\s+trước khi\s+vào|khung\s+(?:hợp đồng|vận hành|chạy\s+sẵn|kiểm thử|màn hình|giao diện|quyết định|thực thi|dữ liệu|kiến trúc|quản trị|điều phối|rào đón)|khóa\s+hợp đồng|hợp đồng\s+(?:dữ liệu|module|mô-đun|api|giao diện|header)|thay đổi\s+hợp đồng\s+phải\s+cập nhật|giao kèo\s+(?:dữ liệu|giao diện|api|module)|mô hình\s+vận hành(?:\s+theo\s+chu kỳ)?|tác vụ\s+vận hành|vòng đời\s+(?:tác vụ|phần mềm)|tác vụ\s+vòng đời\s+phần mềm|chu kỳ\s+điều phối\s+đầu[-–]cuối|ma trận\s+kiểm thử\s+đa\s+hệ\s+điều hành|túi\s+chứa\s+dữ liệu(?:\s+công khai)?|bản chụp\s+trạng thái|thu hồi\s+tài nguyên\s+kết nối|dừng\s+các\s+tác vụ\s+vào/ra\s+còn\s+dở|đóng\s+ứng dụng\s+an toàn|vệt sáng\s+chọn|di chuyển\s+vệt sáng|lưu\s+(?:hoặc|và)\s+nạp\s+lịch sử|chống\s+lặp\s+log|tự\s+loại\s+mẫu\s+[^,.;:\n]{0,20}khỏi\s+mẫu\s+số|hồ sơ\s+quyết định\s+kỹ thuật|phục vụ\s+chạy\s+thử\s+tại\s+chỗ|báo\s+xanh|kỹ sư\s+(?:giao thức\s+mạng|quét\s+mạng|lưu trữ)|dịch vụ\s+lưu trữ|(?:bộ\s+)?khung\s+chạy\s+sẵn|thử nghiệm\s+tình huống\s+lỗi|bộ\s+thực thi\s+(?:giả lập|lệnh)|bộ\s+dò\s+mạng|(?:luồng|tác vụ)\s+dò\s+mạng|dò\s+mạng\s+/24|dò\s+cổng\s+tcp|thanh\s+trạng thái\s+dưới\s+đáy|chuỗi\s+đối số\s+đầu vào|nhánh\s+tính năng\s+ngắn hạn|vượt qua\s+kiểm tra|kiểm tra\s+hợp lệ\s+khi|tệp\s+khả\s+thực thi|triển khai\s+kỹ thuật|chụp\s+(?:độ trễ|bằng chứng|mẫu\s+đo)|tìm kiếm\s+STL|thực thể\s+nghiệp vụ|quá trình\s+làm mới\s+nền|hiện thực\s+(?:lớp|hàm|phương thức|bộ|bảng|cơ chế|giao diện|thuật toán|mô-đun|module|kịch bản|độc lập))\b|\bhiện thực\s{2,})",
+            r"(?i)(?:\b(?:góc nhìn\s+thực chứng|hồ sơ\s+(?:dự án\s+)?thực chứng|ngôn ngữ\s+[^,.;:!?\n]{0,20}thực chứng|bằng chứng\s+thực chứng|kiểm toán\s+thực chứng|phản biện\s+thực chứng|nhận thức luận|mục tra cứu\s+nguyên tử|đơn vị\s+nguyên tử|in đúp|chép\s+(?:thiếu|thừa)\s+tiền|bản chốt sổ\s+cố định|tài liệu\s+trượt|khớp\s+(?:nhau\s+|tới\s+)?từng đồng|bỏ sót\s+sạch|vừa khít\s+bù|(?:dùng|cho)\s+máy(?:\s+tính)?\s+(?:đối chiếu|ghép)|máy tính\s+sẽ\s+trừ|kiểm tra\s+tự động\s+đối soát|điều gì\s+vẫn\s+có thể\s+sai|dấu ấn\s+công việc|điểm cốt lõi\s+vận hành|đọc nhanh\s+trước khi\s+vào|khung\s+(?:hợp đồng|vận hành|chạy\s+sẵn|kiểm thử|màn hình|giao diện|quyết định|thực thi|dữ liệu|kiến trúc|quản trị|điều phối|rào đón)|khóa\s+hợp đồng|hợp đồng\s+(?:dữ liệu|module|mô-đun|api|giao diện|header)|thay đổi\s+hợp đồng\s+phải\s+cập nhật|giao kèo\s+(?:dữ liệu|giao diện|api|module)|mô hình\s+vận hành(?:\s+theo\s+chu kỳ)?|tác vụ\s+vận hành|vòng đời\s+(?:tác vụ|phần mềm)|tác vụ\s+vòng đời\s+phần mềm|chu kỳ\s+điều phối\s+đầu[-–]cuối|ma trận\s+kiểm thử\s+đa\s+hệ\s+điều hành|túi\s+chứa\s+dữ liệu(?:\s+công khai)?|bản chụp\s+trạng thái|thu hồi\s+tài nguyên\s+kết nối|dừng\s+các\s+tác vụ\s+vào/ra\s+còn\s+dở|đóng\s+ứng dụng\s+an toàn|vệt sáng\s+chọn|di chuyển\s+vệt sáng|lưu\s+(?:hoặc|và)\s+nạp\s+lịch sử|chống\s+lặp\s+log|(?:khỏi|vào)\s+(?:mẫu\s+số|tử\s+số)|hồ sơ\s+quyết định\s+kỹ thuật|phục vụ\s+(?:việc\s+)?(?:chạy\s+thử|kiểm thử|minh họa|đối chiếu)(?:\s+tại\s+chỗ)?|báo\s+xanh|kỹ sư\s+(?:giao thức|quét\s+mạng|lưu trữ|dò\s+mạng|trình\s+diễn)|dịch vụ\s+lưu trữ|(?:bộ\s+)?khung\s+chạy\s+sẵn|thử nghiệm\s+tình huống\s+lỗi|bộ\s+thực thi\s+(?:giả lập|lệnh)|(?:bộ|luồng|tác vụ|hàm|cơ chế)\s+dò\s+(?:mạng|cổng|lỗi|thiết bị|dịch vụ)|dò\s+(?:mạng|cổng)|thanh\s+trạng thái\s+dưới\s+đáy|chuỗi\s+đối số\s+đầu vào|nhánh\s+tính năng\s+ngắn hạn|vượt qua\s+kiểm tra|kiểm tra\s+hợp lệ\s+khi|tệp\s+khả\s+thực thi|triển khai\s+kỹ thuật|chụp\s+(?:độ trễ|bằng chứng|mẫu\s+đo)|thực thể\s+nghiệp vụ|quá trình\s+làm mới\s+nền|lớp\s+phụ trách|kỹ thuật\s+[^|,\n]{1,20}\s+áp dụng|đo\s+kết nối|bảng\s+hiển thị|dữ liệu\s+\S+\s+gần\s+nhất|kịch bản\s+biên dịch|bộ\s+công cụ\s+biên dịch|bộ\s+kiểm thử\s+đơn vị\s+trên|tác vụ\s*/\s*(?:thành viên|người|nhân sự)|mẫu\s+thông điệp|thông điệp\s+(?:commit|lỗi|cảnh báo)|hiện thực\s+(?:lớp|hàm|phương thức|bộ|bảng|cơ chế|giao diện|thuật toán|mô-đun|module|kịch bản|độc lập))\b|\bhiện thực\s{2,})",
             Severity.WARNING, 0.7,
             "general|audit_report|academic|marketing|social_media|translation",
             "1/doc", "philosophy_positivism_term",
@@ -760,7 +760,7 @@ def build_default_rules() -> list[RuleDefinition]:
         (
             "VIS-STRUCT-001", "VOICE_AND_STRUCTURE", "regex",
             "Tự thuyết minh bố cục bài viết, để lộ nhãn khung dàn ý nội bộ hoặc vặn câu tuần tự để né máy quét.",
-            r"(?i)(?:\b(?:để tránh\s+trùng lặp|tách biệt\s+với\s+mục|khác với\s+mục\s+\d|mục này\s+được\s+thiết kế|được\s+trình bày\s+theo\s+cấu trúc|(?:bảng|sơ đồ|nội dung)\s+dưới đây\s+(?:sẽ\s+)?(?:trình bày|mô tả|tổng hợp|minh họa)|vướng mắc\s+ở\s+cách\s+\d+|chuyển sang\s+cách\s+\d+|điểm\s+bị\s+kẹt|điểm\s+gãy\s+cụ thể|bước ngoặt\s+tư duy|ví dụ\s+nhẩm tay|câu hỏi\s+vặn ngược|phản xạ\s+bản năng|câu hỏi\s+gỡ rối|biểu hiện\s+bề mặt|nguyên nhân\s+gốc\s+ở\s+tầm\s+cơ chế|hồ sơ\s+thứ nhất[^.!?\n]{3,80}sang\s+hồ sơ\s+thứ hai)\b|^\s*(?:điểm nghẽn|hướng xử lý|bài học rút ra|yêu cầu kiểm soát|căn cứ thực tế)\s*:)",
+            r"(?i)(?:\b(?:để tránh\s+trùng lặp|tách biệt\s+với\s+mục|khác với\s+mục\s+\d|mục này\s+được\s+thiết kế|được\s+trình bày\s+theo\s+cấu trúc|(?:bảng|sơ đồ|nội dung)\s+dưới đây\s+(?:sẽ\s+)?(?:trình bày|mô tả|tổng hợp|minh họa)|(?:tài liệu|tệp|file)\s+[^,.;:\n]{0,40}\bmô tả\s+chi tiết\b|ghi lại\s+lý do\s+chọn|hướng dẫn\s+[^.\n]{3,50}\s+nằm\s+trong|vướng mắc\s+ở\s+cách\s+\d+|chuyển sang\s+cách\s+\d+|điểm\s+bị\s+kẹt|điểm\s+gãy\s+cụ thể|bước ngoặt\s+tư duy|ví dụ\s+nhẩm tay|câu hỏi\s+vặn ngược|phản xạ\s+bản năng|câu hỏi\s+gỡ rối|biểu hiện\s+bề mặt|nguyên nhân\s+gốc\s+ở\s+tầm\s+cơ chế|hồ sơ\s+thứ nhất[^.!?\n]{3,80}sang\s+hồ sơ\s+thứ hai)\b|^\s*(?:điểm nghẽn|hướng xử lý|bài học rút ra|yêu cầu kiểm soát|căn cứ thực tế)\s*:)",
             Severity.WARNING, 0.65,
             "general|audit_report|academic|social_media",
             "1/doc", "none",
@@ -1492,68 +1492,93 @@ class ViScanner:
                                 )
                             )
 
-        # 4. Kiểm tra thuộc tính `alt="..."` nhồi từ khóa (> 12 từ), hộp HTML quảng cáo 01–04
+        # 4. Kiểm tra thuộc tính `alt="..."` nhồi từ khóa (> 12 từ hoặc kèm tagline quảng cáo),
+        # hộp HTML quảng cáo 01–04, chú thích `#` dài dòng trong cây thư mục
         # và lạm dụng dấu backtick quanh từ tiếng Việt thuần túy (`Thêm`, `Sửa`, `Xóa`)
-        pre_html_masked = SemanticMasker.FRONTMATTER_RE.sub(
-            SemanticMasker._blank_match, raw_text
-        )
-        pre_html_masked = SemanticMasker.ENGLISH_SECTION_RE.sub(
-            SemanticMasker._blank_match, pre_html_masked
-        )
-        pre_html_masked = SemanticMasker.CODE_BLOCK_RE.sub(
-            SemanticMasker._blank_match, pre_html_masked
-        )
-        for m_alt in stdlib_re.finditer(r'\balt=["\']([^"\'\n]+)["\']', pre_html_masked):
-            alt_val = m_alt.group(1).strip()
-            if has_vi and len(alt_val.split()) > 12:
-                findings.append(
-                    self._make_finding(
-                        rule,
-                        raw_text,
-                        m_alt.start(),
-                        raw_text[m_alt.start() : m_alt.end()][:100],
-                        "Thuộc tính alt của ảnh quá dài (> 12 từ); chỉ nên ghi ngắn gọn 2–8 từ nêu tên hình thay vì nhồi từ khóa và số liệu kiểu SEO.",
-                    )
-                )
-
-        m_promo_grid = stdlib_re.search(
-            r"(?is)<table\b[\s\S]{0,1200}<b>01</b>[\s\S]{0,600}<b>02</b>[\s\S]{0,600}<b>03</b>",
-            pre_html_masked,
-        )
-        if m_promo_grid:
-            findings.append(
-                self._make_finding(
-                    rule,
-                    raw_text,
-                    m_promo_grid.start(),
-                    "<table>...<b>01</b>...<b>02</b>...<b>03</b>",
-                    "Bảng HTML gắn nhãn 01–04 kiểu trang quảng cáo lặp lại bảng chức năng chi tiết; nên xóa hộp tóm tắt trùng lặp này.",
-                )
+        if any(tok in raw_text for tok in ("alt=", "<table", "<TABLE", "├", "└", "`")):
+            no_en_text = SemanticMasker.FRONTMATTER_RE.sub(
+                SemanticMasker._blank_match, raw_text
             )
+            no_en_text = SemanticMasker.ENGLISH_SECTION_RE.sub(
+                SemanticMasker._blank_match, no_en_text
+            )
+            pre_html_masked = SemanticMasker.CODE_BLOCK_RE.sub(
+                SemanticMasker._blank_match, no_en_text
+            )
+            if "alt=" in pre_html_masked:
+                for m_alt in stdlib_re.finditer(r'\balt=["\']([^"\'\n]+)["\']', pre_html_masked):
+                    alt_val = m_alt.group(1).strip()
+                    w_count = len(alt_val.split())
+                    if has_vi and (w_count > 12 or (w_count >= 7 and stdlib_re.search(r"\s+[-–—]\s+", alt_val))):
+                        findings.append(
+                            self._make_finding(
+                                rule,
+                                raw_text,
+                                m_alt.start(),
+                                raw_text[m_alt.start() : m_alt.end()][:100],
+                                "Thuộc tính alt của ảnh quá dài hoặc kèm khẩu hiệu quảng cáo; chỉ nên ghi ngắn gọn 2–6 từ nêu tên hình.",
+                            )
+                        )
 
-        offset = 0
-        for ln in pre_html_masked.splitlines(keepends=True):
-            if stdlib_re.search(r"(?i)\b(?:tránh|cấm|không|thay vì|ví dụ|dấu hiệu|cách viết|sai|lỗi|VIS-\w+)\b", ln):
-                offset += len(ln)
-                continue
-            vi_backticks = [
-                m.group(0)
-                for m in stdlib_re.finditer(r"`([^`\n]+)`", ln)
-                if 2 <= len(m.group(1)) <= 35
-                and self._VI_DIACRITIC_RE.search(m.group(1))
-                and not stdlib_re.search(r"[/_.*<>\\=+-]|\b(?:[A-Z]{2,}|\d+)\b", m.group(1))
-            ]
-            if len(vi_backticks) >= 3:
-                findings.append(
-                    self._make_finding(
-                        rule,
-                        raw_text,
-                        offset,
-                        ", ".join(vi_backticks[:4]),
-                        "Không bọc dấu backtick (`...`) quanh các từ tiếng Việt thông thường; chỉ dùng backtick cho tên tệp, lệnh hoặc mã nguồn.",
-                    )
+            if "<table" in pre_html_masked.lower():
+                m_promo_grid = stdlib_re.search(
+                    r"(?is)<table\b[\s\S]{0,1200}(?:<b>|`|\*\*)0?1(?:</b>|`|\*\*)[\s\S]{0,800}(?:<b>|`|\*\*)0?2(?:</b>|`|\*\*)[\s\S]{0,800}(?:<b>|`|\*\*)0?3(?:</b>|`|\*\*)",
+                    pre_html_masked,
                 )
-            offset += len(ln)
+                if m_promo_grid:
+                    findings.append(
+                        self._make_finding(
+                            rule,
+                            raw_text,
+                            m_promo_grid.start(),
+                            "<table>...01...02...03...",
+                            "Bảng HTML gắn nhãn 01–04 kiểu trang quảng cáo lặp lại bảng chức năng chi tiết; nên xóa hộp tóm tắt trùng lặp này.",
+                        )
+                    )
+
+            if "├" in no_en_text or "└" in no_en_text:
+                offset = 0
+                for ln in no_en_text.splitlines(keepends=True):
+                    m_tree_cmt = stdlib_re.search(r"[├└│][──\s]*\S+.*?#\s*(.+)$", ln)
+                    if m_tree_cmt:
+                        cmt_text = m_tree_cmt.group(1).strip()
+                        alnum_words = [w for w in cmt_text.split() if any(c.isalnum() for c in w)]
+                        if self._VI_DIACRITIC_RE.search(cmt_text) and len(alnum_words) > 10:
+                            findings.append(
+                                self._make_finding(
+                                    rule,
+                                    raw_text,
+                                    offset,
+                                    f"# {cmt_text[:70]}",
+                                    "Chú thích `#` trong cây thư mục quá dài (> 10 từ); chỉ nên ghi cụm danh từ ngắn 2–8 từ thay vì nhồi cả câu thuyết minh vào sơ đồ cây.",
+                                )
+                            )
+                    offset += len(ln)
+
+            if "`" in pre_html_masked:
+                offset = 0
+                for ln in pre_html_masked.splitlines(keepends=True):
+                    if "`" not in ln or stdlib_re.search(r"(?i)\b(?:tránh|cấm|không|thay vì|ví dụ|dấu hiệu|cách viết|sai|lỗi|VIS-\w+)\b", ln):
+                        offset += len(ln)
+                        continue
+                    vi_backticks = [
+                        m.group(0)
+                        for m in stdlib_re.finditer(r"`([^`\n]+)`", ln)
+                        if 2 <= len(m.group(1)) <= 35
+                        and self._VI_DIACRITIC_RE.search(m.group(1))
+                        and not stdlib_re.search(r"[/_.*<>\\=+-]|\b(?:[A-Z]{2,}|\d+)\b", m.group(1))
+                    ]
+                    if len(vi_backticks) >= 3:
+                        findings.append(
+                            self._make_finding(
+                                rule,
+                                raw_text,
+                                offset,
+                                ", ".join(vi_backticks[:4]),
+                                "Không bọc dấu backtick (`...`) quanh các từ tiếng Việt thông thường; chỉ dùng backtick cho tên tệp, lệnh hoặc mã nguồn.",
+                            )
+                        )
+                    offset += len(ln)
         return findings
 
     @staticmethod

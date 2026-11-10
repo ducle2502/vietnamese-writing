@@ -1,12 +1,19 @@
 {
   "name": "vietnamese-writing",
   "description": "Viết, biên tập và kiểm tra tiếng Việt tự nhiên theo ngữ cảnh kèm công cụ rà câu chữ và đối soát dữ kiện.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": {
     "name": "Duc Le"
   },
   "homepage": "https://github.com/ducle2502/vietnamese-writing",
   "repository": "https://github.com/ducle2502/vietnamese-writing",
   "license": "MIT",
-  "keywords": ["vietnamese", "writing", "editing", "linter", "prose", "translationese"]
+  "keywords": [
+    "vietnamese",
+    "writing",
+    "editing",
+    "linter",
+    "prose",
+    "translationese"
+  ]
 }

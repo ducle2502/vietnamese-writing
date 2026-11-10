@@ -8,7 +8,8 @@
       "name": "vietnamese-writing",
       "source": "./",
       "description": "Viết, biên tập và kiểm tra tiếng Việt tự nhiên theo 7 nhóm văn bản kèm công cụ rà câu chữ và đối soát dữ kiện.",
-      "category": "writing"
+      "category": "writing",
+      "version": "2.1.0"
     }
   ]
 }

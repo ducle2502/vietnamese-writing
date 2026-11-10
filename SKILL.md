@@ -10,7 +10,7 @@ license: MIT
 compatibility: Python 3.11+ (chỉ cần khi chạy công cụ scripts/vi_scanner.py)
 metadata:
   author: ducle2502
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # vietnamese-writing
@@ -19,7 +19,7 @@ Viết câu tiếng Việt đứng độc lập, rõ chủ thể, gọn ý và h
 
 ## Xác định người đọc trước khi đặt bút
 
-Trước khi viết hoặc sửa, tự xác định văn bản thuộc nhóm nào trong 7 nhóm (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`), ai là người đọc trực tiếp và họ cần ra quyết định gì. Chỉ hỏi lại người dùng khi thiếu thông tin làm sai lệch nội dung hoặc xưng hô.
+Trước khi viết hoặc sửa, tự xác định văn bản thuộc nhóm nào trong 7 nhóm (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`), ai là người đọc trực tiếp, quy mô chủ thể viết (cá nhân, nhóm sinh viên, dự án mã nguồn mở hay doanh nghiệp) và người đọc cần ra quyết định gì. Chỉ hỏi lại người dùng khi thiếu thông tin làm sai lệch nội dung hoặc xưng hô.
 
 | Nhóm văn bản | Yêu cầu trọng tâm |
 | :--- | :--- |
@@ -29,24 +29,25 @@ Trước khi viết hoặc sửa, tự xác định văn bản thuộc nhóm nà
 | Mạng xã hội, chia sẻ chuyên môn (`social_media`) | Mở thẳng vào tình huống thực tế. Dẫn dắt từ thao tác đời thường dễ hình dung trước khi nâng dần lên giải pháp tự động, tránh chèn tên hàm lập trình hoặc công thức toán khô cứng. |
 | Tiếp thị, giới thiệu (`marketing`) | Nêu rõ lợi ích gắn với đối tượng và con số cụ thể, không hứa hẹn quá mức bằng chứng. |
 | Dịch thuật Anh - Việt (`translation`) | Bóc ý gốc rồi sắp lại theo mạch Đề - Thuyết tự nhiên của tiếng Việt, dẹp bỏ câu bị động dịch từng chữ nhưng giữ nguyên toàn bộ điều kiện và sắc thái chắc chắn. |
-| Tin bài, trao đổi chung (`general`) | Câu ngắn và vừa (`12` đến `28` chữ), một ý chính mỗi câu, xưng hô nhất quán. |
+| Tin bài, tài liệu kỹ thuật, trao đổi chung (`general`) | Câu ngắn và vừa (`12` đến `28` chữ), một ý chính mỗi câu, xưng hô và chức danh khớp đúng quy mô thực tế. |
 
-## Nguyên tắc câu chữ cốt lõi
+## Nguyên tắc câu chữ và cấu trúc cốt lõi
 
-Mở thẳng vào vấn đề, sự kiện hoặc số liệu. Bỏ các câu rào đón kiểu chatbot (*"Chắc chắn rồi! Dưới đây là..."*, *"Hy vọng thông tin này hữu ích"*), câu mở bài vĩ mô (*"Trong bối cảnh... ngày càng phát triển"*) và câu kết hứa hẹn chung chung (*"hứa hẹn mở ra kỷ nguyên mới"*).
+Mở thẳng vào vấn đề, sự kiện hoặc số liệu. Bỏ các câu rào đón kiểu chatbot (*"Chắc chắn rồi! Dưới đây là..."*, *"Hy vọng thông tin này hữu ích"*), câu mở bài vĩ mô (*"Trong bối cảnh... ngày càng phát triển"*), câu kết hứa hẹn chung chung (*"hứa hẹn mở ra kỷ nguyên mới"*) và hộp cảnh báo đạo đức hoặc pháp lý tự phát khi người dùng không yêu cầu. Ở câu mở đầu tài liệu kỹ thuật, cắt bỏ các định ngữ độn câu, đuôi phủ định kể công (*"và không cần cài thêm..."*) cùng vế giải thích lại hệ quả hiển nhiên (*"nên không phải..."*).
 
-Ưu tiên chủ thể chỉ người hoặc đơn vị cụ thể đi với động từ trực tiếp. Tránh câu bị động dịch sát từ chữ *by* (*"được phê duyệt bởi"*), cụm danh từ hóa nặng nề (*"sự sụt giảm của"*, *"việc triển khai của"*), chủ ngữ giả (*"Nó là cần thiết để"*) và thói quen nhét động từ rỗng (*"tiến hành việc kiểm tra"* thay vì *"kiểm tra"*).
+Ưu tiên chủ thể chỉ người hoặc đơn vị cụ thể đi với động từ trực tiếp. Tránh câu bị động dịch sát từ chữ *by* (*"được phê duyệt bởi"*, *"được CMake tự động tải"*), cụm danh từ hóa nặng nề (*"sự sụt giảm của"*, *"việc triển khai của"*), chủ ngữ giả (*"Nó là cần thiết để"*), thói quen nhét động từ rỗng (*"tiến hành việc kiểm tra"* thay vì *"kiểm tra"*) và các tính từ quảng cáo rỗng trong tài liệu kỹ thuật (*"cảnh báo thông minh"*, *"giao diện mượt"*, *"bảng trực quan"*, *"đóng ứng dụng an toàn"*).
 
-Giữ nhịp trình bày sạch và thoáng. Không rải từ nối sách vở (*"Hơn nữa,"*, *"Thêm vào đó,"*, *"Bên cạnh đó,"*) ở đầu mọi câu, không đóng khuôn danh sách bằng nhãn in đậm kèm dấu hai chấm lặp đi lặp lại ở mọi gạch đầu dòng, không dùng dấu gạch ngang dài (`—`) nối mệnh đề kiểu tiếng Anh.
+Giữ nhịp trình bày sạch, không lặp hai tầng. Không vẽ hộp tóm tắt 4 ô (`01` đến `04`) ngay trước bảng chức năng chi tiết, không mở thẻ `<details>` lặp lại bảng phân công đã có, không tự bịa bảng so sánh với công cụ lớn hay phương án bù nhìn trong tài liệu đồ án nhỏ. Giữ văn bản thay thế ảnh (`alt="..."`) ngắn gọn từ `2` đến `8` chữ nêu đúng tên hình, chú thích sau dấu `#` trong cây thư mục chỉ từ `2` đến `6` chữ, và chỉ bọc dấu nháy ngược quanh tên tệp, lệnh hoặc mã nguồn.
 
-Chọn đúng từ theo thực tế công việc. Không dùng sai nghĩa từ Hán - Việt (như dùng chữ *"thực chứng"* của triết học để dịch cụm *dựa trên bằng chứng*), không dịch ngược các từ tiếng Anh đã quen dùng hàng ngày (`email` thành *"thư điện tử"*, `web` thành *"mạng toàn cầu"*).
+Chọn đúng từ theo thực tế công việc và khớp vai người viết. Không dùng sai nghĩa từ Hán - Việt (như dùng chữ *"thực chứng"* của triết học để dịch cụm *dựa trên bằng chứng*), không dịch từng chữ thuật ngữ phần mềm sang các cụm kỳ dị (*"khung hợp đồng"*, *"khung vận hành"*, *"khóa hợp đồng"*, *"giao kèo dữ liệu"*, *"khung chạy sẵn"*, *"hiện thực lớp"*, *"di chuyển vệt sáng"*, *"túi chứa dữ liệu"*), không tự phong chức danh tập đoàn (*"Kỹ sư giao thức mạng"*, *"20 tác vụ vòng đời phần mềm"*) cho bài tập nhóm sinh viên, và không dịch ngược các từ tiếng Anh đã quen dùng hàng ngày (`email` thành *"thư điện tử"*, `pull request` thành *"yêu cầu kéo"*).
 
-## Bốn cái bẫy cấm mắc khi sửa văn
+## Năm cái bẫy cấm mắc khi sửa văn
 
 1. Tránh vặn câu thành lối đếm tuần tự ngô nghê (`Hồ sơ thứ nhất... Sang hồ sơ thứ hai... Ở hồ sơ thứ ba...`) chỉ để né cảnh báo lặp từ của máy quét. Khi có nhiều dòng số liệu cùng cấu trúc, hãy trình bày thành bảng.
 2. Tuyệt đối tránh biến văn bản trình lãnh đạo thành giọng sồn sã hoặc giật gân báo chí (`Anh Minh ơi,`, `cố bấm nút`, `rủi ro sát sườn`, `tê liệt`, `tử huyệt`). Văn quản trị cần điềm tĩnh, lễ độ chừng mực, để con số tự nói lên mức độ nghiêm trọng và bỏ các câu khen xã giao hoặc tự khoe xếp loại (`loại giỏi`, `very good`).
 3. Cấm tự bịa từ đời thường ngô nghê trái cách gọi nơi làm việc (`in đúp` thay vì *lặp dòng*, `chép thiếu tiền` thay vì *chuyển thiếu số dư*, `cho máy tính ghép` thay vì *chạy đối soát tự động*).
 4. Giữ nguyên dữ kiện và mức độ chắc chắn khi rút gọn câu. Không đổi *có thể giảm* thành *giảm*, không đổi *sau khi* thành *nhờ*, không xóa điều kiện *nếu / trừ khi* và không coi việc chưa tìm thấy hồ sơ là bằng chứng đơn vị không thực hiện.
+5. Cấm xoay vòng động từ đồng nghĩa gượng gạo (`Khóa hợp đồng / Thiết kế / Xây dựng / Hiện thực / Lập trình / Phát triển / Tính toán / Lập bộ / Soạn / Thiết lập`) ở đầu các ô bảng hoặc danh sách chỉ để lách cờ lặp từ `VIS-FMT-005`. Trong bảng phân công hoặc bảng liệt kê thành phần kỹ thuật, bỏ hẳn động từ dẫn đầu và ghi thẳng tên tệp, lớp hoặc đầu việc.
 
 ## Tự quét lại bài viết và đối soát bằng `scripts/vi_scanner.py`
 

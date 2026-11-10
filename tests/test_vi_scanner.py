@@ -241,6 +241,39 @@ class TestViScannerV2(unittest.TestCase):
         for f in struct_hits:
             self.assertNotIn("file:///", f.matched_text)
 
+    def test_v2_1_superset_viet_humanize_and_technical_calques(self) -> None:
+        """Kiểm tra bộ quy tắc v2.1.0 bao phủ 18 chỉ số stylometry, từ dịch can kỹ thuật, xoay vòng động từ bảng và chú thích cây thư mục."""
+        sample_doc = (
+            '<img src="a.svg" alt="Giao diện terminal của ứng dụng hiển thị kết quả quét dải mạng nội bộ và trạng thái cổng TCP trên 5 thiết bị">\n'
+            "<table><tr><td><b>01</b> A</td><td><b>02</b> B</td></tr><tr><td><b>03</b> C</td><td><b>04</b> D</td></tr></table>\n\n"
+            "Hệ thống áp dụng khung hợp đồng cho các phân hệ.\n"
+            "Nhóm thiết lập khung vận hành cho toàn bộ dịch vụ.\n"
+            "Trưởng nhóm khóa hợp đồng kèm khung chạy sẵn.\n\n"
+            "```text\n"
+            "project/\n"
+            "└── include/  # Các tệp khai báo lớp và giao kèo dữ liệu giữa 5 thành viên\n"
+            "```\n\n"
+            "| Mã | Công việc lập trình |\n"
+            "| --- | --- |\n"
+            "| TV1 | Khóa tệp header chung |\n"
+            "| TV2 | Xây dựng lớp thiết bị |\n"
+            "| TV3 | Hiện thực lớp kiểm tra |\n"
+            "| TV4 | Lập trình bộ quét mạng |\n"
+            "| TV5 | Phát triển phần lưu trữ |\n"
+        )
+        rep = self.scanner.scan_text(sample_doc, profile="all")
+        self.assertEqual(len(rep.stylometry), 18)
+        rule_ids = {f.rule_id for f in rep.findings}
+        self.assertIn("VIS-LEX-001", rule_ids)
+        self.assertIn("VIS-FMT-005", rule_ids)
+        self.assertIn("VIS-STRUCT-002", rule_ids)
+        matched_all = " | ".join(f.matched_text for f in rep.findings)
+        self.assertIn("khung hợp đồng", matched_all)
+        self.assertIn("khung vận hành", matched_all)
+        self.assertIn("khóa hợp đồng", matched_all)
+        self.assertIn("giao kèo dữ liệu", matched_all)
+        self.assertIn("Xoay vòng động từ", matched_all)
+
     def test_semantic_invariants_and_verify_safety(self) -> None:
         """Mọi ví dụ sửa mẫu trong bộ quy tắc phải bảo toàn số liệu, điều kiện và URL."""
         for rule in self.scanner.rules.values():

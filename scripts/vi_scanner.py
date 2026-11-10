@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""vi_scanner.py (v2.0.0) - Công cụ rà lỗi câu chữ máy móc, sáo rỗng và dịch thô tiếng Việt.
+"""vi_scanner.py (v2.1.0) - Công cụ rà lỗi câu chữ máy móc, sáo rỗng và dịch thô tiếng Việt.
 
 Nguyên tắc thiết kế:
 1. Chỉ chỉ ra vị trí câu chữ cần người viết hoặc Agent đọc lại. Công cụ không đoán ai là tác giả và không chấm phần trăm văn bản do AI tạo.
 2. Không tự ý sửa tệp gốc. Khi biên tập phải giữ nguyên số liệu, từ phủ định, điều kiện, mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn.
 3. Chạy nhanh bằng thư viện chuẩn Python 3.11+ (tự dùng google-re2 nếu máy có sẵn), không dùng biểu thức lặp lồng nhau gây treo máy (ReDoS).
-4. Mặc định lệnh `scan` chạy và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản (`--profile all`), kèm nhãn nhóm áp dụng để Agent tự chọn lọc theo ngữ cảnh.
+4. Mặc định lệnh `scan` chạy và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản (`--profile all`), kèm chỉ số nhịp câu (stylometry) và nhãn nhóm áp dụng để Agent tự chọn lọc theo ngữ cảnh.
 
 Cách dùng:
   python scripts/vi_scanner.py scan FILE.md
@@ -29,9 +29,11 @@ import json
 import math
 from pathlib import Path
 import re as stdlib_re
+import statistics
 import sys
 import time
 from typing import Any, Sequence
+import zlib
 
 try:
     import re2 as regex_engine  # type: ignore[import-not-found]
@@ -40,8 +42,8 @@ except ImportError:
     import re as regex_engine
     USING_RE2 = False
 
-VERSION = "2.0.0"
-SCHEMA_VERSION = "2.0.0"
+VERSION = "2.1.0"
+SCHEMA_VERSION = "2.1.0"
 
 # ============================================================================
 # DANH SÁCH TỪ TIẾNG ANH ĐÃ QUEN DÙNG TRONG TIẾNG VIỆT (CẦN CẬP NHẬT ĐỊNH KỲ)
@@ -70,7 +72,7 @@ UNIVERSAL_NATURALIZED_LOANWORDS: frozenset[str] = frozenset({
     "jpy", "gbp", "gmt", "utc", "iso", "ieee", "apa", "doi", "isbn", "issn",
     "url", "http", "https", "html", "xml", "json", "csv", "pdf", "qr", "otp",
     "usb", "sim", "pin", "erp", "crm", "gdp", "cpi", "fdi", "oda", "sme",
-    "vat", "vas", "ifrs", "kpi",
+    "vat", "vas", "ifrs", "kpi", "emoji",
 })
 
 # Nhóm 2: Từ công sở, truyền thông và kỹ thuật thông dụng (hợp lệ ở văn bản chung,
@@ -87,7 +89,11 @@ WORKPLACE_TECH_LOANWORDS: frozenset[str] = frozenset({
     "gpu", "api", "sql", "cloud", "server", "client", "module", "plugin",
     "widget", "token", "prompt", "agent", "model", "dataset", "benchmark",
     "regex", "linter", "cli", "sdk", "ide", "git", "repo", "commit",
-    "branch", "merge", "push", "pull",
+    "branch", "merge", "push", "pull", "preset", "build", "test", "debug",
+    "release", "socket", "thread", "mutex", "port", "subnet", "header",
+    "terminal", "script", "mock", "stub", "ping", "scan", "router",
+    "switch", "host", "flag", "class", "struct", "ifstream", "ofstream",
+    "backtick",
 })
 
 
@@ -206,6 +212,7 @@ class ScanReport:
     maintenance_due: bool
     disclaimer: str
     semantic_invariants_summary: dict[str, int]
+    stylometry: dict[str, Any] = field(default_factory=dict)
     findings: list[Finding] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
@@ -217,19 +224,25 @@ class ScanReport:
 
 class SemanticMasker:
     """Che các vùng không được phép bắt lỗi (khối code, mã nội dòng, đích liên kết,
-    câu trích dẫn nguyên văn trong ngoặc kép) bằng khoảng trắng cùng độ dài để giữ
-    chính xác số dòng và số cột trên tệp gốc; đồng thời trích xuất 6 nhóm dữ kiện
-    cần bảo toàn khi biên tập.
+    câu trích dẫn nguyên văn trong ngoặc kép, phần tiếng Anh của tài liệu song ngữ)
+    bằng khoảng trắng cùng độ dài để giữ chính xác số dòng và số cột trên tệp gốc;
+    đồng thời trích xuất 6 nhóm dữ kiện cần bảo toàn khi biên tập.
     """
 
     FRONTMATTER_RE = stdlib_re.compile(r"\A---\s*\n[\s\S]*?\n---\s*(?:\n|$)")
+    ENGLISH_SECTION_RE = stdlib_re.compile(
+        r"<a\s+(?:id|name)=[\"']english[\"']\s*>\s*</a>[\s\S]*$",
+        stdlib_re.IGNORECASE,
+    )
     CODE_BLOCK_RE = stdlib_re.compile(r"```[\s\S]*?```")
     INLINE_CODE_RE = stdlib_re.compile(r"`[^`\n]+`")
-    QUOTED_SPEECH_RE = stdlib_re.compile(r'"[^\n"]{10,300}"|“[^\n”]{10,300}”')
+    QUOTED_SPEECH_RE = stdlib_re.compile(r'"[^\n"]{1,300}"|“[^\n”]{1,300}”')
     MD_LINK_TARGET_RE = stdlib_re.compile(r"(\]\()([^)\n]+)(\))")
     HTML_COMMENT_RE = stdlib_re.compile(r"<!--[\s\S]*?-->")
+    HTML_CODE_TAG_RE = stdlib_re.compile(r"<code\b[^>]*>[\s\S]*?</code>", stdlib_re.IGNORECASE)
+    HTML_KBD_TAG_RE = stdlib_re.compile(r"<kbd\b[^>]*>[\s\S]*?</kbd>", stdlib_re.IGNORECASE)
     HTML_IMG_RE = stdlib_re.compile(
-        r"</?(?:img|picture|source|div|p|table|tr|td|th|br|a|details|summary)(?:\s+[^>]+|\s*)>",
+        r"</?(?:img|picture|source|div|p|table|thead|tbody|tfoot|tr|td|th|br|hr|a|details|summary|kbd|sub|sup|span|b|i|u|strong|em|figure|figcaption)(?:\s+[^>]+|\s*)>",
         stdlib_re.IGNORECASE,
     )
     BARE_URL_RE = stdlib_re.compile(r"(?:https?|file)://[^\s)\">]+")
@@ -243,14 +256,40 @@ class SemanticMasker:
         return cls._blank_span(match.group(0))
 
     @classmethod
+    def _blank_quote_match(cls, match: stdlib_re.Match[str]) -> str:
+        raw = match.group(0)
+        return cls._blank_span(raw) if len(raw) >= 12 else raw
+
+    @classmethod
+    def _blank_code_block(cls, match: stdlib_re.Match[str]) -> str:
+        """Che khối code nhưng giữ lại phần chú thích tiếng Việt sau dấu `#` trong cây thư mục (`├──`, `└──`)."""
+        raw = match.group(0)
+        out: list[str] = []
+        for line in raw.splitlines(keepends=True):
+            if ("├" in line or "└" in line or "│" in line) and "#" in line:
+                hash_idx = line.index("#")
+                comment_part = line[hash_idx:]
+                if stdlib_re.search(r"[à-ỹđÀ-ỸĐ]", comment_part):
+                    out.append(
+                        (" " * hash_idx)
+                        + cls.INLINE_CODE_RE.sub(cls._blank_match, comment_part)
+                    )
+                    continue
+            out.append(cls._blank_span(line))
+        return "".join(out)
+
+    @classmethod
     def mask_code_and_quotes(cls, text: str, mask_quotes: bool = True) -> str:
         masked = cls.FRONTMATTER_RE.sub(cls._blank_match, text)
-        masked = cls.CODE_BLOCK_RE.sub(cls._blank_match, masked)
+        masked = cls.ENGLISH_SECTION_RE.sub(cls._blank_match, masked)
+        masked = cls.CODE_BLOCK_RE.sub(cls._blank_code_block, masked)
         masked = cls.INLINE_CODE_RE.sub(cls._blank_match, masked)
         masked = cls.HTML_COMMENT_RE.sub(cls._blank_match, masked)
+        masked = cls.HTML_CODE_TAG_RE.sub(cls._blank_match, masked)
+        masked = cls.HTML_KBD_TAG_RE.sub(cls._blank_match, masked)
         masked = cls.HTML_IMG_RE.sub(cls._blank_match, masked)
         if mask_quotes:
-            masked = cls.QUOTED_SPEECH_RE.sub(cls._blank_match, masked)
+            masked = cls.QUOTED_SPEECH_RE.sub(cls._blank_quote_match, masked)
         return masked
 
     @classmethod
@@ -397,8 +436,8 @@ def build_default_rules() -> list[RuleDefinition]:
         # =====================================================================
         (
             "VIS-AI-001", "AI_META_AND_STAGING", "regex",
-            "Câu mở đầu hoặc kết thúc kiểu chatbot và lời tự xưng mô hình ngôn ngữ còn sót lại.",
-            r"(?i)\b(?:tất nhiên rồi!?\s+dưới đây là|chắc chắn rồi!?\s+dưới đây là|hy vọng\s+(?:bài viết|thông tin|nội dung|câu trả lời|phân tích|chia sẻ)\s+này\s+(?:sẽ\s+)?hữu ích(?:\s+(?:cho|với)\s+bạn)?|hãy cho tôi biết nếu bạn\s+(?:cần thêm|muốn chỉnh sửa|có câu hỏi)|đừng ngần ngại\s+(?:hỏi|liên hệ)|chúc bạn một ngày\s+tốt lành|là một mô hình ngôn ngữ(?:\s+AI)?|as an ai language model)\b",
+            "Câu mở đầu, nịnh người dùng, kết thúc kiểu chatbot, lời tự xưng mô hình ngôn ngữ hoặc cảnh báo đạo đức/pháp lý tự phát của mô hình.",
+            r"(?i)\b(?:tất nhiên rồi!?\s+dưới đây là|chắc chắn rồi!?\s+dưới đây là|(?:đó\s+là\s+một\s+|một\s+)?câu hỏi\s+(?:rất\s+|cực kỳ\s+|vô cùng\s+)?(?:hay|tuyệt vời|thú vị|sâu sắc|đáng suy ngẫm)|bạn\s+(?:hoàn toàn\s+đúng|nói\s+đúng\s+điểm\s+then chốt|đã\s+chạm\s+đến\s+vấn đề\s+cốt lõi)|đúng\s+như\s+bạn\s+(?:nói|nhận xét|chia sẻ)|hy vọng\s+(?:bài viết|thông tin|nội dung|câu trả lời|phân tích|chia sẻ)\s+này\s+(?:sẽ\s+)?hữu ích(?:\s+(?:cho|với)\s+bạn)?|hãy cho tôi biết nếu bạn\s+(?:cần thêm|muốn chỉnh sửa|có câu hỏi)|đừng ngần ngại\s+(?:hỏi|liên hệ)|chúc bạn một ngày\s+tốt lành|là một mô hình ngôn ngữ(?:\s+AI)?|as an ai language model|chỉ\s+quét\s+dải\s+mạng\s+và\s+cổng\s+dịch vụ\s+trong\s+mạng\s+nội bộ\s+thuộc\s+quyền\s+quản lý\s+của\s+bạn|mạng\s+phòng\s+lab\s+được\s+phép)\b",
             Severity.ERROR, 1.0,
             "general|audit_report|academic|legal|marketing|social_media|translation",
             "1/doc", "direct_quotes|code_block",
@@ -430,8 +469,8 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-AI-004", "AI_META_AND_STAGING", "regex",
-            "Câu dẫn dắt vòng vo ('Hãy cùng khám phá/tìm hiểu', 'Câu hỏi đặt ra là... Câu trả lời là').",
-            r"(?i)\b(?:hãy cùng\s+(?:chúng tôi\s+)?(?:đi sâu vào\s+)?(?:khám phá|tìm hiểu(?:\s+chi tiết)?|mổ xẻ)\s+trong\s+bài viết|câu hỏi đặt ra là[^?\n]{3,60}\?\s*câu trả lời\s+(?:ngắn gọn\s+)?là)\b",
+            "Câu dẫn dắt vòng vo hoặc chắt lọc giả tạo ('Hãy cùng khám phá', 'Câu hỏi đặt ra là... Câu trả lời là', 'Đó mới là điều quan trọng').",
+            r"(?i)\b(?:hãy cùng\s+(?:chúng tôi\s+)?(?:đi sâu vào\s+)?(?:khám phá|tìm hiểu(?:\s+chi tiết)?|mổ xẻ)\s+trong\s+bài viết|câu hỏi đặt ra là[^?\n]{3,60}\?\s*câu trả lời\s+(?:ngắn gọn\s+)?là|đó\s+(?:mới\s+)?là\s+(?:điều\s+quan trọng|câu trả lời|toàn bộ\s+vấn đề|mấu chốt)|và\s+đó\s+là\s+toàn bộ\s+vấn đề|dừng lại\s+một chút\s+và\s+nghĩ)\b",
             Severity.INFO, 0.4,
             "general|audit_report|academic|legal|translation",
             "1/doc", "profile:marketing|profile:social_media",
@@ -441,8 +480,8 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-AI-005", "AI_META_AND_STAGING", "regex",
-            "Kết bài tóm tắt gượng kèm lời hứa hẹn tương lai chung chung ('Tóm lại... hứa hẹn mở ra kỷ nguyên mới').",
-            r"(?i)\b(?:(?:tóm lại|nhìn chung|xét cho cùng|tựu trung(?:\s+lại)?),\s+[^.\n]{5,90}\s+(?:hứa hẹn\s+(?:sẽ\s+)?mở ra|mở ra\s+một\s+(?:kỷ nguyên|chương)\s+mới|tương lai\s+(?:tươi sáng|rộng mở))|chặng đường phía trước còn dài)\b",
+            "Kết bài tóm tắt gượng kèm lời hứa hẹn tương lai chung chung ('Tóm lại... hứa hẹn mở ra kỷ nguyên mới', 'Dù đối mặt thách thức... vẫn vươn lên').",
+            r"(?i)\b(?:(?:tóm lại|nhìn chung|xét cho cùng|tựu trung(?:\s+lại)?),\s+[^.\n]{5,90}\s+(?:hứa hẹn\s+(?:sẽ\s+)?mở ra|mở ra\s+một\s+(?:kỷ nguyên|chương)\s+mới|tương lai\s+(?:tươi sáng|rộng mở))|chặng đường phía trước còn dài|dù\s+(?:đối mặt|gặp)\s+[^.\n]{2,50}\s+thách thức[^.\n]{2,60}\s+(?:vẫn|tiếp tục)\s+(?:vươn lên|phát triển|khẳng định)|về\s+lâu dài[^.\n]{2,50}xứng đáng[^.\n]{2,40}đầu tư)\b",
             Severity.WARNING, 0.7,
             "general|audit_report|academic|legal|marketing|translation",
             "1/doc", "quoted_speech",
@@ -456,7 +495,7 @@ def build_default_rules() -> list[RuleDefinition]:
         (
             "VIS-RHET-001", "AI_RHETORICAL_INFLATION", "regex",
             "Mẫu câu đòn bẩy 'Không chỉ (đơn thuần) là X, mà (còn/chính) là Y' hoặc lặp dày cụm phủ định bắc cầu.",
-            r"(?i)\b(?:(?:đây\s+|nó\s+|điều này\s+)?không\s+(?:chỉ\s+)?(?:đơn thuần|phải chỉ|đơn giản)\s+là\s+[^,.;:\n]{3,60},\s*mà\s+(?:còn\s+|chính\s+)?là\s+(?:một\s+)?[^,.;:\n]{3,65}|không\s+chỉ\s+[^,.;:!?\n]{3,60}\s+mà\s+còn\b)",
+            r"(?i)\b(?:(?:đây\s+|nó\s+|điều này\s+)?không\s+(?:chỉ\s+)?(?:đơn thuần|phải chỉ|đơn giản)\s+là\s+[^,.;:\n]{3,60}(?:,\s*mà\s+(?:còn\s+|chính\s+)?là\s+(?:một\s+)?[^,.;:\n]{3,65}|[,.;—–-]\s*đó\s+là\b)|không\s+chỉ\s+[^,.;:!?\n]{3,60}\s+mà\s+còn\b|không\s+phải\s+vì\s+[^,.;:!?\n]{3,60}\s+mà\s+vì\b)",
             Severity.WARNING, 0.65,
             "general|audit_report|academic|legal|marketing|social_media|translation",
             "1/para;2/1000w", "legal_clause_citation",
@@ -466,8 +505,8 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-RHET-002", "AI_RHETORICAL_INFLATION", "regex",
-            "Lời khen phóng đại tầm vóc ('đóng vai trò then chốt/sống còn', 'đánh dấu bước ngoặt lịch sử', 'minh chứng sống động').",
-            r"(?i)\b(?:đóng\s+(?:một\s+)?vai trò\s+(?:vô cùng\s+|cực kỳ\s+)?(?:then chốt|sống còn|tối quan trọng)|đánh dấu\s+(?:một\s+)?bước ngoặt\s+(?:mang tính\s+)?(?:lịch sử|thời đại)|là\s+(?:một\s+)?minh chứng\s+(?:sống động|hùng hồn)\s+cho)\b",
+            "Lời khen phóng đại tầm vóc ('đóng vai trò then chốt/sống còn', 'đánh dấu bước ngoặt lịch sử', 'minh chứng sống động', 'qua đó khẳng định').",
+            r"(?i)\b(?:đóng\s+(?:một\s+)?vai trò\s+(?:vô cùng\s+|cực kỳ\s+)?(?:then chốt|sống còn|tối quan trọng|quan trọng\s+bậc nhất|không thể\s+thay thế)|đánh dấu\s+(?:một\s+)?bước ngoặt(?:\s+mang tính)?(?:\s+lịch sử|\s+thời đại|\s+quan trọng)?|là\s+(?:một\s+)?minh chứng\s+(?:sống động|hùng hồn|rõ nét)\s+cho|(?:qua đó|nhằm\s+mục đích)\s+[^.\n]{0,40}\b(?:khẳng định|nhấn mạnh|đề cao|tôn vinh)\b|bứt phá\s+ngoạn mục|vẻ đẹp\s+tuyệt diệu|in đậm\s+dấu ấn|di sản\s+bền vững|tiềm năng\s+to lớn|ấn tượng\s+khó quên|cách mạng\s+hóa)\b",
             Severity.WARNING, 0.6,
             "general|audit_report|academic|legal|translation",
             "1/para;2/1000w", "profile:marketing|historical_year_19xx",
@@ -535,19 +574,19 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-FMT-003", "AI_STRUCTURAL_AND_FORMATTING", "statistical_regex",
-            "Lạm dụng dấu gạch ngang dài ('—') nối mệnh đề kiểu tiếng Anh thay vì dùng dấu phẩy hoặc ngoặc đơn.",
-            r"[^\s—]—[^\s—]|\s—\s",
+            "Dùng dấu gạch ngang dài ('—', '--') hoặc dấu chấm phẩy (';') nối mệnh đề kiểu tiếng Anh thay vì tách câu hoặc dùng dấu phẩy.",
+            r"[^\s—]—[^\s—]|\s—\s|\s--\s|;(?![^(\n]*\))",
             Severity.INFO, 0.35,
             "general|audit_report|academic|legal|translation",
-            "2/para;5/1000w", "literary_dialogue_lines",
+            "1/doc", "literary_dialogue_lines|formal_semicolon_profiles",
             "Dự án này—vốn được phê duyệt từ tháng 3/2025—đã vượt tiến độ 12 ngày—một kết quả đáng ghi nhận.",
             "Dự án này (được phê duyệt từ tháng 3/2025) đã vượt tiến độ 12 ngày.",
             "https://github.com/blader/humanizer/blob/main/SKILL.md", "medium",
         ),
         (
             "VIS-FMT-004", "AI_STRUCTURAL_AND_FORMATTING", "regex",
-            "Ghép 3 tính từ hoặc động từ khen ngợi theo nhịp văn mẫu ('nhanh chóng, chính xác và hiệu quả').",
-            r"(?i)\b(?:nhanh chóng,\s*chính xác\s*và\s*hiệu quả|sáng tạo,\s*đột phá\s*và\s*bền vững|toàn diện,\s*sâu sắc\s*và\s*triệt để|linh hoạt,\s*minh bạch\s*và\s*tối ưu)\b",
+            "Ghép 3 tính từ hoặc cụm khen ngợi theo nhịp văn mẫu ('nhanh chóng, chính xác và hiệu quả', 'chạy mượt mà trên cả').",
+            r"(?i)\b(?:nhanh chóng,\s*chính xác\s*và\s*hiệu quả|sáng tạo,\s*đột phá\s*và\s*bền vững|toàn diện,\s*sâu sắc\s*và\s*triệt để|linh hoạt,\s*minh bạch\s*và\s*tối ưu|an toàn,\s*bảo mật\s*và\s*hiệu quả|đơn giản,\s*trực quan\s*và\s*mạnh mẽ|chạy\s+mượt mà\s+trên\s+cả)\b",
             Severity.INFO, 0.4,
             "general|audit_report|academic|legal|translation",
             "1/para;3/1000w", "profile:marketing",
@@ -571,11 +610,11 @@ def build_default_rules() -> list[RuleDefinition]:
         # =====================================================================
         (
             "VIS-TRANS-001", "TRANSLATIONESE_EN_VI", "regex",
-            "Câu bị động dịch sát từ tiếng Anh 'được/bị + động từ + bởi + chủ thể'.",
-            r"(?i)\b(?:được|bị)\s+[a-zà-ỹđ]+(?:\s+[a-zà-ỹđ]+){0,2}\s+bởi\s+(?:các|những|một|nhiều|mọi|chính|ông|bà|anh|chị|nhóm|đội ngũ|công ty|tổ chức|hội đồng|ban|phòng|đơn vị|người|khách hàng|nhà\s+nghiên cứu|chuyên gia|hệ thống|phần mềm|tham số)\b",
+            "Câu bị động dịch sát từ tiếng Anh ('được/bị + V + bởi', 'được <tác nhân> tự động tải/tạo', 'đều được thiết kế bằng', 'được đọc/ghi ra').",
+            r"(?i)\b(?:(?:được|bị)\s+[a-zà-ỹđ]+(?:\s+[a-zà-ỹđ]+){0,2}\s+bởi(?:\s+(?:các|những|một|nhiều|mọi|chính|ông|bà|anh|chị|nhóm|đội ngũ|công ty|tổ chức|hội đồng|ban|phòng|đơn vị|người|khách hàng|nhà\s+nghiên cứu|chuyên gia|hệ thống|phần mềm|tham số)\b|\s{2,})|(?:được|bị)\s+(?:(?:[A-Za-zÀ-ỹĐđ0-9_+-]+\s+){1,3}|\s{2,})(?:tự động|trực tiếp)\s+(?:tải|tạo|gọi|kiểm tra|cập nhật|quản lý|biên dịch|xử lý|thực thi|sinh|cấu hình)\b|(?:đều|vẫn|luôn)\s+được\s+(?:thiết kế|xây dựng|hiện thực|triển khai|ghi nhận|lưu trữ|cấu hình)\s+(?:bằng|chính xác|qua|trong)\b|được\s+(?:đọc/ghi|lưu/nạp|thêm/sửa/xóa|xuất/nhập)\s+(?:ra|vào|từ|bằng)\b)",
             Severity.WARNING, 0.75,
             "general|audit_report|academic|legal|marketing|social_media|translation",
-            "1/para;2/1000w", "mathematical_formula_definition",
+            "1/doc", "mathematical_formula_definition",
             "Báo cáo tài chính năm 2025 đã được phê duyệt bởi hội đồng quản trị vào ngày 10/01/2026.",
             "Hội đồng quản trị đã phê duyệt báo cáo tài chính năm 2025 vào ngày 10/01/2026.",
             "https://vi.wikipedia.org/wiki/Cao_Xu%C3%A2n_H%E1%BA%A1o", "strong",
@@ -605,7 +644,7 @@ def build_default_rules() -> list[RuleDefinition]:
         (
             "VIS-TRANS-004", "TRANSLATIONESE_EN_VI", "regex",
             "Lặp cụm 'một cách + tính từ' dịch từ trạng từ đuôi '-ly' của tiếng Anh.",
-            r"(?i)\bmột\s+cách\s+(?:đáng kể|nhanh chóng|hiệu quả|rõ rệt|rõ ràng|tích cực|tiêu cực|toàn diện|triệt để|nghiêm trọng|mạnh mẽ|sâu sắc|tự nhiên|dễ dàng|chính xác|tự động|độc lập|linh hoạt|tối ưu)\b",
+            r"(?i)\bmột\s+cách\s+(?:đáng kể|nhanh chóng|hiệu quả|rõ rệt|rõ ràng|tích cực|tiêu cực|toàn diện|triệt để|nghiêm trọng|mạnh mẽ|sâu sắc|tự nhiên|dễ dàng|chính xác|tự động|độc lập|linh hoạt|tối ưu|tất định|nguyên tử|bất biến|tường minh)\b",
             Severity.INFO, 0.45,
             "general|audit_report|academic|legal|marketing|social_media|translation",
             "2/para;4/1000w", "single_occurrence_allowed",
@@ -615,8 +654,8 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-TRANS-005", "TRANSLATIONESE_EN_VI", "regex",
-            "Chủ ngữ giả ('Nó là... để', 'Có một sự... trong việc'), đại từ quan hệ dịch thô ('nơi mà', 'điều mà'), câu cụt chủ ngữ hoặc gán tâm lý người cho vật vô tri.",
-            r"(?i)(?:\bnó\s+(?:thì\s+)?là\s+(?:rất\s+|khá\s+|cực kỳ\s+|vô cùng\s+)?(?:quan trọng|cần thiết|bắt buộc|khó khăn|dễ dàng|hữu ích|tốt hơn)\s+(?:cho\s+\S+\s+)?để\s+|\bcó\s+một\s+sự\s+(?:gia tăng|sụt giảm|thay đổi|khác biệt|chậm trễ)\s+(?:lớn\s+|đáng kể\s+)?trong\s+việc\b|(?:[—–-]\s*nơi(?:\s+mà)?\b|,\s*(?:nơi mà|điều mà|cái mà|người mà|việc mà)\b)|^\s*(?:đúc kết từ|dẫn đến việc|xuất phát từ việc)\s+[^.!?\n]{5,60}|\b(?:phép cộng|phép tính|báo cáo|bảng dữ liệu|bảng tính|con số|dòng tổng|biểu đồ)\s+(?:[a-zà-ỹđ]+\s+){0,3}(?:vô tình|kết luận nhầm|tưởng nhầm|quên mất|chủ quan|bỏ quên|hiểu lầm)\b)",
+            "Chủ ngữ giả ('Nó là... để', 'Có một sự...'), đại từ quan hệ dịch thô ('nơi mà', 'điều mà'), lặp trạng từ 'vẫn... vẫn' hoặc đảo ngược bổ ngữ kiểu dịch từng chữ ('báo mất kết nối nhầm', 'kèm giới hạn thời gian chờ rõ ràng').",
+            r"(?i)(?:\bnó\s+(?:thì\s+)?là\s+(?:rất\s+|khá\s+|cực kỳ\s+|vô cùng\s+)?(?:quan trọng|cần thiết|bắt buộc|khó khăn|dễ dàng|hữu ích|tốt hơn)\s+(?:cho\s+\S+\s+)?để\s+|\bcó\s+một\s+sự\s+(?:gia tăng|sụt giảm|thay đổi|khác biệt|chậm trễ)\s+(?:lớn\s+|đáng kể\s+)?trong\s+việc\b|(?:[—–-]\s*nơi(?:\s+mà)?\b|,\s*(?:nơi mà|điều mà|cái mà|người mà|việc mà)\b)|^\s*(?:đúc kết từ|dẫn đến việc|xuất phát từ việc)\s+[^.!?\n]{5,60}|\b(?:phép cộng|phép tính|báo cáo|bảng dữ liệu|bảng tính|con số|dòng tổng|biểu đồ)\s+(?:[a-zà-ỹđ]+\s+){0,3}(?:vô tình|kết luận nhầm|tưởng nhầm|quên mất|chủ quan|bỏ quên|hiểu lầm)\b|\bvẫn\s+[^,.;:!?\n]{2,45}\s+vẫn\s+(?:được|bị|có|là|giữ|tiếp tục)\b|\bbáo\s+(?:mất\s+kết nối|lỗi|hỏng|ngắt\s+kết nối)\s+nhầm\b|\b(?:kèm|với)\s+giới hạn\s+thời gian\s+chờ\s+rõ ràng\b|\bcó\s+giới hạn\s+thời gian\s+tách biệt\s+với\b|\bmột\s+cách\s+(?:tất định|nguyên tử|bất biến|tường minh)\b)",
             Severity.WARNING, 0.8,
             "general|audit_report|academic|legal|marketing|social_media|translation",
             "1/doc", "none",
@@ -640,11 +679,11 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-CLICHE-002", "BUREAUCRATIC_AND_SEO_CLICHE", "regex",
-            "Né động từ 'là', 'có' hoặc chèn động từ rỗng ('đóng vai trò như là một', 'sở hữu tính năng vượt trội', 'tiến hành việc').",
-            r"(?i)\b(?:đóng\s+vai trò\s+như\s+là\s+một|hoạt động\s+với\s+tư cách\s+là\s+một|được\s+biết\s+đến\s+như\s+là\s+một(?:\s+trong\s+những)?|sở hữu\s+(?:những\s+|các\s+)?(?:tính năng|ưu điểm)\s+vượt trội|(?:tiến hành|thực hiện)\s+việc\s+(?:kiểm tra|đối chiếu|đối soát|so sánh|rà soát|xử lý|đánh giá|xác nhận|lưu lại))\b",
+            "Né động từ 'là', 'có', chèn động từ rỗng ('đóng vai trò như là một', 'thực hiện kiểm tra') hoặc gắn tính từ tán dương rỗng ('cảnh báo thông minh', 'bảng trực quan').",
+            r"(?i)\b(?:đóng\s+vai trò\s+như\s+là\s+một|hoạt động\s+với\s+tư cách\s+là\s+một|được\s+(?:biết\s+đến|xem|coi)\s+như\s+là\s+một(?:\s+trong\s+những)?|hiện diện\s+như\s+một|sở hữu\s+(?:những\s+|các\s+)?(?:tính năng|ưu điểm)\s+vượt trội|đáp ứng\s+mọi\s+nhu cầu|trải nghiệm\s+tuyệt vời|điểm\s+đến\s+lý tưởng|nơi\s+hội tụ|tọa lạc\s+giữa|cảnh báo\s+thông minh|bảng\s+trực quan|hiển thị\s+trực quan|giao diện\s+[^,.;:\n]{0,20}\bmượt\b|(?:tiến hành|thực hiện)\s+(?:(?:việc|công tác|quá trình|thao tác)\s+)?(?:kiểm tra|đối chiếu|đối soát|so sánh|rà soát|xử lý|đánh giá|xác nhận|lưu lại))\b",
             Severity.INFO, 0.45,
             "general|audit_report|academic|legal|translation",
-            "1/para;3/1000w", "legal_commercial_agency",
+            "1/doc", "legal_commercial_agency",
             "Module thanh toán này hoạt động với tư cách là một cổng trung gian và sở hữu những tính năng vượt trội giúp xử lý 500 giao dịch/giây.",
             "Module thanh toán này là cổng trung gian xử lý 500 giao dịch/giây.",
             "https://github.com/blader/humanizer/blob/main/SKILL.md", "medium",
@@ -673,8 +712,8 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-CLICHE-005", "BUREAUCRATIC_AND_SEO_CLICHE", "regex",
-            "Ghép chồng nhiều từ rào đón làm câu mơ hồ ('có thể có khả năng sẽ', 'dường như có vẻ như là').",
-            r"(?i)\b(?:có thể\s+có\s+khả năng\s+(?:sẽ|là)|dường như\s+có\s+vẻ\s+(?:như\s+)?là|ở\s+một\s+(?:góc độ|mức độ)\s+nhất định\s+nào\s+đó\s+có thể(?:\s+được\s+xem\s+là)?)\b",
+            "Ghép chồng nhiều từ rào đón làm câu mơ hồ ('có thể có khả năng sẽ', 'dường như có vẻ như là', 'khả năng có thể', 'một cách nào đó').",
+            r"(?i)\b(?:có thể\s+có\s+khả năng\s+(?:sẽ|là)|khả năng\s+có thể|có thể\s+nào\s+đó|một\s+cách\s+nào\s+đó|dường như\s+có\s+vẻ\s+(?:như\s+)?là|ở\s+một\s+(?:góc độ|mức độ)\s+nhất định\s+nào\s+đó\s+có thể(?:\s+được\s+xem\s+là)?)\b",
             Severity.WARNING, 0.55,
             "general|audit_report|academic|legal|marketing|social_media|translation",
             "1/para;2/1000w", "none",
@@ -687,8 +726,8 @@ def build_default_rules() -> list[RuleDefinition]:
         # =====================================================================
         (
             "VIS-LEX-001", "VOICE_AND_STRUCTURE", "regex",
-            "Dùng sai nghĩa từ Hán - Việt ('thực chứng', 'nhận thức luận') hoặc tự chế từ trái cách gọi thực tế khi đi làm.",
-            r"(?i)\b(?:góc nhìn\s+thực chứng|hồ sơ\s+(?:dự án\s+)?thực chứng|ngôn ngữ\s+[^,.;:!?\n]{0,20}thực chứng|bằng chứng\s+thực chứng|kiểm toán\s+thực chứng|phản biện\s+thực chứng|nhận thức luận|mục tra cứu\s+nguyên tử|đơn vị\s+nguyên tử|in đúp|chép\s+(?:thiếu|thừa)\s+tiền|bản chốt sổ\s+cố định|tài liệu\s+trượt|khớp\s+(?:nhau\s+|tới\s+)?từng đồng|bỏ sót\s+sạch|vừa khít\s+bù|(?:dùng|cho)\s+máy(?:\s+tính)?\s+(?:đối chiếu|ghép)|máy tính\s+sẽ\s+trừ|kiểm tra\s+tự động\s+đối soát|điều gì\s+vẫn\s+có thể\s+sai|dấu ấn\s+công việc|điểm cốt lõi\s+vận hành|đọc nhanh\s+trước khi\s+vào)\b",
+            "Dùng sai nghĩa từ Hán - Việt ('thực chứng', 'nhận thức luận'), dịch từng chữ thuật ngữ phần mềm ('khung hợp đồng', 'khung vận hành', 'khóa hợp đồng', 'giao kèo dữ liệu', 'khung chạy sẵn', 'hiện thực lớp', 'vệt sáng chọn') hoặc tự chế từ trái cách gọi thực tế.",
+            r"(?i)(?:\b(?:góc nhìn\s+thực chứng|hồ sơ\s+(?:dự án\s+)?thực chứng|ngôn ngữ\s+[^,.;:!?\n]{0,20}thực chứng|bằng chứng\s+thực chứng|kiểm toán\s+thực chứng|phản biện\s+thực chứng|nhận thức luận|mục tra cứu\s+nguyên tử|đơn vị\s+nguyên tử|in đúp|chép\s+(?:thiếu|thừa)\s+tiền|bản chốt sổ\s+cố định|tài liệu\s+trượt|khớp\s+(?:nhau\s+|tới\s+)?từng đồng|bỏ sót\s+sạch|vừa khít\s+bù|(?:dùng|cho)\s+máy(?:\s+tính)?\s+(?:đối chiếu|ghép)|máy tính\s+sẽ\s+trừ|kiểm tra\s+tự động\s+đối soát|điều gì\s+vẫn\s+có thể\s+sai|dấu ấn\s+công việc|điểm cốt lõi\s+vận hành|đọc nhanh\s+trước khi\s+vào|khung\s+(?:hợp đồng|vận hành|chạy\s+sẵn|kiểm thử|màn hình|giao diện|quyết định|thực thi|dữ liệu|kiến trúc|quản trị|điều phối|rào đón)|khóa\s+hợp đồng|hợp đồng\s+(?:dữ liệu|module|mô-đun|api|giao diện|header)|thay đổi\s+hợp đồng\s+phải\s+cập nhật|giao kèo\s+(?:dữ liệu|giao diện|api|module)|mô hình\s+vận hành(?:\s+theo\s+chu kỳ)?|tác vụ\s+vận hành|vòng đời\s+(?:tác vụ|phần mềm)|tác vụ\s+vòng đời\s+phần mềm|chu kỳ\s+điều phối\s+đầu[-–]cuối|ma trận\s+kiểm thử\s+đa\s+hệ\s+điều hành|túi\s+chứa\s+dữ liệu(?:\s+công khai)?|bản chụp\s+trạng thái|thu hồi\s+tài nguyên\s+kết nối|dừng\s+các\s+tác vụ\s+vào/ra\s+còn\s+dở|đóng\s+ứng dụng\s+an toàn|vệt sáng\s+chọn|di chuyển\s+vệt sáng|lưu\s+(?:hoặc|và)\s+nạp\s+lịch sử|chống\s+lặp\s+log|tự\s+loại\s+mẫu\s+[^,.;:\n]{0,20}khỏi\s+mẫu\s+số|hồ sơ\s+quyết định\s+kỹ thuật|phục vụ\s+chạy\s+thử\s+tại\s+chỗ|báo\s+xanh|kỹ sư\s+(?:giao thức\s+mạng|quét\s+mạng|lưu trữ)|dịch vụ\s+lưu trữ|(?:bộ\s+)?khung\s+chạy\s+sẵn|thử nghiệm\s+tình huống\s+lỗi|bộ\s+thực thi\s+(?:giả lập|lệnh)|bộ\s+dò\s+mạng|(?:luồng|tác vụ)\s+dò\s+mạng|dò\s+mạng\s+/24|dò\s+cổng\s+tcp|thanh\s+trạng thái\s+dưới\s+đáy|chuỗi\s+đối số\s+đầu vào|nhánh\s+tính năng\s+ngắn hạn|vượt qua\s+kiểm tra|kiểm tra\s+hợp lệ\s+khi|tệp\s+khả\s+thực thi|triển khai\s+kỹ thuật|chụp\s+(?:độ trễ|bằng chứng|mẫu\s+đo)|tìm kiếm\s+STL|thực thể\s+nghiệp vụ|quá trình\s+làm mới\s+nền|hiện thực\s+(?:lớp|hàm|phương thức|bộ|bảng|cơ chế|giao diện|thuật toán|mô-đun|module|kịch bản|độc lập))\b|\bhiện thực\s{2,})",
             Severity.WARNING, 0.7,
             "general|audit_report|academic|marketing|social_media|translation",
             "1/doc", "philosophy_positivism_term",
@@ -698,7 +737,7 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-LEX-002", "VOICE_AND_STRUCTURE", "morphological_lexical",
-            "Dịch ngược từ tiếng Anh đã quen dùng ('thư điện tử', 'yêu cầu kéo') hoặc chêm từ tiếng Anh chuyên ngành chưa Việt hóa.",
+            "Dịch ngược từ tiếng Anh đã quen dùng ('thư điện tử', 'yêu cầu kéo', 'trang mạng') hoặc chêm từ tiếng Anh chuyên ngành chưa Việt hóa.",
             "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK",
             Severity.INFO, 0.45,
             "general|audit_report|social_media|translation",
@@ -731,7 +770,7 @@ def build_default_rules() -> list[RuleDefinition]:
         ),
         (
             "VIS-STRUCT-002", "VOICE_AND_STRUCTURE", "structural_hygiene",
-            "Lỗi trình bày tiêu đề (Title Case kiểu Anh, mục con đơn độc), ký tự ẩn, mũi tên ASCII hoặc sai lệch bảng số liệu.",
+            "Lỗi trình bày tiêu đề (Title Case kiểu Anh, mục con đơn độc), ký tự ẩn, mũi tên ASCII, emoji trang trí lạm dụng hoặc sai lệch bảng số liệu.",
             "ALGO:DOCUMENT_AND_TABLE_HYGIENE",
             Severity.WARNING, 0.6,
             "general|audit_report|academic|legal|marketing|social_media|translation",
@@ -773,7 +812,7 @@ def build_default_rules() -> list[RuleDefinition]:
 
 
 class ViScanner:
-    """Máy quét câu chữ tiếng Việt v2.0.0.
+    """Máy quét câu chữ tiếng Việt v2.1.0.
     Mặc định `profile="all"` chạy và xuất đủ 100% tín hiệu của cả 7 nhóm văn bản.
     """
 
@@ -790,7 +829,7 @@ class ViScanner:
         r"ÀÁẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬÈÉẺẼẸÊẾỀỂỄỆÌÍỈĨỊÒÓỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÙÚỦŨỤƯỨỪỬỮỰỲÝỶỸỴĐ]"
     )
     _REVERSE_LOANWORD_RE = stdlib_re.compile(
-        r"(?i)\b(?:thư\s+điện\s+tử|yêu\s+cầu\s+kéo|kho\s+mã\s+nguồn|mạng\s+toàn\s+cầu|trình\s+duyệt\s+mạng)\b"
+        r"(?i)\b(?:thư\s+điện\s+tử|yêu\s+cầu\s+kéo|kho\s+mã\s+nguồn|mạng\s+toàn\s+cầu|trình\s+duyệt\s+mạng|trang\s+mạng|máy\s+tìm\s+kiếm|trí\s+tuệ\s+nhân\s+tạo\s+tạo\s+sinh|phiên\s+bản\s+thử\s+nghiệm\s+kín)\b"
     )
     _RAW_TECH_ID_RE = stdlib_re.compile(
         r"\b(?:[A-Z]{2,}(?:_[A-Z0-9]{2,})+|[A-Z]{2,}(?:\.[A-Z0-9]{2,}){2,})\b"
@@ -801,8 +840,8 @@ class ViScanner:
     _EN_PHONOTACTIC_RE = stdlib_re.compile(
         r"(?:[fjwz]"
         r"|^(?:bl|br|cl|cr|dr|fl|fr|gl|gr|pl|pr|sc|sk|sl|sm|sn|sp|st|sw|tw|wr)"
-        r"|(?:ck|ct|ft|ld|lp|lt|mp|nd|nk|nt|pt|rd|rk|rt|sh|sk|sp|st|xt)$"
-        r"|(?:tion|sion|ment|ness|able|ible|ship|line|back|over|down|flow|work|book|list|test|load|lock|scan)$)"
+        r"|(?:ck|ct|ft|ld|lp|lt|mp|nd|nk|nt|pt|rd|rk|rt|sh|sk|sp|st|xt)s?$"
+        r"|(?:tion|sion|ment|ness|able|ible|ship|line|back|over|down|flow|work|book|list|test|load|lock|scan|point|terface|ning)s?$)"
     )
     _BOLD_COLON_BULLET_RE = stdlib_re.compile(
         r"^\s*(?:[-*•◦–]|\d+[.)])\s+(?:\*\*[^*\n]{2,65}?:\*\*|\*\*[^*\n]{2,65}?\*\*\s*:)"
@@ -945,6 +984,7 @@ class ViScanner:
         if prof is None:
             return False
         sent = self._sentence_around(target_text, start, end)
+        matched = target_text[start:end].strip()
         if rule_id == "VIS-RHET-001" and prof == Profile.LEGAL:
             if stdlib_re.search(
                 r"(?i)\b(?:điều|khoản|mục|chương|nghị định|thông tư|luật|bộ luật|hợp đồng)\s+(?:số\s+)?\d+",
@@ -954,6 +994,12 @@ class ViScanner:
         if rule_id == "VIS-FMT-001" and prof == Profile.LEGAL:
             if stdlib_re.search(r"(?i)\b(?:giải thích từ ngữ|bên a|bên b)\b", target_text):
                 return True
+        if rule_id == "VIS-FMT-003" and matched == ";" and prof in (
+            Profile.AUDIT_REPORT,
+            Profile.ACADEMIC,
+            Profile.LEGAL,
+        ):
+            return True
         if rule_id == "VIS-CLICHE-002" and prof == Profile.LEGAL:
             if stdlib_re.search(
                 r"(?i)\b(?:luật\s+thương mại|bộ luật\s+dân sự|đại lý\s+thương mại|ủy thác)\b",
@@ -1030,8 +1076,12 @@ class ViScanner:
             offset += len(ln)
         return []
 
+    _TABLE_SYNONYM_VERBS: frozenset[str] = frozenset({
+        "khóa", "thiết", "xây", "hiện", "lập", "phát", "tính", "soạn", "cấu", "triển",
+    })
+
     def _run_monotony_rule(
-        self, rule: RuleDefinition, raw_text: str, masked_prose: str
+        self, rule: RuleDefinition, raw_text: str, masked_full: str, masked_prose: str
     ) -> list[Finding]:
         findings: list[Finding] = []
         para_spans = [
@@ -1058,12 +1108,22 @@ class ViScanner:
                     )
 
         # Kiểm tra 3 dòng/câu liên tiếp mở đầu bằng cùng một từ khóa
+        # (Miễn trừ các dòng bảng Markdown `| ... |`, tiêu đề `#` và các dòng đánh số thứ tự Bước/Phần/Điều)
+        exempt_openers = {"điều", "bước", "phần", "giai", "mục", "chương", "khoản", "nhóm"}
         openers: list[tuple[int, str, str]] = []
         offset = 0
-        for ln in masked_prose.splitlines(keepends=True):
+        for ln in masked_full.splitlines(keepends=True):
+            stripped_ln = ln.strip()
+            if stripped_ln.startswith(("|", "#")):
+                offset += len(ln)
+                continue
             clean_ln = stdlib_re.sub(r"^\s*(?:[-*•◦–>#]|\d+[.)])+\s*", "", ln).strip()
             words = stdlib_re.findall(r"[A-Za-zÀ-ỹĐđ]+", clean_ln)
-            if len(words) >= 4 and len(words[0]) >= 3 and words[0].casefold() != "điều":
+            if (
+                len(words) >= 4
+                and len(words[0]) >= 3
+                and words[0].casefold() not in exempt_openers
+            ):
                 openers.append((offset, words[0].casefold(), clean_ln))
             offset += len(ln)
         for i in range(len(openers) - 2):
@@ -1079,6 +1139,39 @@ class ViScanner:
                     )
                 )
                 break
+
+        # Kiểm tra bẫy xoay vòng động từ đồng nghĩa ở đầu các ô cùng một cột bảng
+        table_rows: list[tuple[int, list[str]]] = []
+        offset = 0
+        for ln in [*raw_text.splitlines(keepends=True), "\n"]:
+            s = ln.strip()
+            if s.startswith("|") and s.endswith("|") and not stdlib_re.match(r"^\|[\s:\-|]+\|$", s):
+                cells = [c.strip() for c in s.strip("|").split("|")]
+                table_rows.append((offset, cells))
+            else:
+                if len(table_rows) >= 5:
+                    body = table_rows[1:]
+                    num_cols = max(len(c) for _, c in body)
+                    for col_idx in range(1, num_cols):
+                        first_words: list[str] = []
+                        for _, cells in body:
+                            if col_idx < len(cells):
+                                w_list = stdlib_re.findall(r"^[A-Za-zÀ-ỹĐđ]+", cells[col_idx])
+                                if w_list and w_list[0].casefold() in self._TABLE_SYNONYM_VERBS:
+                                    first_words.append(w_list[0].casefold())
+                        if len(first_words) >= 4 and len(set(first_words)) >= 4:
+                            findings.append(
+                                self._make_finding(
+                                    rule,
+                                    raw_text,
+                                    body[0][0],
+                                    f"Xoay vòng động từ đầu cột {col_idx + 1}: {', '.join(first_words[:5])}",
+                                    "Trong bảng kỹ thuật hoặc bảng phân công, bỏ động từ dẫn đầu và ghi thẳng tên tệp, lớp hoặc đầu việc.",
+                                )
+                            )
+                            break
+                table_rows = []
+            offset += len(ln)
         return findings
 
     def _run_loanword_and_jargon_rule(
@@ -1118,16 +1211,19 @@ class ViScanner:
             return findings
         strict_allowlist = UNIVERSAL_NATURALIZED_LOANWORDS
         broad_allowlist = UNIVERSAL_NATURALIZED_LOANWORDS | WORKPLACE_TECH_LOANWORDS
+        checked_non_en: set[str] = set()
 
         for m_word in self._LOWER_ASCII_WORD_RE.finditer(masked_prose):
             token = m_word.group(0).lower()
+            if token in checked_non_en or token in strict_allowlist:
+                continue
+            if token == "request" and masked_prose[max(0, m_word.start() - 6) : m_word.start()].lower().endswith("pull "):
+                continue
             if not self._EN_PHONOTACTIC_RE.search(token):
+                checked_non_en.add(token)
                 continue
             sent = self._sentence_around(masked_prose, m_word.start(), m_word.end())
             if not self._VI_DIACRITIC_RE.search(sent):
-                continue
-
-            if token in strict_allowlist:
                 continue
             if token in broad_allowlist:
                 if prof == Profile.AUDIT_REPORT or prof is None:
@@ -1217,6 +1313,11 @@ class ViScanner:
                 "Tách câu có nhiều dấu chấm phẩy `;` liên tiếp thành các câu ngắn độc lập.",
                 ["general", "marketing", "social_media", "translation"],
             ),
+            (
+                stdlib_re.compile(r"[🚀💡✨🎯🔥📌✅⭐🌟💪🎉👉⚡🔍📊🏆💎🌈]"),
+                "Gỡ emoji trang trí kiểu bài mẫu AI khỏi văn bản chuyên môn/kỹ thuật.",
+                ["general", "audit_report", "academic", "legal", "translation"],
+            ),
         ]
         if has_vi:
             quick_checks.append(
@@ -1231,6 +1332,13 @@ class ViScanner:
                     stdlib_re.compile(r"\([A-Za-zÀ-ỹĐđ0-9\s,+/-]{2,60}=[A-Za-zÀ-ỹĐđ0-9\s,+/%-]{1,60}\)"),
                     "Diễn đạt phép tính trong ngoặc đơn bằng lời tự nhiên ('tương ứng', 'gồm') thay vì dấu `=`.",
                     ["audit_report", "social_media"],
+                )
+            )
+            quick_checks.append(
+                (
+                    stdlib_re.compile(r"(?:“[^”\n]{1,25}”[^.\n]{0,40}){2,}“[^”\n]{1,25}”"),
+                    "Gỡ dấu ngoặc kép cong '“...”' bọc quanh các từ khóa thông thường không phải lời trích dẫn.",
+                    ["general", "audit_report", "academic", "legal", "translation"],
                 )
             )
 
@@ -1383,7 +1491,198 @@ class ViScanner:
                                     f"Dòng 'Tổng cộng' cột {col_i + 1} ghi {tot:g} nhưng tổng các dòng thành phần bằng {expected:g}.",
                                 )
                             )
+
+        # 4. Kiểm tra thuộc tính `alt="..."` nhồi từ khóa (> 12 từ), hộp HTML quảng cáo 01–04
+        # và lạm dụng dấu backtick quanh từ tiếng Việt thuần túy (`Thêm`, `Sửa`, `Xóa`)
+        pre_html_masked = SemanticMasker.FRONTMATTER_RE.sub(
+            SemanticMasker._blank_match, raw_text
+        )
+        pre_html_masked = SemanticMasker.ENGLISH_SECTION_RE.sub(
+            SemanticMasker._blank_match, pre_html_masked
+        )
+        pre_html_masked = SemanticMasker.CODE_BLOCK_RE.sub(
+            SemanticMasker._blank_match, pre_html_masked
+        )
+        for m_alt in stdlib_re.finditer(r'\balt=["\']([^"\'\n]+)["\']', pre_html_masked):
+            alt_val = m_alt.group(1).strip()
+            if has_vi and len(alt_val.split()) > 12:
+                findings.append(
+                    self._make_finding(
+                        rule,
+                        raw_text,
+                        m_alt.start(),
+                        raw_text[m_alt.start() : m_alt.end()][:100],
+                        "Thuộc tính alt của ảnh quá dài (> 12 từ); chỉ nên ghi ngắn gọn 2–8 từ nêu tên hình thay vì nhồi từ khóa và số liệu kiểu SEO.",
+                    )
+                )
+
+        m_promo_grid = stdlib_re.search(
+            r"(?is)<table\b[\s\S]{0,1200}<b>01</b>[\s\S]{0,600}<b>02</b>[\s\S]{0,600}<b>03</b>",
+            pre_html_masked,
+        )
+        if m_promo_grid:
+            findings.append(
+                self._make_finding(
+                    rule,
+                    raw_text,
+                    m_promo_grid.start(),
+                    "<table>...<b>01</b>...<b>02</b>...<b>03</b>",
+                    "Bảng HTML gắn nhãn 01–04 kiểu trang quảng cáo lặp lại bảng chức năng chi tiết; nên xóa hộp tóm tắt trùng lặp này.",
+                )
+            )
+
+        offset = 0
+        for ln in pre_html_masked.splitlines(keepends=True):
+            if stdlib_re.search(r"(?i)\b(?:tránh|cấm|không|thay vì|ví dụ|dấu hiệu|cách viết|sai|lỗi|VIS-\w+)\b", ln):
+                offset += len(ln)
+                continue
+            vi_backticks = [
+                m.group(0)
+                for m in stdlib_re.finditer(r"`([^`\n]+)`", ln)
+                if 2 <= len(m.group(1)) <= 35
+                and self._VI_DIACRITIC_RE.search(m.group(1))
+                and not stdlib_re.search(r"[/_.*<>\\=+-]|\b(?:[A-Z]{2,}|\d+)\b", m.group(1))
+            ]
+            if len(vi_backticks) >= 3:
+                findings.append(
+                    self._make_finding(
+                        rule,
+                        raw_text,
+                        offset,
+                        ", ".join(vi_backticks[:4]),
+                        "Không bọc dấu backtick (`...`) quanh các từ tiếng Việt thông thường; chỉ dùng backtick cho tên tệp, lệnh hoặc mã nguồn.",
+                    )
+                )
+            offset += len(ln)
         return findings
+
+    @staticmethod
+    def _compute_stylometry(masked_prose: str) -> dict[str, Any]:
+        """Tính 18 chỉ số nhịp học (stylometry) tương thích ngược 100% với viet-humanize."""
+        sample_prose = masked_prose[:30000] if len(masked_prose) > 30000 else masked_prose
+        prose_lines = [
+            ln.strip()
+            for ln in sample_prose.splitlines()
+            if ln.strip() and not ln.lstrip().startswith("#")
+        ]
+        prose = "\n".join(prose_lines)
+        raw_sents = stdlib_re.split(r"(?<=[.!?…])\s+|\n+", prose)
+        sents = [s.strip() for s in raw_sents if len(s.strip().split()) >= 2]
+        lengths = [len(s.split()) for s in sents]
+        paras = [
+            p.strip()
+            for p in stdlib_re.split(r"\n\s*\n", sample_prose)
+            if p.strip() and not p.lstrip().startswith("#")
+        ]
+        para_sent_counts = [
+            len([s for s in stdlib_re.split(r"(?<=[.!?…])\s+", p) if len(s.split()) >= 2])
+            for p in paras
+        ]
+        para_word_lengths = [len(p.split()) for p in paras if len(p.split()) >= 5]
+
+        warnings: list[str] = []
+        mean_len = statistics.mean(lengths) if lengths else 0.0
+        cv = (statistics.pstdev(lengths) / mean_len) if len(lengths) >= 3 and mean_len else 0.0
+        if len(lengths) >= 4 and cv < 0.30:
+            warnings.append(
+                f"Độ dài câu quá đều (CV={cv:.2f} < 0.30) — thiếu nhịp câu ngắn xen câu dài."
+            )
+        if mean_len > 28:
+            warnings.append(
+                f"Câu trung bình khá dài ({mean_len:.1f} âm tiết) — nên tách bớt mệnh đề phụ."
+            )
+
+        skew = 0.0
+        if len(lengths) >= 5 and cv > 0:
+            std = statistics.pstdev(lengths)
+            skew = sum(((x - mean_len) / std) ** 3 for x in lengths) / len(lengths)
+
+        para_cv = (
+            statistics.pstdev(para_word_lengths) / statistics.mean(para_word_lengths)
+            if len(para_word_lengths) >= 3 and statistics.mean(para_word_lengths)
+            else 0.0
+        )
+
+        tokens = [
+            t.lower()
+            for t in stdlib_re.findall(r"[A-Za-zÀ-ỹĐđ]+", prose)
+            if len(t) > 1
+        ]
+        ttr = (len(set(tokens)) / len(tokens)) if tokens else 0.0
+        if len(tokens) >= 50:
+            windows = [
+                len(set(tokens[i : i + 50])) / 50.0
+                for i in range(0, len(tokens) - 49, 10)
+            ]
+            mattr = statistics.mean(windows)
+        else:
+            mattr = ttr
+
+        exclam = sample_prose.count("!")
+        particles = len(
+            stdlib_re.findall(
+                r"(?i)\b(?:nhé|nhỉ|nha|thôi|đấy|đâu|sao|chứ|hả|ạ|ơi|hen|nghen|vậy|thế)\b[!.?…]?",
+                prose,
+            )
+        )
+        formal_conn = len(
+            stdlib_re.findall(
+                r"(?i)\b(?:tuy nhiên|do đó|vì vậy|hơn nữa|ngoài ra|bên cạnh đó|mặt khác|đồng thời|tóm lại|nhìn chung|cụ thể là|theo đó|qua đó)\b",
+                prose,
+            )
+        )
+        colloq_conn = len(
+            stdlib_re.findall(
+                r"(?i)\b(?:nhưng mà|thế là|vậy nên|cơ mà|thật ra|nói thật|nghĩ xem|thử hỏi|chứ còn gì)\b",
+                prose,
+            )
+        )
+        han_viet_admin = len(
+            stdlib_re.findall(
+                r"(?i)\b(?:triển khai|thực hiện|tiến hành|tối ưu hóa|hiện đại hóa|đồng bộ hóa|đa dạng hóa|toàn diện|chuyên sâu|vượt trội|then chốt|bứt phá|kiến tạo|nâng tầm|hiện diện|tọa lạc|sở hữu|mang lại|đáp ứng|nhằm mục đích|trong bối cảnh|trên cơ sở|với tư cách)\b",
+                prose,
+            )
+        )
+        hv_per_1k = (han_viet_admin / max(len(tokens), 1)) * 1000.0
+        tu_lay = len(
+            stdlib_re.findall(
+                r"(?i)\b(?:lúng túng|rườm rà|mập mờ|lặp đi lặp lại|dài dòng|ngắn gọn|rõ ràng|tự nhiên|mượt mà|khô khan|cứng nhắc|sáo rỗng|lẻ tẻ|rải rác|chầm chậm|nhanh nhanh|vội vàng|thong thả)\b",
+                prose,
+            )
+        )
+        puncts = stdlib_re.findall(r"[.,;:!?…—–\-()\"'“”]", sample_prose)
+        if puncts:
+            p_counts = collections.Counter(puncts)
+            total_p = len(puncts)
+            punct_entropy = -sum(
+                (c / total_p) * math.log2(c / total_p) for c in p_counts.values()
+            )
+        else:
+            punct_entropy = 0.0
+
+        encoded = prose.encode("utf-8") if prose else b" "
+        comp_ratio = len(zlib.compress(encoded)) / max(len(encoded), 1)
+
+        return {
+            "so_cau": len(lengths),
+            "so_doan": len(paras),
+            "cau_trung_binh_doan": round(statistics.mean(para_sent_counts), 2) if para_sent_counts else 0.0,
+            "dai_cau_tb": round(mean_len, 1),
+            "bien_dong_do_dai_cau_cv": round(cv, 2),
+            "lech_do_dai_cau_skew": round(skew, 2),
+            "bien_dong_do_dai_doan_cv": round(para_cv, 2),
+            "ty_le_tu_rieng_ttr_am_tiet": round(ttr, 2),
+            "mattr_cua_so_50": round(mattr, 2),
+            "so_dau_cham_than": exclam,
+            "tro_tu_cuoi_cau": particles,
+            "lien_tu_hinh_thuc": formal_conn,
+            "tu_noi_khau_ngu": colloq_conn,
+            "han_viet_hanh_chinh_tren_1000": round(hv_per_1k, 1),
+            "tu_lay": tu_lay,
+            "entropy_dau_cau_bit": round(punct_entropy, 2),
+            "do_nen_zlib": round(comp_ratio, 2),
+            "canh_bao": warnings,
+        }
 
     def scan_text(
         self,
@@ -1416,7 +1715,7 @@ class ViScanner:
                 findings.extend(self._run_bold_colon_list_rule(rule, text, masked_prose, prof))
                 continue
             if rule.regex_or_algorithm == "ALGO:PARAGRAPH_CV_AND_OPENING_MONOTONY":
-                findings.extend(self._run_monotony_rule(rule, text, masked_prose))
+                findings.extend(self._run_monotony_rule(rule, text, masked_full, masked_prose))
                 continue
             if rule.regex_or_algorithm == "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK":
                 findings.extend(self._run_loanword_and_jargon_rule(rule, text, masked_prose, prof))
@@ -1429,12 +1728,12 @@ class ViScanner:
 
             # VIS-AI-002 cần quét trên văn bản chưa che URL để bắt `utm_source=chatgpt.com`
             target_text = masked_no_code if rid == "VIS-AI-002" else masked_prose
-            if rid == "VIS-FMT-003":
+            if rid == "VIS-FMT-003" and "—" in target_text:
                 target_text = "\n".join(
                     (" " * len(ln)) if ln.lstrip().startswith("—") else ln
                     for ln in target_text.splitlines()
                 )
-            elif rid == "VIS-FMT-004":
+            elif rid == "VIS-FMT-004" and "," in target_text:
                 # Che dấu phẩy thập phân để không nhận nhầm số liệu thành danh sách 3 vế
                 target_text = stdlib_re.sub(r"(?<=\d),(?=\d)", ".", target_text)
 
@@ -1465,31 +1764,44 @@ class ViScanner:
             if not valid_matches:
                 continue
 
-            triggered_match: Any = None
+            triggered_matches: list[Any] = []
             thresh = rule.threshold
             if thresh.per_para is not None:
                 for p_start, p_end, _ in para_spans:
                     in_para = [m for m in valid_matches if p_start <= m.start() < p_end]
                     if len(in_para) >= thresh.per_para:
-                        triggered_match = in_para[0]
-                        break
+                        triggered_matches.extend(in_para if thresh.per_para == 1 else [in_para[0]])
                 if (
-                    triggered_match is None
+                    not triggered_matches
                     and thresh.per_1000_words is not None
                     and word_count >= 250
                     and (len(valid_matches) * 1000.0 / word_count) >= thresh.per_1000_words
                 ):
-                    triggered_match = valid_matches[0]
+                    triggered_matches.append(valid_matches[0])
             elif thresh.per_doc is not None:
                 if len(valid_matches) >= thresh.per_doc:
-                    triggered_match = valid_matches[0]
+                    triggered_matches.extend(valid_matches if thresh.per_doc == 1 else [valid_matches[0]])
             else:
-                triggered_match = valid_matches[0]
+                triggered_matches.extend(valid_matches)
 
-            if triggered_match is not None:
-                raw_slice = text[triggered_match.start() : triggered_match.end()].strip()
+            seen_lines: set[int] = set()
+            for tm in triggered_matches:
+                ln_no, _ = self._offset_to_line_col(text, tm.start())
+                if ln_no in seen_lines:
+                    continue
+                seen_lines.add(ln_no)
+                raw_slice = text[tm.start() : tm.end()].strip()
+                override_profs: list[str] | None = None
+                if rid == "VIS-FMT-003" and raw_slice == ";":
+                    override_profs = ["general", "marketing", "social_media", "translation"]
                 findings.append(
-                    self._make_finding(rule, text, triggered_match.start(), raw_slice)
+                    self._make_finding(
+                        rule,
+                        text,
+                        tm.start(),
+                        raw_slice,
+                        override_profiles=override_profs,
+                    )
                 )
 
         findings.sort(key=lambda f: (f.line, f.col, f.rule_id))
@@ -1500,6 +1812,7 @@ class ViScanner:
         inv_summary = {k: len(v) for k, v in invariants.items()}
         cat_counts = dict(collections.Counter(f.category for f in findings))
         maint = check_loanwords_maintenance()
+        stylo = self._compute_stylometry(masked_prose)
 
         return ScanReport(
             schema_version=self.SCHEMA_VERSION,
@@ -1518,6 +1831,7 @@ class ViScanner:
             maintenance_due=bool(maint["due_for_quarterly_review"]),
             disclaimer=self.DISCLAIMER,
             semantic_invariants_summary=inv_summary,
+            stylometry=stylo,
             findings=findings,
         )
 
@@ -1569,6 +1883,15 @@ def print_scan_report(report: ScanReport, label: str) -> None:
         f"(Lỗi: {report.error_count}, Cảnh báo: {report.warning_count}, Gợi ý: {report.info_count}) | "
         f"Mật độ: {report.findings_per_1000_words}/1.000 từ | Thời gian: {report.elapsed_ms} ms"
     )
+    if report.stylometry:
+        st = report.stylometry
+        print(
+            f"Nhịp câu: {st.get('so_cau', 0)} câu | TB {st.get('dai_cau_tb', 0)} từ/câu "
+            f"(CV={st.get('bien_dong_do_dai_cau_cv', 0)}) | MATTR={st.get('mattr_cua_so_50', 0)} | "
+            f"Hán-Việt hành chính={st.get('han_viet_hanh_chinh_tren_1000', 0)}/1.000 từ"
+        )
+        for w in st.get("canh_bao", []):
+            print(f"  [NHỊP HỌC] {w}")
     if report.maintenance_due:
         print(
             "[NHẮC BẢO TRÌ] Danh sách từ tiếng Anh quen dùng (NATURALIZED_EN_LOANWORDS) "

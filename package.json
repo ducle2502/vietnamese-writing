@@ -1,6 +1,6 @@
 {
   "name": "vietnamese-writing",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Kỹ năng viết, biên tập và kiểm tra tiếng Việt tự nhiên kèm công cụ dòng lệnh vi_scanner.py cho AI Agent",
   "keywords": [
     "agent-skill",

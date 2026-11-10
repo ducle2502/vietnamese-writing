@@ -5,7 +5,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/banner-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/banner-light.svg">
-  <img alt="vietnamese-writing - Kỹ năng biên tập tiếng Việt tự nhiên và công cụ quét lỗi câu chữ cho AI Agent" src="./assets/banner-dark.svg" width="100%">
+  <img alt="vietnamese-writing" src="./assets/banner-dark.svg" width="100%">
 </picture>
 
 <br>

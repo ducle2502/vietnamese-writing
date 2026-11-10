@@ -9,12 +9,12 @@
 3. Bảo toàn nguyên vẹn số liệu, ngày tháng, từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn.
 4. Tránh 4 lỗi sửa quá tay gồm vặn câu tuần tự để né máy quét, hạ giọng sồn sã trong văn bản trình duyệt, tự bịa từ trái thực tế đi làm và làm rơi từ hạn định mức chắc chắn.
 
-## Công cụ kiểm tra trong repo
+## Tự quét và kiểm tra trong repo
 
-Chạy từ thư mục gốc của kỹ năng khi rà soát tệp dài hoặc bảo trì bộ quy tắc:
+Sau khi viết mới hoặc biên tập văn bản (trừ câu trả lời ngắn 1 đến 2 câu), luôn tự quét lại chính đầu ra của mình từ thư mục gốc của kỹ năng trước khi bàn giao:
 
 ```bash
-python scripts/vi_scanner.py scan TEP_CAN_RA.md --json
+python scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
 python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 python scripts/vi_scanner.py check-maintenance
 python -m unittest discover -s tests -v

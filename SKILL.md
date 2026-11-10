@@ -48,12 +48,18 @@ Chọn đúng từ theo thực tế công việc. Không dùng sai nghĩa từ H
 3. Cấm tự bịa từ đời thường ngô nghê trái cách gọi nơi làm việc (`in đúp` thay vì *lặp dòng*, `chép thiếu tiền` thay vì *chuyển thiếu số dư*, `cho máy tính ghép` thay vì *chạy đối soát tự động*).
 4. Giữ nguyên dữ kiện và mức độ chắc chắn khi rút gọn câu. Không đổi *có thể giảm* thành *giảm*, không đổi *sau khi* thành *nhờ*, không xóa điều kiện *nếu / trừ khi* và không coi việc chưa tìm thấy hồ sơ là bằng chứng đơn vị không thực hiện.
 
-## Quy trình quét và đối soát với `scripts/vi_scanner.py`
+## Tự quét lại bài viết và đối soát bằng `scripts/vi_scanner.py`
 
-Khi biên tập tệp hoặc bài viết dài, chạy công cụ [scripts/vi_scanner.py](scripts/vi_scanner.py) theo trình tự hai bước (đường dẫn tính từ thư mục chứa kỹ năng này):
+Sau khi viết mới hoặc biên tập xong bất kỳ tệp, email, bài đăng hay báo cáo nào (trừ câu trả lời hội thoại ngắn 1 đến 2 câu), bắt buộc tự quét lại chính văn bản vừa viết bằng [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi trả kết quả cho người dùng:
 
 ```bash
-python scripts/vi_scanner.py scan TEP_CAN_RA.md --json
+# Quét tệp vừa viết hoặc vừa sửa (mặc định xuất đủ 100% tín hiệu mọi nhóm)
+python scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
+
+# Quét nhanh bản nháp soạn trực tiếp trong luồng chat qua stdin
+python scripts/vi_scanner.py scan - --json < BAN_NHAP.txt
+
+# Nếu sửa trên văn bản có sẵn của người dùng, chạy thêm bước đối soát dữ kiện
 python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 ```
 

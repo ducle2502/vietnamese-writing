@@ -347,6 +347,14 @@ class TestViScannerV2(unittest.TestCase):
                 f"Tài liệu {doc_path.name} của chính Skill bị gắn cờ: {[f.rule_id + ':' + f.matched_text for f in rep.findings]}",
             )
 
+        for rule in self.scanner.rules.values():
+            rep_ex = self.scanner.scan_text(rule.better_example, profile="all")
+            self.assertEqual(
+                rep_ex.findings_count,
+                0,
+                f"Câu mẫu sửa đúng của {rule.rule_id} lại bị chính máy quét gắn cờ: {rep_ex.findings}",
+            )
+
     def test_zero_hardcoded_project_leaks_in_repo(self) -> None:
         """Đảm bảo không tệp mã nguồn hay tài liệu nào trong repo chứa chuỗi dự án nội bộ cũ.
         Dùng mã băm SHA-256 của từng token nhạy cảm để ngay cả tệp test cũng không lưu chữ thô.

@@ -2,9 +2,9 @@
 
 ## 1. Quy trình rà soát hàng quý hoặc hàng năm cho danh sách từ mượn
 
-Công cụ `scripts/vi_scanner.py` dò các từ tiếng Anh chêm giữa câu tiếng Việt thông qua đặc trưng mặt chữ (chứa chữ cái `f, j, w, z`, cụm phụ âm đầu/cuối tiếng Anh như `bl-, cr-, st-, -ck, -tion, -ment` hoặc cách viết `SNAKE_CASE`), sau đó bỏ qua các từ nằm trong hai tập hợp ở đầu tệp `scripts/vi_scanner.py`:
-1. `UNIVERSAL_NATURALIZED_LOANWORDS` dành cho những từ đã đi hẳn vào tiếng Việt hàng ngày và xuất hiện tự nhiên trong cả báo cáo kiểm toán, văn bản pháp lý lẫn bài báo khoa học (`email`, `web`, `website`, `internet`, `wifi`, `video`, `logic`, `logistics`, `container`, `pdf`, `qr`, `otp`...).
-2. `WORKPLACE_TECH_LOANWORDS` dành cho những từ thông dụng trong giao tiếp công sở, truyền thông và kỹ thuật (`app`, `file`, `link`, `code`, `team`, `slide`, `deadline`, `feedback`, `api`, `sql`, `cloud`...), hợp lệ ở bài viết chung hoặc mạng xã hội nhưng vẫn nhắc người viết cân nhắc Việt hóa khi trình báo cáo quản trị cấp cao (`audit_report`).
+Công cụ `scripts/vi_scanner.py` dò các từ tiếng Anh chêm giữa câu tiếng Việt thông qua đặc trưng mặt chữ. Các dấu hiệu gồm chữ cái `f, j, w, z`, cụm phụ âm đầu/cuối tiếng Anh như `bl-, cr-, st-, -ck, -tion, -ment` hoặc cách viết `SNAKE_CASE`. Sau đó, máy quét bỏ qua các từ nằm trong hai tập hợp ở đầu tệp `scripts/vi_scanner.py`:
+1. `UNIVERSAL_NATURALIZED_LOANWORDS` dành cho những từ đã đi hẳn vào tiếng Việt hàng ngày (`email`, `web`, `website`, `internet`, `wifi`, `video`, `logic`, `logistics`, `container`, `pdf`, `qr`, `otp`...). Các từ này xuất hiện tự nhiên trong cả báo cáo kiểm toán, văn bản pháp lý lẫn bài báo khoa học.
+2. `WORKPLACE_TECH_LOANWORDS` dành cho những từ thông dụng trong giao tiếp công sở, truyền thông và kỹ thuật (`app`, `file`, `link`, `code`, `team`, `slide`, `deadline`, `feedback`, `api`, `sql`, `cloud`...). Nhóm từ này hợp lệ ở bài viết chung hoặc mạng xã hội, nhưng máy quét vẫn nhắc cân nhắc Việt hóa khi trình báo cáo quản trị cấp cao (`audit_report`).
 
 Mỗi quý (90 ngày) hoặc ít nhất mỗi năm một lần, chạy lệnh sau để kiểm tra hạn rà soát:
 

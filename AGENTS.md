@@ -14,10 +14,11 @@
 Sau khi viết mới hoặc biên tập văn bản (trừ câu trả lời ngắn 1 đến 2 câu), luôn tự quét lại chính đầu ra của mình từ thư mục gốc của kỹ năng trước khi bàn giao:
 
 ```bash
-python scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
-python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
-python scripts/vi_scanner.py check-maintenance
-python -m unittest discover -s tests -v
+python -B scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
+python -B scripts/vi_scanner.py profile TEP_VUA_VIET.md --json
+python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
+python -B scripts/vi_scanner.py check-maintenance
+python -B -m unittest discover -s tests -v
 ```
 
-Khi cập nhật quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py), giữ đồng bộ nội dung giữa [SKILL.md](SKILL.md), [README.md](README.md), [references/rule-catalog.md](references/rule-catalog.md) và [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md), sau đó chạy lại bộ kiểm thử đơn vị và quét chính các tệp `.md` trong repo.
+Khi cập nhật quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py), giữ đồng bộ nội dung giữa [SKILL.md](SKILL.md), [README.md](README.md), [references/rule-catalog.md](references/rule-catalog.md), [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) và [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md), sau đó chạy lại bộ kiểm thử đơn vị và quét chính các tệp `.md` trong repo.

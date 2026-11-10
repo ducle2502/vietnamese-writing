@@ -8,7 +8,7 @@ Mọi thay đổi đáng chú ý của dự án được ghi nhận tại tệp 
 
 - Tích hợp trọn vẹn 100% tập mẫu P0/P1/P2 và 18 chỉ số nhịp học (`stylometry`) của `viet-humanize` vào báo cáo quét JSON của [scripts/vi_scanner.py](scripts/vi_scanner.py).
 - Mở rộng `SemanticMasker` để quét xuyên vào bên trong bảng Markdown, bảng HTML và phần chú thích tiếng Việt sau dấu `#` trong cây thư mục (`├──`, `└──`), đồng thời tự động che phần tiếng Anh sau neo `<a id="english"></a>` trong tài liệu song ngữ.
-- Bổ sung bộ nhận diện từ dịch can kỹ thuật (`khung hợp đồng`, `khung vận hành`, `khóa hợp đồng`, `giao kèo dữ liệu`, `khung chạy sẵn`, `hiện thực lớp`, `di chuyển vệt sáng`, `túi chứa dữ liệu`, `Kỹ sư giao thức mạng`), lỗi xoay vòng động từ đồng nghĩa đầu cột bảng (`VIS-FMT-005`), thuộc tính `alt` ảnh nhồi từ khóa (`> 12` từ), hộp HTML quảng cáo `01` đến `04` trùng lặp và lỗi bọc dấu nháy ngược quanh từ tiếng Việt thường (`VIS-STRUCT-002`).
+- Bổ sung bộ nhận diện từ dịch can kỹ thuật (`khung hợp đồng`, `khung vận hành`, `khóa hợp đồng`, `giao kèo dữ liệu`, `khung chạy sẵn`, `hiện thực lớp`, `lớp phụ trách`, `di chuyển vệt sáng`, `túi chứa dữ liệu`, `mẫu thông điệp`, `tác vụ/thành viên`, `Kỹ sư giao thức mạng`), lỗi xoay vòng động từ đồng nghĩa đầu cột bảng (`VIS-FMT-005`), thuộc tính `alt` ảnh nhồi từ khóa hoặc kèm khẩu hiệu quảng cáo, chú thích `#` trong cây thư mục dài quá `10` từ, hộp HTML quảng cáo `01` đến `04` trùng lặp và lỗi bọc dấu nháy ngược quanh từ tiếng Việt thường (`VIS-STRUCT-002`).
 
 ## [2.0.0] - 2026-11-10
 

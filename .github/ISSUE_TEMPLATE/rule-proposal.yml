@@ -1,0 +1,25 @@
+name: Đề xuất quy tắc hoặc cập nhật từ mượn
+description: Đề xuất thêm mã quy tắc VIS-* mới hoặc bổ sung từ tiếng Anh đã quen dùng vào danh sách ngoại lệ
+title: "[Rule]: "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Hạng mục đề xuất
+      options:
+        - Cập nhật danh sách từ mượn (UNIVERSAL_NATURALIZED_LOANWORDS / WORKPLACE_TECH_LOANWORDS)
+        - Thêm quy tắc mới (VIS-AI / VIS-RHET / VIS-FMT / VIS-TRANS / VIS-CLICHE / VIS-LEX / VIS-TONE / VIS-STRUCT)
+        - Điều chỉnh nhóm văn bản miễn trừ (exempt_profiles)
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Ví dụ câu lỗi (Bad) và câu viết lại tự nhiên (Good)
+      placeholder: |
+        - Câu lỗi: ...
+        - Câu tự nhiên: ...
+        - Nhóm văn bản cần miễn trừ (nếu có): ...
+    validations:
+      required: true

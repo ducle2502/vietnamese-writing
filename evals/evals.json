@@ -1,0 +1,50 @@
+{
+  "skill_name": "vietnamese-writing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Biên tập lại đoạn báo cáo kiểm toán sau cho Hội đồng Thành viên: 'Anh Minh ơi, việc triển khai của hệ thống mới đang gặp tử huyệt sát sườn. Sự sụt giảm của tốc độ khớp lệnh từ 98,5% xuống 59,9% được gây ra bởi lỗi khóa bảng dữ liệu, điều này không chỉ ảnh hưởng đến khách hàng mà còn làm tê liệt toàn diện hoạt động.'",
+      "expected_output": "Đoạn báo cáo quản trị điềm tĩnh, đưa số liệu 98,5% xuống 59,9% và nguyên nhân khóa bảng lên đầu, bỏ xưng hô sồn sã ('Anh Minh ơi') và từ giật gân ('tử huyệt', 'sát sườn', 'tê liệt toàn diện'), bỏ câu bị động dịch sát ('được gây ra bởi').",
+      "files": [],
+      "assertions": [
+        "Giữ nguyên hai con số 98,5% và 59,9%",
+        "Xóa cách gọi sồn sã 'Anh Minh ơi' và từ giật gân 'tử huyệt', 'sát sườn', 'tê liệt'",
+        "Chuyển cụm bị động 'được gây ra bởi' và danh hóa 'Sự sụt giảm của' sang câu chủ động trực tiếp",
+        "Quét bằng scripts/vi_scanner.py scan đạt 0 lỗi"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Dịch và làm sạch câu tiếng Anh sau sang tiếng Việt tự nhiên cho tài liệu kỹ thuật: 'This caching mechanism may reduce database query latency by up to 40% during peak hours unless the working set exceeds available memory.'",
+      "expected_output": "Câu tiếng Việt chủ động, giữ nguyên con số 40%, mức độ khả năng ('có thể giảm') và điều kiện ngoại lệ ('trừ khi' / 'nếu... không vượt quá'), không biến thành khẳng định tuyệt đối.",
+      "files": [],
+      "assertions": [
+        "Giữ nguyên con số 40%",
+        "Giữ nguyên từ chỉ khả năng ('có thể') từ chữ 'may', không đổi thành 'sẽ' hay khẳng định chắc chắn",
+        "Giữ nguyên điều kiện ngoại lệ ('trừ khi' hoặc 'nếu... không') từ chữ 'unless'",
+        "Không dùng cấu trúc dịch từng chữ kiểu 'được giảm bởi lên đến 40%'"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Viết lại 4 gạch đầu dòng báo cáo lỗi đối soát ở 4 chi nhánh thành bảng Markdown gọn để trình lãnh đạo, tránh lối đếm tuần tự 'Chi nhánh thứ nhất... Sang chi nhánh thứ hai... Ở chi nhánh thứ ba...'.",
+      "expected_output": "Bảng Markdown có cột rõ ràng, số liệu trong bảng dùng dấu phẩy thập phân thống nhất và không lặp lại câu chữ ở từng dòng.",
+      "files": [],
+      "assertions": [
+        "Trình bày dưới dạng bảng Markdown thay vì đoạn văn đếm thứ tự",
+        "Không xuất hiện chuỗi 'thứ nhất... Sang... thứ hai... Ở... thứ ba'",
+        "Quét bằng scripts/vi_scanner.py scan đạt 0 lỗi"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Người dùng chỉ dán đoạn hợp đồng có câu 'Quyền sở hữu trí tuệ đối với phần mềm được chuyển giao bởi Bên A cho Bên B theo Điều 12 Khoản 3' và hỏi 'Theo câu này ai giữ quyền sở hữu sau khi bàn giao?'. Hãy trả lời câu hỏi.",
+      "expected_output": "Trả lời ngắn gọn rằng Bên B nhận quyền sở hữu trí tuệ theo Điều 12 Khoản 3, không tự ý viết lại hay bắt lỗi câu hợp đồng của người dùng.",
+      "files": [],
+      "assertions": [
+        "Trả lời đúng Bên B nhận quyền sở hữu theo Điều 12 Khoản 3",
+        "Không tự ý biên tập lại câu hợp đồng khi người dùng chỉ hỏi nội dung"
+      ]
+    }
+  ]
+}

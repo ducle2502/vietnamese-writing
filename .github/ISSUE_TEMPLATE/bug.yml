@@ -1,0 +1,45 @@
+name: Báo lỗi bắt nhầm hoặc bỏ sót (False Positive / False Negative)
+description: Báo cáo trường hợp vi_scanner.py gắn cờ nhầm câu tự nhiên hoặc bỏ sót lỗi dịch thô, văn máy móc
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Loại vấn đề
+      options:
+        - Bắt nhầm câu tự nhiên (False Positive)
+        - Bỏ sót lỗi câu chữ (False Negative)
+        - Lỗi đối soát dữ kiện (verify)
+        - Lỗi hướng dẫn trong SKILL.md
+    validations:
+      required: true
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Nhóm văn bản (Profile)
+      options:
+        - all (Mặc định)
+        - general
+        - audit_report
+        - academic
+        - legal
+        - marketing
+        - social_media
+        - translation
+    validations:
+      required: true
+  - type: textarea
+    id: sample
+    attributes:
+      label: Đoạn văn mẫu tái hiện lỗi
+      description: Dán câu hoặc đoạn văn tiếng Việt (đã xóa thông tin nhạy cảm/nội bộ).
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Kết quả mong đợi so với kết quả thực tế
+      description: Nêu mã quy tắc (ví dụ VIS-TRANS-001) đang báo nhầm hoặc cần bắt thêm.
+    validations:
+      required: true

@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-self-scan:
+    name: Test & Self-Scan (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run scanner selftest & maintenance check
+        run: |
+          python -B scripts/vi_scanner.py selftest
+          python -B scripts/vi_scanner.py check-maintenance
+
+      - name: Run unit test suite (100+ fixtures & skill manifest checks)
+        run: |
+          python -B -m unittest discover -s tests -v
+
+      - name: Self-scan all repository Markdown documents
+        run: |
+          python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md references/rule-catalog.md references/loanwords-and-exceptions.md --json

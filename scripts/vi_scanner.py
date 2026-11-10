@@ -227,7 +227,11 @@ class SemanticMasker:
     INLINE_CODE_RE = stdlib_re.compile(r"`[^`\n]+`")
     QUOTED_SPEECH_RE = stdlib_re.compile(r'"[^\n"]{10,300}"|“[^\n”]{10,300}”')
     MD_LINK_TARGET_RE = stdlib_re.compile(r"(\]\()([^)\n]+)(\))")
-    HTML_IMG_RE = stdlib_re.compile(r"<img\s+[^>]+>", stdlib_re.IGNORECASE)
+    HTML_COMMENT_RE = stdlib_re.compile(r"<!--[\s\S]*?-->")
+    HTML_IMG_RE = stdlib_re.compile(
+        r"</?(?:img|picture|source|div|p|table|tr|td|th|br|a|details|summary)(?:\s+[^>]+|\s*)>",
+        stdlib_re.IGNORECASE,
+    )
     BARE_URL_RE = stdlib_re.compile(r"(?:https?|file)://[^\s)\">]+")
 
     @staticmethod
@@ -243,6 +247,7 @@ class SemanticMasker:
         masked = cls.FRONTMATTER_RE.sub(cls._blank_match, text)
         masked = cls.CODE_BLOCK_RE.sub(cls._blank_match, masked)
         masked = cls.INLINE_CODE_RE.sub(cls._blank_match, masked)
+        masked = cls.HTML_COMMENT_RE.sub(cls._blank_match, masked)
         masked = cls.HTML_IMG_RE.sub(cls._blank_match, masked)
         if mask_quotes:
             masked = cls.QUOTED_SPEECH_RE.sub(cls._blank_match, masked)

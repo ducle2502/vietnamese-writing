@@ -1,69 +1,138 @@
-# vietnamese-writing
+<a id="top"></a>
 
-Kỹ năng chuẩn (`SKILL.md`) kèm công cụ dòng lệnh (`scripts/vi_scanner.py` bản 2.0) giúp AI Agent viết, biên tập và kiểm tra tiếng Việt tự nhiên, rõ ý mà vẫn bảo toàn nguyên vẹn dữ kiện gốc.
+<div align="center">
 
-## Cấu trúc thư mục chuẩn Skill
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/banner-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/banner-light.svg">
+  <img alt="vietnamese-writing - Kỹ năng biên tập tiếng Việt tự nhiên và công cụ quét lỗi câu chữ cho AI Agent" src="./assets/banner-dark.svg" width="100%">
+</picture>
 
-```text
-vietnamese-writing/
-├── SKILL.md                             # Hướng dẫn chính cho Agent (kèm YAML frontmatter)
-├── AGENTS.md                            # Quy tắc ngắn gọn khi mở trực tiếp thư mục
-├── LICENSE                              # Giấy phép MIT
-├── README.md                            # Hướng dẫn cài đặt và sử dụng
-├── scripts/
-│   └── vi_scanner.py                    # Máy quét câu chữ và đối soát dữ kiện (Python 3.11+)
-├── references/
-│   ├── rule-catalog.md                  # Bảng tra cứu 30 mã quy tắc và cách viết lại
-│   └── loanwords-and-exceptions.md      # Quy trình cập nhật từ mượn và ngoại lệ 7 nhóm văn bản
-├── .claude-plugin/                      # Cấu hình cài đặt cho Claude Code
-├── .cursor-plugin/                      # Cấu hình cài đặt cho Cursor
-└── tests/
-    └── test_vi_scanner.py               # Bộ 100+ mẫu kiểm thử độc lập và kiểm tra gói kỹ năng
-```
+<br>
 
-## Cách cài đặt cho Agent
+[![CI](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml/badge.svg)](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-0969da?style=flat-square&labelColor=161b22) ![Rules](https://img.shields.io/badge/rules-30%20%286%20groups%29-3fb950?style=flat-square&labelColor=161b22) [![License](https://img.shields.io/badge/license-MIT-58a6ff?style=flat-square&labelColor=161b22)](./LICENSE)
+
+[Tổng quan](#tổng-quan) · [Cài đặt nhanh](#cài-đặt-nhanh) · [6 nhóm quy tắc](#6-nhóm-quy-tắc-và-7-ngữ-cảnh-văn-bản) · [Dòng lệnh](#cách-sử-dụng-dòng-lệnh) · [Cấu trúc thư mục](#cấu-trúc-thư-mục) · [Giới hạn phạm vi](#giới-hạn-phạm-vi)
+
+</div>
+
+**vietnamese-writing** là gói kỹ năng chuẩn (`SKILL.md`) đi kèm công cụ dòng lệnh [scripts/vi_scanner.py](scripts/vi_scanner.py) giúp AI Agent viết, biên tập và tự kiểm tra tiếng Việt tự nhiên, rõ chủ thể mà vẫn giữ nguyên vẹn dữ kiện gốc. Công cụ chạy trực tiếp trên thư viện chuẩn `Python 3.11+`, không cần cài thêm gói phụ thuộc ngoài và đang được bảo trì định kỳ.
+
+## Tổng quan
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+`01` **Bắt đúng cấu trúc dịch thô và khuôn mẫu máy móc**
+
+Thay vì cấm từ Hán - Việt một cách cơ học, 30 quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) tập trung chỉ ra câu rào đón kiểu chatbot, cấu trúc bị động dịch từng chữ từ tiếng Anh (*"được thực hiện bởi"*), danh từ hóa nặng nề, nhãn in đậm lặp lại hàng loạt và lỗi dùng sai nghĩa từ Hán - Việt.
+
+</td>
+<td width="50%" valign="top">
+
+`02` **Quét đủ 100% tín hiệu kèm miễn trừ theo 7 ngữ cảnh**
+
+Lệnh `scan` mặc định chạy ở chế độ `all`, xuất toàn bộ tín hiệu kèm trường `applicable_profiles` và `exempt_profiles` trên 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`). Câu bị động hợp lệ trong hợp đồng pháp lý hoặc trích dẫn học thuật không bị ép sửa sai ngữ cảnh.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+`03` **Che chắn vùng mã lệnh và đối soát bảo toàn dữ kiện**
+
+Lớp `SemanticMasker` tự động bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép mà không làm lệch số dòng hay số cột. Lệnh `verify` đối chiếu bản gốc và bản sửa để chặn lỗi làm rơi con số, từ phủ định, từ chỉ điều kiện hoặc mức độ chắc chắn.
+
+</td>
+<td width="50%" valign="top">
+
+`04` **Tách bạch từ mượn đã quen dùng với từ chêm vô lối**
+
+Bộ lọc âm vị nhận diện từ tiếng Anh chêm lẫn trong câu nhưng tự động loại trừ danh sách từ đã quen dùng hàng ngày (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`) và nhắc lịch rà soát định kỳ qua lệnh `check-maintenance`.
+
+</td>
+</tr>
+</table>
+
+## Cài đặt nhanh
+
+Bạn có thể cài trực tiếp kỹ năng này vào Claude Code, Cursor, Codex, Antigravity hoặc chạy độc lập từ dòng lệnh trong vòng 1 phút:
 
 ```bash
-# Cài qua skills.sh CLI (hỗ trợ Claude Code, Cursor, Codex, Antigravity...)
+# Cài qua skills.sh CLI (hỗ trợ Claude Code, Cursor, Codex, Antigravity)
 npx skills add ducle2502/vietnamese-writing
 
 # Cài qua Skills Manager CLI
 skills-manager-cli skills install https://github.com/ducle2502/vietnamese-writing.git
 
-# Hoặc tải trực tiếp vào thư mục skills của Agent
-git clone https://github.com/ducle2502/vietnamese-writing.git ~/.gemini/config/skills/vietnamese-writing
+# Cài qua pi
+pi install git:github.com/ducle2502/vietnamese-writing
 ```
 
-## Tính năng chính
+Nếu muốn tải trực tiếp mã nguồn và chạy thử ngay công cụ quét bằng `Python 3.11+`:
 
-1. Bộ 30 quy tắc chia làm 6 nhóm: tách biệt rõ câu rào đón và khuôn mẫu của AI (`VIS-AI`), lối nói phóng đại (`VIS-RHET`), định dạng và nhịp đoạn máy móc (`VIS-FMT`), cấu trúc dịch từng chữ từ tiếng Anh sang tiếng Việt (`VIS-TRANS`), sáo ngữ hành chính hoặc quảng cáo đặt sai chỗ (`VIS-CLICHE`), cùng nhóm lỗi dùng sai từ Hán - Việt, từ tự chế ngô nghê, giọng sồn sã và lỗi bảng số liệu (`VIS-LEX`, `VIS-TONE`, `VIS-STRUCT`).
-2. Quét mặc định đủ mọi ngữ cảnh (`--profile all`) xuất 100% tín hiệu trên cả 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) kèm nhãn nhóm áp dụng và nhóm được miễn để Agent tự đối chiếu ngữ cảnh. Hỗ trợ lọc riêng từng nhóm khi chạy kiểm thử tự động.
-3. Bảo vệ vùng không quét và đối soát dữ kiện (`SemanticMasker`) giúp bỏ qua khối code, mã nội dòng, đường dẫn liên kết và câu trích dẫn trong ngoặc kép mà vẫn giữ đúng số dòng, số cột. Lệnh `verify` kiểm tra bảo toàn số liệu, từ phủ định, từ điều kiện, mức độ chắc chắn, đường dẫn và trích dẫn trước và sau khi sửa.
-4. Không gắn cứng dữ liệu dự án và chạy nhanh nhờ chỉ dùng thư viện chuẩn Python 3.11+ (tự nhận `google-re2` nếu có), biểu thức chính quy chạy một lượt không gây treo máy (ReDoS).
+```bash
+git clone https://github.com/ducle2502/vietnamese-writing.git
+cd vietnamese-writing
+python -B scripts/vi_scanner.py selftest
+python -B scripts/vi_scanner.py scan SKILL.md
+```
+
+## 6 nhóm quy tắc và 7 ngữ cảnh văn bản
+
+Chi tiết toàn bộ 30 mã quy tắc cùng ví dụ câu lỗi và câu viết lại nằm tại [references/rule-catalog.md](references/rule-catalog.md):
+
+| Nhóm mã | Tên nhóm quy tắc | Số quy tắc | Các lỗi trọng tâm được chỉ ra |
+|---|---|---|---|
+| `VIS-AI-001..005` | Tín hiệu sinh văn của AI | `5` | Câu rào đón/kết thúc kiểu chatbot, mở bài vĩ mô (*"Trong bối cảnh..."*), cặp sóng đôi giả (*"không chỉ... mà còn"*), chuỗi danh sách đóng khuôn `**Nhãn:**`, lạm dụng gạch ngang dài (`—`) và chấm phẩy (`;`). |
+| `VIS-RHET-001..005` | Tu từ phóng đại và dàn ý lộ liễu | `5` | Cụm tự khen tầm vóc (*"đóng vai trò then chốt"*), sáo ngữ kết bài (*"mở ra kỷ nguyên mới"*), nối câu bằng *"Từ đó,"*, chuyển đoạn lộ khung dàn bài, cụm rào đón chồng chéo. |
+| `VIS-FMT-001..005` | Định dạng và nhịp đoạn máy móc | `5` | Chèn biểu tượng trang trí đầu dòng, chia đều độ dài đoạn văn như máy in, viết hoa kiểu tiêu đề tiếng Anh, lạm dụng ngoặc kép hoặc in nghiêng quanh từ thông thường. |
+| `VIS-TRANS-001..005` | Cấu trúc dịch sát từ tiếng Anh | `5` | Câu bị động dịch từ *by* (*"được phê duyệt bởi"*), danh từ hóa (*"sự sụt giảm của"*), mở câu bằng *"Thông qua việc..."*, chủ ngữ giả (*"Nó là cần thiết"*), mật độ từ nối sách vở dày đặc. |
+| `VIS-CLICHE-001..005` | Sáo ngữ hành chính và quảng cáo | `5` | Nhét động từ rỗng (*"tiến hành việc kiểm tra"*), tính từ phóng đại (*"toàn diện"*, *"chuyên sâu"*), mở câu bằng *"Việc..."*, ẩn dụ dịch chữ (*"điểm nghẽn cổ chai"*), câu vượt quá 45 từ. |
+| `VIS-LEX` · `VIS-TONE` · `VIS-STRUCT` | Từ vựng, giọng văn và bảng số liệu | `5` | Dùng sai từ Hán - Việt (`thực chứng`) hoặc tự chế từ ngô nghê (`in đúp`), dịch ngược từ đã quen dùng (`thư điện tử`) hoặc chêm tiếng Anh chưa Việt hóa, giọng sồn sã/giật gân trong báo cáo quản trị, đếm tuần tự né máy quét và dùng dấu chấm thập phân kiểu Mỹ trong bảng. |
 
 ## Cách sử dụng dòng lệnh
 
 ```bash
-# Quét mặc định (xuất đủ 100% tín hiệu của mọi nhóm văn bản)
-python scripts/vi_scanner.py scan BAI_VIET.md
+# 1. Quét mặc định (chế độ 'all' xuất đủ 100% tín hiệu của cả 7 nhóm văn bản)
+python -B scripts/vi_scanner.py scan BAI_VIET.md
 
-# Xuất JSON cho Agent đọc và biên tập
-python scripts/vi_scanner.py scan BAI_VIET.md --json
+# 2. Xuất kết quả dạng JSON để AI Agent tự đọc và biên tập
+python -B scripts/vi_scanner.py scan BAI_VIET.md --json
 
-# Lọc riêng cho một nhóm văn bản cụ thể (ví dụ: báo cáo kiểm toán/quản trị)
-python scripts/vi_scanner.py scan BAO_CAO.md --profile audit_report
+# 3. Lọc riêng theo một nhóm văn bản cố định (ví dụ: báo cáo kiểm toán/quản trị)
+python -B scripts/vi_scanner.py scan BAO_CAO.md --profile audit_report
 
-# Đối soát bảo toàn số liệu, phủ định và điều kiện trước và sau biên tập
-python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
+# 4. Đối soát bảo toàn số liệu, phủ định, điều kiện và trích dẫn trước - sau khi sửa
+python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 
-# Kiểm tra hạn rà soát định kỳ danh sách từ tiếng Anh quen dùng
-python scripts/vi_scanner.py check-maintenance
+# 5. Kiểm tra hạn rà soát định kỳ danh sách từ tiếng Anh quen dùng
+python -B scripts/vi_scanner.py check-maintenance
 
-# Chạy kiểm thử tự động (100+ mẫu kiểm thử độc lập và kiểm tra cấu trúc Skill)
-python scripts/vi_scanner.py selftest
-python -m unittest discover -s tests -v
+# 6. Chạy bộ kiểm thử tự động (100+ mẫu kiểm thử độc lập và kiểm tra cấu trúc Skill)
+python -B -m unittest discover -s tests -v
 ```
 
-## Lưu ý bảo trì định kỳ
+## Cấu trúc thư mục
 
-Danh sách từ tiếng Anh đã quen dùng trong tiếng Việt (`UNIVERSAL_NATURALIZED_LOANWORDS` và `WORKPLACE_TECH_LOANWORDS` ở đầu tệp [scripts/vi_scanner.py](scripts/vi_scanner.py)) là phần từ vựng duy nhất cần rà soát và cập nhật hàng quý hoặc hàng năm theo hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).
+| Đường dẫn | Vai trò |
+|---|---|
+| [SKILL.md](SKILL.md) | Hướng dẫn chính cho AI Agent (kèm phần khai báo đầu tệp chuẩn `YAML frontmatter`). |
+| [AGENTS.md](AGENTS.md) | Quy tắc rút gọn khi mở trực tiếp thư mục dự án. |
+| [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ dòng lệnh quét văn bản, che chắn vùng code và đối soát bảo toàn dữ kiện. |
+| [references/rule-catalog.md](references/rule-catalog.md) | Bảng tra cứu chi tiết 30 quy tắc kèm ví dụ câu lỗi và câu sửa. |
+| [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) | Quy trình cập nhật danh sách từ tiếng Anh quen dùng và ngoại lệ của 7 nhóm văn bản. |
+| [evals/evals.json](evals/evals.json) | Bộ kịch bản kiểm thử hành vi biên tập thực tế cho Agent. |
+| [tests/test_vi_scanner.py](tests/test_vi_scanner.py) | Bộ kiểm thử đơn vị (100+ mẫu đối chứng, kiểm tra hiệu năng chống treo máy và kiểm tra gói kỹ năng). |
+| [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) | Hướng dẫn đóng góp quy tắc mới và lịch sử phiên bản. |
+
+## Giới hạn phạm vi
+
+- Mọi tín hiệu từ [scripts/vi_scanner.py](scripts/vi_scanner.py) chỉ chỉ ra các vị trí câu chữ gượng gạo, sáo rỗng hoặc dịch sát cần đọc lại, tuyệt đối không dùng để kết luận văn bản do con người hay AI viết.
+- Kỹ năng này hướng tới câu tiếng Việt rõ nghĩa, đúng ngữ cảnh người đọc và giữ nguyên dữ kiện gốc, không thêm lỗi chính tả hay phương ngữ giả tạo để lách công cụ dò tự động.
+- Nếu người dùng chỉ dán hợp đồng, báo cáo hoặc tài liệu để hỏi nội dung bên trong, Agent giữ nguyên văn bản gốc và trả lời thẳng vào câu hỏi.
+
+## Giấy phép
+
+Phát hành theo giấy phép [MIT](LICENSE).

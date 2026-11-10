@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 176" width="960" height="176" role="img" aria-labelledby="bn-title bn-desc">
+  <title id="bn-title">vietnamese-writing — Agent Skill &amp; Deterministic Vietnamese Style Scanner</title>
+  <desc id="bn-desc">vietnamese-writing header banner showing Vietnamese typography editorial mark, SKILL.md and Python 3.11+ badges, 30 rules across 7 profiles, and semantic invariant verifier.</desc>
+  <defs>
+    <pattern id="grid-dark" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#161C26" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif; }
+    .mono { font-family: 'JetBrains Mono', 'Cascadia Mono', 'SF Mono', Consolas, 'Liberation Mono', monospace; }
+  </style>
+
+  <!-- Card Frame -->
+  <rect x="0.5" y="0.5" width="959" height="175" rx="10" fill="#0D1117" stroke="#262E3B" stroke-width="1"/>
+  <rect x="1" y="1" width="958" height="174" rx="9.5" fill="url(#grid-dark)" opacity="0.75"/>
+
+  <!-- Geometric Editorial Mark (Vietnamese 'V' + Check Gate) -->
+  <rect x="36" y="36" width="104" height="104" rx="18" fill="#121822" stroke="#2B3547" stroke-width="1.2"/>
+  <line x1="56" y1="64" x2="108" y2="64" stroke="#263346" stroke-width="2" stroke-linecap="round"/>
+  <line x1="56" y1="84" x2="94" y2="84" stroke="#263346" stroke-width="2" stroke-linecap="round"/>
+  <line x1="56" y1="104" x2="82" y2="104" stroke="#263346" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 64 58 L 80 108 L 96 58" fill="none" stroke="#58A6FF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="108" cy="106" r="14" fill="#12261E" stroke="#3FB950" stroke-width="1.6"/>
+  <path d="M 102 106 L 106.5 110.5 L 114.5 101.5" fill="none" stroke="#3FB950" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Wordmark & Badges -->
+  <text x="168" y="74" class="sans" font-size="33" font-weight="700" letter-spacing="-0.6" fill="#F0F6FC">vietnamese-writing</text>
+  <rect x="504" y="51" width="88" height="24" rx="6" fill="#161F2C" stroke="#2D3B4E" stroke-width="1"/>
+  <text x="548" y="67" text-anchor="middle" class="mono" font-size="12" font-weight="600" fill="#9EA7B3">SKILL.md</text>
+  <rect x="600" y="51" width="104" height="24" rx="6" fill="#13233A" stroke="#264A78" stroke-width="1"/>
+  <text x="652" y="67" text-anchor="middle" class="mono" font-size="12" font-weight="600" fill="#58A6FF">Python 3.11+</text>
+  <rect x="712" y="51" width="76" height="24" rx="6" fill="#12261E" stroke="#235A36" stroke-width="1"/>
+  <text x="750" y="67" text-anchor="middle" class="mono" font-size="12" font-weight="600" fill="#3FB950">v2.0.0</text>
+
+  <!-- Subtitle -->
+  <text x="168" y="104" class="sans" font-size="15" fill="#9EA7B3">Kỹ năng biên tập tiếng Việt tự nhiên kèm công cụ quét lỗi dịch thô, văn máy móc và đối soát dữ kiện.</text>
+
+  <!-- Technical Spec Strip -->
+  <line x1="168" y1="122.5" x2="924" y2="122.5" stroke="#212836" stroke-width="1"/>
+  <circle cx="174" cy="141" r="3.5" fill="#3FB950"/>
+  <text x="186" y="145" class="mono" font-size="11.5" fill="#7D8590">30 Rules (6 Groups)   ·   7 Context Profiles   ·   SemanticMasker &amp; Verify   ·   Zero External Dependencies</text>
+</svg>

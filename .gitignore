@@ -1,27 +1,26 @@
-# Python
+# Python bytecode & build artifacts
 __pycache__/
 *.py[cod]
-.venv/
-venv/
+*$py.class
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+*.skill
 
-# Secrets
-.env
-.env.*
-!.env.example
-
-# Local research & workspace files
+# Raw reference materials & local workspace files
+raw/
 *.docx
-~$*.docx
+*.pdf
+*.xlsx
 *.code-workspace
-scratch/
-tmp/
-
-# Editor & OS
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 .DS_Store
 Thumbs.db
-Desktop.ini

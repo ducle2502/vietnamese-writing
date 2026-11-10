@@ -314,6 +314,7 @@ class TestViScannerV2(unittest.TestCase):
         self.assertRegex(fm, r"(?m)^license:\s*MIT\s*$")
 
         for manifest_rel in (
+            "package.json",
             ".claude-plugin/plugin.json",
             ".claude-plugin/marketplace.json",
             ".cursor-plugin/plugin.json",
@@ -323,10 +324,32 @@ class TestViScannerV2(unittest.TestCase):
             mdata = json.loads(mpath.read_text(encoding="utf-8"))
             self.assertEqual(mdata["name"], "vietnamese-writing")
 
+        evals_path = ROOT / "evals" / "evals.json"
+        self.assertTrue(evals_path.exists(), "Thiếu evals/evals.json")
+        evals_data = json.loads(evals_path.read_text(encoding="utf-8"))
+        self.assertEqual(evals_data.get("skill_name"), "vietnamese-writing")
+        self.assertGreaterEqual(len(evals_data.get("evals", [])), 4)
+
+        for asset_rel in (
+            "assets/banner-dark.svg",
+            "assets/banner-light.svg",
+            ".github/workflows/ci.yml",
+            ".github/ISSUE_TEMPLATE/bug.yml",
+            ".github/ISSUE_TEMPLATE/rule-proposal.yml",
+            ".github/ISSUE_TEMPLATE/config.yml",
+            ".github/PULL_REQUEST_TEMPLATE.md",
+            ".github/CODEOWNERS",
+            ".editorconfig",
+        ):
+            self.assertTrue((ROOT / asset_rel).exists(), f"Thiếu {asset_rel}")
+
         md_docs = [
             ROOT / "SKILL.md",
             ROOT / "AGENTS.md",
             ROOT / "README.md",
+            ROOT / "CONTRIBUTING.md",
+            ROOT / "CHANGELOG.md",
+            ROOT / ".github" / "PULL_REQUEST_TEMPLATE.md",
             ROOT / "references" / "rule-catalog.md",
             ROOT / "references" / "loanwords-and-exceptions.md",
         ]

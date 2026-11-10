@@ -20,10 +20,11 @@
 
 ## Tổng quan
 
-- **Bắt đúng cấu trúc dịch thô và khuôn mẫu máy móc.** Thay vì cấm từ Hán - Việt một cách cơ học, 30 quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) tập trung chỉ ra câu rào đón kiểu chatbot, cấu trúc bị động dịch từng chữ từ tiếng Anh (*"được thực hiện bởi"*), danh từ hóa nặng nề, nhãn in đậm lặp lại hàng loạt và lỗi dùng sai nghĩa từ Hán - Việt.
-- **Quét đủ 100% tín hiệu kèm miễn trừ theo 7 ngữ cảnh.** Lệnh `scan` mặc định chạy ở chế độ `all`, xuất toàn bộ tín hiệu kèm trường `applicable_profiles` và `exempt_profiles` trên 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`). Câu bị động hợp lệ trong hợp đồng pháp lý hoặc trích dẫn học thuật không bị ép sửa sai ngữ cảnh.
-- **Che chắn vùng mã lệnh và đối soát bảo toàn dữ kiện.** Lớp `SemanticMasker` tự động bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép mà không làm lệch số dòng hay số cột. Lệnh `verify` đối chiếu bản gốc và bản sửa để chặn lỗi làm rơi con số, từ phủ định, từ chỉ điều kiện hoặc mức độ chắc chắn.
-- **Tách bạch từ mượn đã quen dùng với từ chêm vô lối.** Bộ lọc âm vị nhận diện từ tiếng Anh chêm lẫn trong câu nhưng tự động loại trừ danh sách từ đã quen dùng hàng ngày (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`) và nhắc lịch rà soát định kỳ qua lệnh `check-maintenance`.
+- **Bắt đúng cấu trúc dịch thô và khuôn mẫu máy móc.** Thay vì cấm từ Hán - Việt cơ học, 30 quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) chỉ ra câu rào đón kiểu chatbot và cấu trúc bị động dịch từng chữ (*"được thực hiện bởi"*). Công cụ cũng phát hiện danh từ hóa nặng nề, nhãn in đậm lặp lại hàng loạt và lỗi dùng sai nghĩa từ Hán - Việt.
+- **Quét đủ 100% tín hiệu kèm miễn trừ theo 7 ngữ cảnh.** Lệnh `scan` mặc định chạy ở chế độ `all` và xuất toàn bộ tín hiệu trên 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`). Mỗi kết quả đều kèm trường `applicable_profiles` và `exempt_profiles`. Nhờ đó, câu bị động hợp lệ trong hợp đồng pháp lý hoặc trích dẫn học thuật không bị ép sửa sai ngữ cảnh.
+- **Che chắn vùng mã lệnh và đối soát bảo toàn dữ kiện.** Lớp `SemanticMasker` tự động bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép mà không làm lệch số dòng hay số cột. Sau khi biên tập, lệnh `verify` đối chiếu bản gốc và bản sửa. Bước này chặn lỗi làm rơi con số, từ phủ định, từ chỉ điều kiện hoặc mức độ chắc chắn.
+- **Tách bạch từ mượn đã quen dùng với từ chêm vô lối.** Bộ lọc âm vị nhận diện từ tiếng Anh chêm lẫn trong câu. Tuy nhiên, bộ lọc tự động loại trừ danh sách từ đã quen dùng hàng ngày (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`). Công cụ cũng nhắc lịch rà soát định kỳ qua lệnh `check-maintenance`.
+- **Đọc trực tiếp tệp `.docx` và đo tất định hồ sơ giọng văn (`DHDNA` & `Stylometry`).** Lệnh `scan` và `profile` đọc thẳng tệp Word `.docx` bằng thư viện chuẩn. Công cụ hỗ trợ `--ignore-table-cols` để loại trừ các cột bảng trích lục văn bản của bên thứ ba. Ngoài ra, máy quét kiểm tra lỗi sót tiêu đề kỳ cũ trong thuộc tính tệp (`template_title_mismatch`), phát hiện xung đột mẫu số và phân loại tất định kiểu giọng văn theo 4 mẫu chuẩn tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md).
 
 ## Cài đặt nhanh
 
@@ -60,7 +61,7 @@ Chi tiết toàn bộ 30 mã quy tắc cùng ví dụ câu lỗi và câu viết
 | `VIS-FMT-001..005` | Định dạng và nhịp đoạn máy móc | `5` | Chèn biểu tượng trang trí đầu dòng, chia đều độ dài đoạn văn như máy in, viết hoa kiểu tiêu đề tiếng Anh, lạm dụng ngoặc kép hoặc in nghiêng quanh từ thông thường. |
 | `VIS-TRANS-001..005` | Cấu trúc dịch sát từ tiếng Anh | `5` | Câu bị động dịch từ *by* (*"được phê duyệt bởi"*), danh từ hóa (*"sự sụt giảm của"*), mở câu bằng *"Thông qua việc..."*, chủ ngữ giả (*"Nó là cần thiết"*), mật độ từ nối sách vở dày đặc. |
 | `VIS-CLICHE-001..005` | Sáo ngữ hành chính và quảng cáo | `5` | Nhét động từ rỗng (*"tiến hành việc kiểm tra"*), tính từ phóng đại (*"toàn diện"*, *"chuyên sâu"*), mở câu bằng *"Việc..."*, ẩn dụ dịch chữ (*"điểm nghẽn cổ chai"*), câu vượt quá 45 từ. |
-| `VIS-LEX` · `VIS-TONE` · `VIS-STRUCT` | Từ vựng, giọng văn và bảng số liệu | `5` | Dùng sai từ Hán - Việt (`thực chứng`) hoặc tự chế từ ngô nghê (`in đúp`), dịch ngược từ đã quen dùng (`thư điện tử`) hoặc chêm tiếng Anh chưa Việt hóa, giọng sồn sã/giật gân trong báo cáo quản trị, đếm tuần tự né máy quét và dùng dấu chấm thập phân kiểu Mỹ trong bảng. |
+| `VIS-LEX` · `VIS-TONE` · `VIS-STRUCT` | Từ vựng, giọng văn và kỷ luật bằng chứng | `5` | Dùng sai từ Hán - Việt (`thực chứng`) hoặc tự chế từ ngô nghê (`in đúp`), dịch ngược từ đã quen dùng (`thư điện tử`), giọng sồn sã hoặc kịch tính hóa hiện trường (`sập toàn tuyến`), gộp mục còn lỗi vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian, dùng bù trừ ròng kết luận không sai lệch và lệch tổng bảng số liệu. |
 
 ## Cách sử dụng dòng lệnh
 
@@ -68,11 +69,11 @@ Chi tiết toàn bộ 30 mã quy tắc cùng ví dụ câu lỗi và câu viết
 # 1. Quét mặc định (chế độ 'all' xuất đủ 100% tín hiệu của cả 7 nhóm văn bản)
 python -B scripts/vi_scanner.py scan BAI_VIET.md
 
-# 2. Xuất kết quả dạng JSON để AI Agent tự đọc và biên tập
-python -B scripts/vi_scanner.py scan BAI_VIET.md --json
+# 2. Quét trực tiếp tệp Word .docx và bỏ qua cột bảng trích lục bên thứ ba
+python -B scripts/vi_scanner.py scan BAO_CAO.docx --profile audit_report --ignore-table-cols 2,3
 
-# 3. Lọc riêng theo một nhóm văn bản cố định (ví dụ: báo cáo kiểm toán/quản trị)
-python -B scripts/vi_scanner.py scan BAO_CAO.md --profile audit_report
+# 3. Đo tất định 18 chỉ số nhịp câu (stylometry) và 12 chỉ số kỷ luật lập luận DHDNA
+python -B scripts/vi_scanner.py profile BAO_CAO.docx --ignore-table-cols 2,3 --json
 
 # 4. Đối soát bảo toàn số liệu, phủ định, điều kiện và trích dẫn trước - sau khi sửa
 python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
@@ -90,8 +91,9 @@ python -B -m unittest discover -s tests -v
 |---|---|
 | [SKILL.md](SKILL.md) | Hướng dẫn chính cho AI Agent (kèm phần khai báo đầu tệp chuẩn `YAML frontmatter`). |
 | [AGENTS.md](AGENTS.md) | Quy tắc rút gọn khi mở trực tiếp thư mục dự án. |
-| [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ dòng lệnh quét văn bản, che chắn vùng code và đối soát bảo toàn dữ kiện. |
+| [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ dòng lệnh quét văn bản, đo hồ sơ giọng văn DHDNA, đọc `.docx` và đối soát dữ kiện. |
 | [references/rule-catalog.md](references/rule-catalog.md) | Bảng tra cứu chi tiết 30 quy tắc kèm ví dụ câu lỗi và câu sửa. |
+| [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) | Bốn kiểu giọng văn chức năng, 6 kỷ luật dẫn số liệu/bằng chứng và bảng chuyển ngữ quản trị. |
 | [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) | Quy trình cập nhật danh sách từ tiếng Anh quen dùng và ngoại lệ của 7 nhóm văn bản. |
 | [evals/evals.json](evals/evals.json) | Bộ kịch bản kiểm thử hành vi biên tập thực tế cho Agent. |
 | [tests/test_vi_scanner.py](tests/test_vi_scanner.py) | Bộ kiểm thử đơn vị (100+ mẫu đối chứng, kiểm tra hiệu năng chống treo máy và kiểm tra gói kỹ năng). |

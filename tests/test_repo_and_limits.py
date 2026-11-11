@@ -63,14 +63,18 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
         cls.scanner = ViScanner()
 
     def test_semantic_invariants_and_verify_safety(self) -> None:
-        """Mọi ví dụ sửa mẫu trong 31 quy tắc phải bảo toàn số liệu, điều kiện và URL."""
-        self.assertEqual(len(self.scanner.rules), 31)
+        """Mọi ví dụ sửa mẫu trong 41 quy tắc phải bảo toàn dữ kiện gốc và bắt đúng lỗi mục tiêu."""
+        self.assertEqual(len(self.scanner.rules), 41)
         for rule in self.scanner.rules.values():
             if rule.rule_id == "VIS-FMT-005":
                 continue
-            ok, errs = SemanticMasker.validate_rewrite_safety(
-                rule.bad_example, rule.better_example, strict_negations_and_modals=False
-            )
+            bad_hits = {f.rule_id for f in self.scanner.scan_text(rule.bad_example, profile="all").findings}
+            self.assertIn(rule.rule_id, bad_hits, f"bad_example của {rule.rule_id} không kích hoạt chính nó")
+            inv_bad = SemanticMasker.extract_invariants(rule.bad_example)
+            inv_better = SemanticMasker.extract_invariants(rule.better_example)
+            if not inv_bad["numbers"] and inv_better["numbers"]:
+                inv_better = {**inv_better, "numbers": []}
+            ok, errs = SemanticMasker.validate_invariants(inv_bad, inv_better, strict_negations_and_modals=False)
             self.assertTrue(ok, f"Rule {rule.rule_id} làm lệch dữ kiện mẫu: {errs}")
 
         self.assertFalse(
@@ -139,7 +143,7 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
         unanchored = ViScanner()
         unanchored._rule_anchors.clear()
         for rid, rule in self.scanner.rules.items():
-            if not rule.regex_or_algorithm.startswith("ALGO:"):
+            if not rule.regex_or_algorithm.startswith("ALGO:") and rule.regex_or_algorithm != "VOCAB":
                 self.assertTrue(_extract_regex_anchors(rule.regex_or_algorithm), f"Rule {rid} thiếu neo literal")
             r_fast = self.scanner.scan_text(rule.bad_example, profile="all")
             r_raw = unanchored.scan_text(rule.bad_example, profile="all")

@@ -297,6 +297,52 @@ class TestViScannerSupersetAndDocx(unittest.TestCase):
             self.assertEqual(scan_data["category_breakdown"], {"VOICE_AND_STRUCTURE": 1})
             self.assertIn("Đợt 2", scan_data["findings"][0]["matched_text"])
 
+    def test_extended_41_rules_and_vocab_trie_gates(self) -> None:
+        """Kiểm tra 10 quy tắc mở rộng, cụm thống kê theo đoạn và bộ lọc ngữ cảnh Hán-Việt / khẩu hiệu."""
+        new_rule_samples = (
+            ("VIS-AI-006", "Hãy thử tưởng tượng một hệ thống tự khóa sổ mỗi tối mà không cần đối chiếu."),
+            ("VIS-AI-007", "Dù bạn là sinh viên, nhân viên hay lãnh đạo, bạn đều dùng được biểu mẫu này."),
+            ("VIS-RHET-006", "Hơn cả một bảng tính, đây là người bạn đồng hành của phòng tài chính."),
+            ("VIS-RHET-007", "Tưởng chừng chỉ là sai lệch nhỏ, nhưng đó là cảnh báo cho toàn bộ quy trình."),
+            ("VIS-FMT-006", "Không ngoại lệ. Không trì hoãn. Không thỏa hiệp."),
+            ("VIS-TRANS-006", "Kết quả của đợt kiểm tra của bộ phận vận hành của chi nhánh đã có."),
+            ("VIS-TRANS-007", "Mặc dù chứng từ đã khớp nhưng kế toán vẫn rà lại thêm một lượt."),
+            ("VIS-TRANS-008", "Đề xuất đến từ nhóm vận hành giúp giảm 15% thời gian chờ."),
+            ("VIS-TRANS-009", "Biểu mẫu nằm trong ngăn lưu trữ bên trong tủ hồ sơ tầng hai."),
+            ("VIS-TRANS-010", "Báo cáo mang tính chiến lược và mang tính định hướng cho năm 2027."),
+        )
+        for expected_rid, text in new_rule_samples:
+            found = {f.rule_id for f in self.scanner.scan_text(text, profile="general").findings}
+            self.assertIn(expected_rid, found, f"Bỏ sót {expected_rid} trên mẫu: {text}")
+
+        self.assertEqual(
+            self.scanner.scan_text(new_rule_samples[0][1], profile="marketing").findings_count,
+            0,
+        )
+        self.assertEqual(
+            self.scanner.scan_text(new_rule_samples[4][1], profile="audit_report").findings_count,
+            0,
+        )
+        self.assertEqual(
+            self.scanner.scan_text(
+                "Tuy nhiên, 138/213 đơn vị của doanh nghiệp đã khóa sổ kế toán.", profile="general"
+            ).findings_count,
+            0,
+        )
+        clustered_adj = "Phương án mới linh hoạt, bền vững và tối ưu cho dây chuyền đóng gói."
+        self.assertIn(
+            "VIS-FMT-004",
+            {f.rule_id for f in self.scanner.scan_text(clustered_adj, profile="general").findings},
+        )
+        convert_sample = "Bất quá nhân gia chỉ là một cái kế toán mới vào doanh nghiệp làm việc."
+        rev_findings = [
+            f
+            for f in self.scanner.scan_text(convert_sample, profile="translation").findings
+            if f.rule_id == "VIS-LEX-002"
+        ]
+        self.assertGreaterEqual(len(rev_findings), 1)
+        self.assertNotRegex(rev_findings[0].suggestion_vi, r"\d+\)")
+
 
 if __name__ == "__main__":
     unittest.main()

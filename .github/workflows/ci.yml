@@ -46,4 +46,4 @@ jobs:
 
       - name: Self-scan all repository Markdown documents
         run: |
-          python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md references/rule-catalog.md references/voice-and-argument-patterns.md references/loanwords-and-exceptions.md --json
+          python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md .github/PULL_REQUEST_TEMPLATE.md references/rule-catalog.md references/voice-and-argument-patterns.md references/loanwords-and-exceptions.md --fail-on any --json

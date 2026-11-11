@@ -9,7 +9,7 @@ body:
       label: Hạng mục đề xuất
       options:
         - Cập nhật danh sách từ mượn (UNIVERSAL_NATURALIZED_LOANWORDS / WORKPLACE_TECH_LOANWORDS)
-        - Thêm quy tắc mới (VIS-AI / VIS-RHET / VIS-FMT / VIS-TRANS / VIS-CLICHE / VIS-LEX / VIS-TONE / VIS-STRUCT)
+        - Thêm quy tắc mới (VIS-AI / VIS-RHET / VIS-FMT / VIS-TRANS / VIS-CLICHE / VIS-LEX / VIS-TONE / VIS-STRUCT / VIS-LEN)
         - Điều chỉnh nhóm văn bản miễn trừ (exempt_profiles)
     validations:
       required: true

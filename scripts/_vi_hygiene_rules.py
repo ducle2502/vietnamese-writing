@@ -7,6 +7,7 @@ import re as stdlib_re
 from typing import TYPE_CHECKING
 
 from _vi_algo_rules import VI_DIACRITIC_RE
+from _vi_context_and_echo import check_calque_heading, check_prose_proximity_echo
 from _vi_masker import SemanticMasker, make_finding
 from _vi_types import Finding, Profile, RuleDefinition, _ScanBuffer
 
@@ -248,6 +249,9 @@ def _check_headings_and_colon_lists(rule: RuleDefinition, buf: _ScanBuffer, *, h
         if m_h:
             h_text = m_h.group(2)
             headings.append((len(m_h.group(1)), offset, h_text))
+            calque_h = check_calque_heading(rule, buf, offset, buf.raw_text[offset : offset + len(ln)])
+            if calque_h is not None:
+                findings.append(calque_h)
             words = _HEADING_WORD_RE.findall(_PAREN_STRIP_RE.sub("", h_text))
             if (
                 has_vi
@@ -459,6 +463,7 @@ def _check_markup_trees_and_backticks(rule: RuleDefinition, buf: _ScanBuffer, *,
 def run_document_and_table_hygiene(rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None) -> list[Finding]:
     has_vi = bool(VI_DIACRITIC_RE.search(buf.masked_prose))
     findings = _check_prose_and_pct_hygiene(rule, buf, prof, has_vi=has_vi)
+    findings.extend(check_prose_proximity_echo(rule, buf, prof))
     findings.extend(_check_headings_and_colon_lists(rule, buf, has_vi=has_vi))
     for tbl in _extract_markdown_table_blocks(buf.raw_text):
         findings.extend(_check_single_markdown_table(rule, buf, tbl))

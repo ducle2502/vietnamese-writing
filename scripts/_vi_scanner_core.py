@@ -188,52 +188,53 @@ def _prepare_rule_target_text(rid: str, buf: _ScanBuffer) -> str:
     return target_text
 
 
+_MAX_RULE_HITS_PER_LINE = 12
+
+
 def _merge_non_overlapping_matches(
-    primary: Sequence[_RegexMatch],
-    secondary: Sequence[_RegexMatch],
+    primary: Sequence[_RegexMatch], secondary: Sequence[_RegexMatch]
 ) -> list[_RegexMatch]:
-    merged = sorted([*primary, *secondary], key=lambda m: (m.start(), -m.end()))
     out: list[_RegexMatch] = []
     last_end = -1
-    for m in merged:
+    for m in sorted([*primary, *secondary], key=lambda x: (x.start(), -x.end())):
         if m.start() >= last_end:
             out.append(m)
             last_end = m.end()
     return out
 
 
+def _resolve_match_hint(
+    tm: _RegexMatch, norm_key: tuple[str, str], phrase_hints: dict[tuple[str, str], str]
+) -> str | None:
+    if isinstance(tm, GroupedSpanMatch):
+        return tm.custom_hint
+    if isinstance(tm, PhraseHit):
+        return tm.entry.hint or phrase_hints.get(norm_key)
+    return phrase_hints.get(norm_key)
+
+
 def _build_regex_findings(
-    rule: RuleDefinition,
-    buf: _ScanBuffer,
-    triggered: Sequence[_RegexMatch],
-    phrase_hints: dict[tuple[str, str], str],
+    rule: RuleDefinition, buf: _ScanBuffer, triggered: Sequence[_RegexMatch], phrase_hints: dict[tuple[str, str], str]
 ) -> list[Finding]:
     rid = rule.rule_id
     findings: list[Finding] = []
-    seen_lines: set[int] = set()
-    last_line_end = -1
+    line_counts: dict[int, int] = {}
+    last_hit_end = -1
     for tm in triggered:
         hit_start, raw_slice = _clean_match_slice(tm, buf.raw_text)
-        if hit_start <= last_line_end:
-            continue
-        last_line_end = line_end_offset(buf.raw_text, hit_start, buf.nl_offsets)
         ln_no, _ = offset_to_line_col(buf.raw_text, hit_start, buf.nl_offsets)
-        if ln_no in seen_lines:
+        if hit_start < last_hit_end or line_counts.get(ln_no, 0) >= _MAX_RULE_HITS_PER_LINE:
             continue
-        seen_lines.add(ln_no)
-        override_profs: Sequence[str] | None = (
+        line_counts[ln_no] = line_counts.get(ln_no, 0) + 1
+        last_hit_end = tm.end()
+        ov_profs = (
             ("general", "marketing", "social_media", "translation")
             if rid == "VIS-FMT-003" and raw_slice == ";"
             else None
         )
-        if isinstance(tm, GroupedSpanMatch):
-            hint = tm.custom_hint
-        elif isinstance(tm, PhraseHit):
-            hint = tm.entry.hint or phrase_hints.get((rid, " ".join(raw_slice.split()).casefold()))
-        else:
-            hint = phrase_hints.get((rid, " ".join(raw_slice.split()).casefold()))
+        hint = _resolve_match_hint(tm, (rid, " ".join(raw_slice.split()).casefold()), phrase_hints)
         findings.append(
-            make_finding(rule, buf, hit_start, raw_slice, custom_suggestion=hint, override_profiles=override_profs)
+            make_finding(rule, buf, hit_start, raw_slice, custom_suggestion=hint, override_profiles=ov_profs)
         )
     return findings
 
@@ -313,29 +314,32 @@ class ViScanner:
         return out
 
     def _collect_valid_regex_matches(
-        self,
-        rule: RuleDefinition,
-        target_text: str,
-        nl_offsets: Sequence[int],
-        prof: Profile | None,
+        self, rule: RuleDefinition, target_text: str, nl_offsets: Sequence[int], prof: Profile | None
     ) -> list[_RegexMatch]:
         rid = rule.rule_id
         thresh = rule.threshold
-        single_hit_per_line = (thresh.per_para == 1 and thresh.per_1000_words is None) or thresh.per_doc == 1
+        cap_line = (thresh.per_para == 1 and thresh.per_1000_words is None) or thresh.per_doc == 1
         text_len = len(target_text)
         valid_matches: list[_RegexMatch] = []
-        valid_line_end = -1
+        cur_line_end = -1
+        cur_line_hits = 0
         for m in self._compiled[rid].finditer(target_text):
-            if single_hit_per_line and m.start() <= valid_line_end:
+            if cap_line and m.start() <= cur_line_end and cur_line_hits >= _MAX_RULE_HITS_PER_LINE:
                 continue
-            if not is_linguistically_exempt(rid, target_text, m.start(), m.end()) and not is_profile_exempt(
+            if is_linguistically_exempt(rid, target_text, m.start(), m.end()) or is_profile_exempt(
                 rid, target_text, m.start(), m.end(), prof
             ):
-                valid_matches.append(m)
-                if single_hit_per_line:
-                    valid_line_end = line_end_offset(target_text, m.start(), nl_offsets)
-                    if valid_line_end >= text_len - 1:
-                        break
+                continue
+            valid_matches.append(m)
+            if not cap_line:
+                continue
+            if m.start() > cur_line_end:
+                cur_line_end = line_end_offset(target_text, m.start(), nl_offsets)
+                cur_line_hits = 1
+            else:
+                cur_line_hits += 1
+                if cur_line_hits >= _MAX_RULE_HITS_PER_LINE and cur_line_end >= text_len - 1:
+                    break
         if rid == "VIS-AI-007" and not valid_matches:
             valid_matches.extend(
                 m
@@ -345,12 +349,7 @@ class ViScanner:
         return valid_matches
 
     def _collect_valid_vocab_matches(
-        self,
-        rid: str,
-        raw_hits: Sequence[PhraseHit],
-        target_text: str,
-        buf: _ScanBuffer,
-        prof: Profile | None,
+        self, rid: str, raw_hits: Sequence[PhraseHit], target_text: str, buf: _ScanBuffer, prof: Profile | None
     ) -> list[_RegexMatch]:
         if not raw_hits:
             return []
@@ -367,11 +366,7 @@ class ViScanner:
         return filter_statistical_cluster_hits(non_overlapping, buf.para_spans, raw_text=buf.raw_text, rid=rid)
 
     def _scan_regex_rule(
-        self,
-        rule: RuleDefinition,
-        buf: _ScanBuffer,
-        prof: Profile | None,
-        vocab_hits: Sequence[PhraseHit] = (),
+        self, rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None, vocab_hits: Sequence[PhraseHit] = ()
     ) -> list[Finding]:
         rid = rule.rule_id
         target_text = _prepare_rule_target_text(rid, buf)
@@ -401,12 +396,7 @@ class ViScanner:
             return []
 
         triggered = _select_triggered_matches(
-            valid_matches,
-            buf.para_spans,
-            buf.word_count,
-            rule.threshold,
-            rule_id=rid,
-            raw_text=buf.raw_text,
+            valid_matches, buf.para_spans, buf.word_count, rule.threshold, rule_id=rid, raw_text=buf.raw_text
         )
         return _build_regex_findings(rule, buf, triggered, self.vocab.phrase_hints)
 

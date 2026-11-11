@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Kiểm tra giới hạn độ dài tệp, hàm, lớp và cấu trúc dữ liệu khai báo tại `[tool.code_limits]`."""
+"""Kiểm thử giới hạn độ dài tệp, hàm, lớp và cấu trúc dữ liệu theo `[tool.code_limits]` bằng `pytest`."""
 
 from __future__ import annotations
 
 import ast
+import dataclasses
 import fnmatch
-import sys
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
@@ -155,20 +155,36 @@ def check_repo_limits(root: Path = DEFAULT_ROOT) -> list[str]:
     return violations
 
 
-def main(argv: Sequence[str] | None = None) -> int:
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
-    if hasattr(sys.stderr, "reconfigure"):
-        sys.stderr.reconfigure(encoding="utf-8")
-    root = Path(argv[0]).resolve() if argv else DEFAULT_ROOT
-    violations = check_repo_limits(root)
-    if violations:
-        for v in violations:
-            print(v, file=sys.stderr)
-        return 1
-    print("CODE_LIMITS: PASS (0 vi phạm về độ dài tệp, hàm, lớp và cấu trúc dữ liệu)")
-    return 0
+def test_repo_code_limits_compliance() -> None:
+    """Đảm bảo 100% mã nguồn trong `scripts/` và `tests/` tuân thủ `[tool.code_limits]`."""
+    violations = check_repo_limits(DEFAULT_ROOT)
+    assert violations == [], "\n".join(violations)
 
 
-if __name__ == "__main__":
-    raise SystemExit(main(sys.argv[1:]))
+def test_code_limits_violation_detection(tmp_path: Path) -> None:
+    """Đảm bảo bộ kiểm tra bắt đúng vi phạm độ dài tệp, hàm, lớp và literal dữ liệu."""
+    strict_cfg = dataclasses.replace(
+        load_code_limits(DEFAULT_ROOT / "pyproject.toml"),
+        max_file_lines=5,
+        max_function_lines=2,
+        max_class_lines=3,
+        max_class_methods=1,
+        max_class_attributes=1,
+        max_object_literal_items=2,
+    )
+    sample_py = tmp_path / "tiny.py"
+    sample_py.write_text(
+        "ITEMS = [1, 2, 3]\n"
+        "def f():\n"
+        "    a = 1\n"
+        "    b = 2\n"
+        "    return a + b\n"
+        "class C:\n"
+        "    x = 1\n"
+        "    y = 2\n"
+        "    def m1(self): pass\n"
+        "    def m2(self): pass\n",
+        encoding="utf-8",
+    )
+    errs = check_file_limits(sample_py, "tiny.py", strict_cfg)
+    assert len(errs) == 6

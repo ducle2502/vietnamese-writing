@@ -7,7 +7,7 @@ Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a
 ### Thêm mới (Added)
 
 - Bổ sung lệnh `profile` trong [scripts/vi_scanner.py](scripts/vi_scanner.py). Lệnh mới tính 18 chỉ số nhịp câu (`stylometry`), 12 chỉ số kỷ luật lập luận (`DHDNA v2.0`), phát hiện lệch mẫu số (`ung_vien_lech_mau_so`) và xếp loại 4 kiểu giọng văn chức năng.
-- Bổ sung trình đọc tệp Word `.docx` bằng thư viện chuẩn (`zipfile` + `xml.etree.ElementTree`). Người dùng có thể truyền `--ignore-table-cols` để bỏ qua cột trích lục của bên thứ ba và kiểm tra lỗi sót tiêu đề kỳ cũ (`template_title_mismatch`).
+- Bổ sung trình đọc tệp Word `.docx` bằng thư viện chuẩn (`zipfile` + `xml.etree.ElementTree`). Người dùng có thể truyền `--ignore-table-cols` để bỏ qua cột trích lục của bên thứ ba và kiểm tra lỗi sót tiêu đề kỳ trước (`template_title_mismatch`).
 - Mở rộng `VIS-STRUCT-002` và `VIS-TONE-001` để rà kỷ luật số liệu và bằng chứng. Máy quét bắt lỗi gộp mục còn vướng mắc vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian và dùng bù trừ ròng kết luận khớp đúng. Bộ quét cũng chặn lỗi chốt tỷ lệ thiếu `Tử số/Mẫu số` và từ kịch tính hiện trường.
 - Bổ sung quy tắc `VIS-TONE-002` bắt họ động từ điều tra/cổ văn (`phát lộ`, `phát giác`, `bại lộ`, `vạch trần`) và mẫu câu kịch tính hóa sự cố hoặc con số (`sập API`, `vỏn vẹn`, `giậm chân tại chỗ`).
 - Khái quát hóa khung ngữ pháp dịch từng chữ của `VIS-LEX-001` (`hiện thực + <danh từ>`, `khung + <danh từ>`, `hợp đồng/giao kèo + <danh từ>`) và bổ sung họ lỗi chính tả công sở (`cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`, `xuất sứ`).
@@ -20,7 +20,7 @@ Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a
 ### Sửa lỗi (Fixed)
 
 - Gỡ ngưỡng gom cụm ẩn (`>= 3` lần/đoạn) trên các ẩn dụ dịch sát không mơ hồ của `VIS-RHET-002`, `VIS-RHET-003`, `VIS-CLICHE-002` và `VIS-CLICHE-004` để bắt ngay từ lần xuất hiện đầu tiên.
-- Chuẩn hóa đủ `2.011` mục từ tại [data/vocab.csv](data/vocab.csv) và `42` quy tắc tại [data/grammar.csv](data/grammar.csv). Gợi ý `suggestion_vi` nay khớp trực tiếp với từng nhánh biểu thức chính quy, cụm lặp vượt ngưỡng và bộ 3 tính từ khen ngợi.
+- Chuẩn hóa `2.057` mục từ tại [data/vocab.csv](data/vocab.csv), mở rộng kiểm tra lặp từ sát nhau, tiêu đề dịch từng chữ và chuyển kiểm tra giới hạn mã sang `pytest` tại [tests/test_code_limits.py](tests/test_code_limits.py). Gợi ý `suggestion_vi` nay khớp trực tiếp với từng nhánh biểu thức chính quy, cụm lặp vượt ngưỡng và bộ 3 tính từ khen ngợi.
 
 ## [2.1.0] - 2026-11-10
 
@@ -36,12 +36,12 @@ Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a
 
 - Chuẩn hóa repo thành gói kỹ năng đa nền tảng (`SKILL.md`, `AGENTS.md`, `package.json`, `.claude-plugin/`, `.cursor-plugin/`, `evals/evals.json`).
 - Mở rộng công cụ [scripts/vi_scanner.py](scripts/vi_scanner.py) lên 30 quy tắc chia thành 6 nhóm (`VIS-AI`, `VIS-RHET`, `VIS-FMT`, `VIS-TRANS`, `VIS-CLICHE` cùng nhóm `VIS-LEX`, `VIS-TONE`, `VIS-STRUCT`).
-- Hỗ trợ 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) với chế độ quét mặc định `--profile all` xuất đủ 100% tín hiệu kèm danh sách nhóm áp dụng và nhóm miễn trừ.
-- Bổ sung lớp che chắn vùng không quét (`SemanticMasker`) giữ nguyên tọa độ dòng và cột cho khối code, mã nội dòng, đường dẫn liên kết và câu trích dẫn trong ngoặc kép.
-- Bổ sung lệnh `verify` kiểm tra bảo toàn 6 nhóm dữ kiện (số liệu, phủ định, điều kiện, mức chắc chắn, đường dẫn và nguồn trích dẫn) cùng lệnh `check-maintenance` nhắc lịch rà soát từ mượn định kỳ.
+- Hỗ trợ 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) với chế độ quét mặc định `--profile all` xuất đủ 100% tín hiệu kèm danh sách nhóm áp dụng và nhóm không áp dụng.
+- Bổ sung bộ tách riêng vùng không quét (`SemanticMasker`) giữ nguyên tọa độ dòng và cột cho khối code, mã nội dòng, đường dẫn liên kết và câu trích dẫn trong ngoặc kép.
+- Bổ sung lệnh `verify` đối chiếu 6 nhóm dữ kiện gốc (số liệu, phủ định, điều kiện, mức chắc chắn, đường dẫn và nguồn trích dẫn) cùng lệnh `check-maintenance` nhắc lịch rà soát từ mượn định kỳ.
 - Thiết lập quy trình kiểm thử tự động [ci.yml](.github/workflows/ci.yml) trên Ubuntu, macOS và Windows cùng bộ hơn 100 mẫu kiểm thử độc lập tại [tests/test_vi_scanner.py](tests/test_vi_scanner.py).
 
 ### Thay đổi (Changed)
 
-- Gỡ bỏ toàn bộ hằng số gắn cứng theo dự án riêng lẻ, chỉ duy trì hai tập từ tiếng Anh đã quen dùng (`UNIVERSAL_NATURALIZED_LOANWORDS` và `WORKPLACE_TECH_LOANWORDS`) kèm cơ chế nạp quy tắc ngoài qua `--custom-rules`.
+- Gỡ bỏ toàn bộ hằng số ghi cố định theo dự án riêng lẻ, chỉ duy trì hai tập từ tiếng Anh đã quen dùng (`UNIVERSAL_NATURALIZED_LOANWORDS` và `WORKPLACE_TECH_LOANWORDS`) kèm cơ chế nạp quy tắc ngoài qua `--custom-rules`.
 - Viết lại toàn bộ biểu thức chính quy theo hướng khớp một lượt, ngăn lỗi treo máy trên văn bản dài.

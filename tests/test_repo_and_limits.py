@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import contextlib
 import csv
-import dataclasses
 import datetime as dt
 import hashlib
 import io
@@ -27,7 +26,6 @@ for _dir in (str(SCRIPTS_DIR), str(TESTS_DIR)):
     if _dir not in sys.path:
         sys.path.insert(0, _dir)
 
-from check_code_limits import check_file_limits, check_repo_limits, load_code_limits  # noqa: E402
 from vi_scanner import (  # noqa: E402
     DEFAULT_GRAMMAR_CSV,
     DEFAULT_VOCAB_CSV,
@@ -64,7 +62,7 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
         cls.scanner = ViScanner()
 
     def test_semantic_invariants_and_verify_safety(self) -> None:
-        """Mọi ví dụ sửa mẫu trong 42 quy tắc phải bảo toàn dữ kiện gốc và bắt đúng lỗi mục tiêu."""
+        """Mọi ví dụ sửa mẫu trong 42 quy tắc phải giữ nguyên dữ kiện gốc và bắt đúng lỗi mục tiêu."""
         self.assertEqual(len(self.scanner.rules), 42)
         for rule in self.scanner.rules.values():
             if rule.rule_id == "VIS-FMT-005":
@@ -120,7 +118,7 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
 
     def test_algorithms_data_structures_and_docx_xml_safety(self) -> None:
         """Kiểm tra tìm kiếm nhị phân dòng/cột, cửa sổ trượt MATTR, bộ lọc neo regex và chặn XML XXE."""
-        self.assertEqual((len(UNIVERSAL_NATURALIZED_LOANWORDS), len(WORKPLACE_TECH_LOANWORDS)), (63, 114))
+        self.assertEqual((len(UNIVERSAL_NATURALIZED_LOANWORDS), len(WORKPLACE_TECH_LOANWORDS)), (63, 115))
 
         multi_line = "Báo cáo quý I\n\nĐoạn tiếng Việt có dấu: 59,92% — đạt yêu cầu.\nDòng cuối"
         nl_offsets = _build_newline_offsets(multi_line)
@@ -165,24 +163,6 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
             with self.assertRaises(ValueError):
                 extract_docx_text_and_meta(bad_docx)
 
-    def test_code_limits_and_modularity_enforcement(self) -> None:
-        """Đảm bảo 100% mã nguồn tuân thủ `[tool.code_limits]` và trình kiểm tra bắt đúng vi phạm giả lập."""
-        self.assertEqual(check_repo_limits(ROOT), [])
-        strict_cfg = dataclasses.replace(
-            load_code_limits(ROOT / "pyproject.toml"),
-            max_file_lines=5,
-            max_function_lines=2,
-            max_object_literal_items=2,
-        )
-        with tempfile.TemporaryDirectory() as tmp:
-            sample_py = Path(tmp) / "tiny.py"
-            sample_py.write_text(
-                "ITEMS = [1, 2, 3]\ndef f():\n    a = 1\n    b = 2\n    return a + b\n# pad\n",
-                encoding="utf-8",
-            )
-            errs = check_file_limits(sample_py, "tiny.py", strict_cfg)
-            self.assertEqual(len(errs), 3)
-
     def test_skill_repo_structure_manifests_and_self_lint(self) -> None:
         """Kiểm tra cấu trúc chuẩn Skill repo, liên kết nội bộ và tự quét sạch toàn bộ tài liệu."""
         for req_rel in (
@@ -193,7 +173,7 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
             "data/vocab.csv",
             "data/grammar.csv",
             "scripts/vi_scanner.py",
-            "scripts/check_code_limits.py",
+            "tests/test_code_limits.py",
             "references/rule-catalog.md",
             "references/loanwords-and-exceptions.md",
             "assets/banner-dark.svg",
@@ -309,11 +289,11 @@ class TestCsvCrudAndRowInvariants(unittest.TestCase):
                 ViScanner(vocab_path=bad_vocab, grammar_path=grammar_csv)
 
     def test_vocab_and_grammar_csv_row_count_and_hint_coherence(self) -> None:
-        """Bảo toàn nguyên vẹn 2.011 dòng `vocab.csv`, 42 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
+        """Giữ nguyên vẹn 2.057 dòng `vocab.csv`, 42 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
         vocab_raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
-        self.assertEqual(len(vocab_raw.splitlines()), 2012)
+        self.assertEqual(len(vocab_raw.splitlines()), 2058)
         vocab_rows = list(csv.DictReader(io.StringIO(vocab_raw)))
-        self.assertEqual(len(vocab_rows), 2011)
+        self.assertEqual(len(vocab_rows), 2057)
 
         grammar_raw = DEFAULT_GRAMMAR_CSV.read_text(encoding="utf-8-sig")
         self.assertEqual(len(grammar_raw.splitlines()), 53)

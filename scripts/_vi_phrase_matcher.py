@@ -6,8 +6,8 @@ import re as stdlib_re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from _vi_context_and_echo import check_contextual_vocab_hit
 from _vi_masker import make_finding, sentence_around
-from _vi_regex_anchors import safe_lower_preserve_len
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -45,13 +45,6 @@ _CONVERT_CTX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
 _NUMERIC_SLANG_LEAD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"(?i)(?:đồ|thằng|con|kẻ|quá|đỉnh|cười|chế\s+độ|làm\s+việc|kiểu)\s+$"
 )
-_BAN_CHI_EXEMPT_TAIL_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)^\s*(?:đạo|huy)\b")
-_BANG_QUANG_LEAD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)(?:thái\s+độ|vẻ|đứng|sống)\s+$")
-_BANG_QUANG_TAIL_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)^\s*(?:trước|với)\b")
-_NHAN_PREFIX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)(?:xác|ghi|chấp|công|thừa)\s+$")
-_YEU_DIEM_BAD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
-    r"(?i)\b(?:khắc\s+phục|sửa\s+chữa|nhược\s+điểm|hạn\s+chế|bộc\s+lộ|che\s+giấu|chí\s+mạng|chết\s+người)\b"
-)
 _SENT_START_PREFIX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?:^|[.!?…\n])(?:\s*(?:[-*•◦–>]|\d+[.)]))*\s*$")
 _DIRECT_HOMOGRAPH_TERMS: frozenset[str] = frozenset(
     {"bộ vệ sinh", "sở vệ sinh", "tổ hạng mục", "phân tử sinh học", "ý vị trứ", "lợi dụng nguyên liệu"}
@@ -85,7 +78,10 @@ _STACCATO_SPLIT_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?<=[.!?…])\s
 _STACCATO_WORD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"[0-9A-Za-zÀ-ỹĐđ]+(?:[.,/-][0-9A-Za-zÀ-ỹĐđ]+)*")
 _NON_PROSE_PARA_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"^\s*(?:[#|>—\"“]|[-*•◦–]\s|\d+[.)]\s)")
 _BOLD_COLON_BULLET_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
-    r"^\s*(?:[-*•◦–]|\d+[.)])\s+(?:\*\*[^*\n]{2,65}?:\*\*|\*\*[^*\n]{2,65}?\*\*\s*:)"
+    r"^\s*(?:[-*•◦–]|\d+[.)])\s+(?:"
+    r"\*\*[^*\n]{2,85}?(?::|[.!?]|[—–-])\*\*(?:\s+\S|\s*$)"
+    r"|\*\*[^*\n]{2,85}?\*\*\s*(?::|(?:[.!?]|[—–-])\s+\S)"
+    r")"
 )
 _EX_LEGAL_GLOSSARY_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)\b(?:giải thích từ ngữ|bên a|bên b)\b")
 _CLUSTER_ELIGIBLE_RULES: frozenset[str] = frozenset(
@@ -219,28 +215,6 @@ def build_vocab_entry(
     )
 
 
-def _check_special_rev_term(key: str, prose_text: str, start: int, end: int, prof: Profile | None) -> bool | None:
-    res: bool | None = None
-    if key == "ban chỉ":
-        res = not bool(_BAN_CHI_EXEMPT_TAIL_RE.match(prose_text[end : end + 12]))
-    elif key == "kho mã nguồn":
-        res = "thư mục" not in safe_lower_preserve_len(sentence_around(prose_text, start, end))
-    elif key == "khuyến mãi":
-        res = prof is None or prof.value in ("audit_report", "legal")
-    elif key == "góa phụ":
-        res = prose_text[max(0, start - 6) : start].casefold().endswith("nam ")
-    elif key == "bàng quang":
-        res = bool(
-            _BANG_QUANG_LEAD_RE.search(prose_text[max(0, start - 15) : start])
-            or _BANG_QUANG_TAIL_RE.match(prose_text[end : end + 12])
-        )
-    elif key == "nhận sẵn sàng":
-        res = not bool(_NHAN_PREFIX_RE.search(prose_text[max(0, start - 8) : start]))
-    elif key == "yếu điểm":
-        res = bool(_YEU_DIEM_BAD_RE.search(sentence_around(prose_text, start, end)))
-    return res
-
-
 def is_valid_phrase_hit(
     entry: PhraseEntry,
     prose_text: str,
@@ -248,7 +222,7 @@ def is_valid_phrase_hit(
     end: int,
     prof: Profile | None,
 ) -> bool:
-    special = _check_special_rev_term(entry.term_key, prose_text, start, end, prof)
+    special = check_contextual_vocab_hit(entry, prose_text, start, end, prof)
     if special is not None:
         return special
     if entry.sentence_initial_only:

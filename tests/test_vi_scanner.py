@@ -75,7 +75,7 @@ class TestViScannerRulesAndProfiles(unittest.TestCase):
             self.assertGreaterEqual(len(f.applicable_profiles), 1)
 
     def test_group6_voice_lexical_and_structure_rules(self) -> None:
-        """Kiểm tra các quy tắc từ vựng sai nghĩa, từ mượn, giọng sồn sã và bảng số liệu Nhóm 6."""
+        """Kiểm tra các quy tắc từ vựng sai nghĩa, từ mượn, giọng suồng sã và bảng số liệu Nhóm 6."""
         r_bad_lex = self.scanner.scan_text("Hồ sơ dự án thực chứng này cho máy tính ghép để tìm dòng in đúp.")
         self.assertIn("VIS-LEX-001", {f.rule_id for f in r_bad_lex.findings})
         r_good_phil = self.scanner.scan_text(

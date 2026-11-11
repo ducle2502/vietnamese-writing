@@ -12,7 +12,7 @@
 
 [![CI](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml/badge.svg)](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-0969da?style=flat-square&labelColor=161b22) ![Rules](https://img.shields.io/badge/rules-42%20%286%20groups%29-3fb950?style=flat-square&labelColor=161b22) [![License](https://img.shields.io/badge/license-MIT-58a6ff?style=flat-square&labelColor=161b22)](./LICENSE)
 
-[Tổng quan](#tổng-quan) · [Cài đặt nhanh](#cài-đặt-nhanh) · [6 nhóm quy tắc](#6-nhóm-quy-tắc-và-7-ngữ-cảnh-văn-bản) · [Dòng lệnh](#cách-sử-dụng-dòng-lệnh) · [Cấu trúc thư mục](#cấu-trúc-thư-mục) · [Giới hạn phạm vi](#giới-hạn-phạm-vi)
+[Tổng quan](#tổng-quan) · [Cài đặt nhanh](#cài-đặt-nhanh) · [6 nhóm quy tắc](#6-nhóm-quy-tắc-và-7-ngữ-cảnh-văn-bản) · [Dòng lệnh](#chạy-từ-dòng-lệnh) · [Cấu trúc thư mục](#cấu-trúc-thư-mục) · [Giới hạn phạm vi](#giới-hạn-phạm-vi)
 
 </div>
 
@@ -20,11 +20,13 @@
 
 ## Tổng quan
 
-- **Bắt đúng cấu trúc dịch thô, câu dài vòng vo và khuôn mẫu máy móc.** Công cụ không cấm từ Hán - Việt máy móc. Thay vào đó, 42 quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) chỉ ra câu rào đón chatbot, bị động dịch sát (*"được thực hiện bởi"*), danh từ hóa và nhãn in đậm lặp khuôn. Quy tắc `VIS-LEN-001` chặn cứng câu vượt `35` từ (`45` từ ở văn bản pháp lý) kể cả trong ô bảng, kèm gợi ý sửa sát từng nhánh lỗi.
-- **Quét đủ 100% tín hiệu kèm miễn trừ theo 7 ngữ cảnh.** Lệnh `scan` mặc định chạy ở chế độ `all` và xuất toàn bộ tín hiệu trên 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`). Nhờ hai trường `applicable_profiles` và `exempt_profiles` trên từng kết quả, câu bị động chuẩn mực trong hợp đồng pháp lý hoặc trích dẫn học thuật không bị ép sửa sai ngữ cảnh.
-- **Che chắn vùng mã lệnh và đối soát bảo toàn dữ kiện.** Lớp `SemanticMasker` bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép mà vẫn giữ nguyên số dòng, số cột. Sau khi biên tập, lệnh `verify` đối chiếu bản gốc với bản sửa để chặn lỗi làm rơi con số, từ phủ định, điều kiện hoặc mức độ chắc chắn.
-- **Phân biệt từ mượn quen dùng với lối chêm từ lửng lơ.** Bộ lọc âm vị bắt từ tiếng Anh chêm giữa câu nhưng tự cho qua nhóm từ quen dùng (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`). Lệnh `check-maintenance` tự động nhắc lịch rà soát danh sách này theo quý.
-- **Đọc trực tiếp tệp `.docx` và lập hồ sơ giọng văn (`DHDNA` & `Stylometry`).** Hai lệnh `scan` và `profile` đọc thẳng tệp Word `.docx` bằng thư viện chuẩn, cho phép dùng `--ignore-table-cols` để bỏ qua cột bảng trích lục của bên thứ ba. Máy quét cũng phát hiện lỗi sót tiêu đề kỳ cũ trong thuộc tính tệp (`template_title_mismatch`), cảnh báo lệch mẫu số giữa các trang và xếp loại giọng văn theo 4 mẫu chuẩn tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md).
+Công cụ không cấm từ Hán - Việt một cách cực đoan. Thay vào đó, 42 quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) chỉ ra câu rào đón chatbot, câu bị động dịch từng chữ (*"được thực hiện bởi"*), danh từ hóa và danh sách gắn nhãn in đậm rập khuôn. Quy tắc `VIS-LEN-001` báo lỗi ngay khi gặp câu vượt `35` từ (`45` từ ở văn bản pháp lý) kể cả trong ô bảng, kèm gợi ý sửa cụ thể cho từng nhánh lỗi.
+
+Lệnh `scan` mặc định chạy ở chế độ `all` và xuất toàn bộ tín hiệu trên 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`). Nhờ hai trường `applicable_profiles` và `exempt_profiles` trên từng kết quả, câu bị động hợp lệ trong hợp đồng pháp lý hoặc trích dẫn học thuật không bị ép sửa sai ngữ cảnh.
+
+Lớp `SemanticMasker` bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép khi quét mà vẫn giữ nguyên số dòng, số cột. Sau khi biên tập, lệnh `verify` đối chiếu bản gốc với bản sửa để chặn lỗi làm rơi con số, từ phủ định, điều kiện hoặc mức độ chắc chắn. Bộ lọc âm vị cũng bắt từ tiếng Anh chêm tùy tiện giữa câu nhưng tự cho qua nhóm từ đã quen dùng (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`), kèm lệnh `check-maintenance` nhắc lịch rà soát định kỳ theo quý.
+
+Hai lệnh `scan` và `profile` đọc thẳng tệp Word `.docx` bằng thư viện chuẩn, cho phép dùng `--ignore-table-cols` để bỏ qua cột bảng trích lục của bên thứ ba. Máy quét còn phát hiện lỗi sót tiêu đề kỳ trước trong thuộc tính tệp (`template_title_mismatch`), cảnh báo lệch mẫu số giữa các trang và xếp loại giọng văn theo 4 mẫu tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md).
 
 ## Cài đặt nhanh
 
@@ -41,7 +43,7 @@ skills-manager-cli skills install https://github.com/ducle2502/vietnamese-writin
 pi install git:github.com/ducle2502/vietnamese-writing
 ```
 
-Nếu muốn tải trực tiếp mã nguồn và chạy thử ngay công cụ quét bằng `Python 3.11+`:
+Tải trực tiếp mã nguồn và chạy kiểm tra trên `Python 3.11+`:
 
 ```bash
 git clone https://github.com/ducle2502/vietnamese-writing.git
@@ -56,14 +58,14 @@ Chi tiết toàn bộ 42 mã quy tắc cùng ví dụ câu lỗi và câu viết
 
 | Nhóm mã | Tên nhóm quy tắc | Số quy tắc | Lỗi câu chữ trọng tâm |
 |---|---|---|---|
-| `VIS-AI-001..007` | Tín hiệu sinh văn của AI | `7` | Câu rào đón/kết thúc kiểu chatbot, mở bài vĩ mô (*"Trong bối cảnh..."*), ép tưởng tượng giả định (*"Hãy thử tưởng tượng..."*), câu điều kiện bao sân (*"Dù bạn là..."*) và chỗ trống nhắc điền chưa xóa. |
-| `VIS-RHET-001..007` | Tu từ phóng đại và dàn ý lộ liễu | `7` | Cặp đòn bẩy (*"không chỉ... mà còn"*, *"hơn cả X, đây là Y"*), đối lập giả kịch tính (*"tưởng chừng... nhưng"*), tự khen tầm vóc (*"đóng vai trò then chốt"*), ẩn dụ dịch sát và dẫn nguồn không tên. |
-| `VIS-FMT-001..006` | Định dạng và nhịp đoạn máy móc | `6` | Danh sách đóng khuôn `**Nhãn:**`, từ nối đầu câu dày đặc, lạm dụng gạch ngang dài (`—`), xếp chồng tính từ khen ngợi, chia đều đoạn văn hoặc chuỗi 3 câu cực ngắn kiểu khẩu hiệu. |
-| `VIS-TRANS-001..010` | Cấu trúc dịch sát từ tiếng Anh | `10` | Câu bị động dịch từ *by* (*"được phê duyệt bởi"*), danh từ hóa (*"sự sụt giảm của"*), chuỗi sở hữu *"của... của... của"*, cặp liên từ sóng đôi lặp dày, *"đến từ"* chỉ nguồn gốc trừu tượng, *"ở trong... bên trong"* và lặp *"mang tính"*. |
-| `VIS-CLICHE-001..005` | Sáo ngữ hành chính và quảng cáo | `5` | Nhét động từ rỗng (*"tiến hành việc kiểm tra"*), khẩu hiệu thiếu đầu ra, cụm từ trùng nghĩa, câu khách kiểu quảng cáo và chồng nhiều lớp từ rào đón. |
-| `VIS-LEX` · `VIS-TONE` · `VIS-STRUCT` · `VIS-LEN` | Từ vựng, giọng văn, độ dài câu và kỷ luật bằng chứng | `7` | Chặn cứng câu dài quá `35` từ (`45` từ ở văn bản pháp lý, tính cả ô bảng), câu nối nhiều dấu phẩy và mở câu vòng vo (`VIS-LEN-001`). Bắt lỗi sai từ Hán - Việt (`thực chứng`), sai chính tả công sở (`chỉnh chu`, `cập nhập`, `sát nhập`, `dậm chân`), dịch thô (`khung hợp đồng`, `hiện thực lớp`) và dịch ngược (`thư điện tử`). Đồng thời chặn giọng điều tra/giật gân (`phát lộ`, `vạch trần`, `sập API`, `vỏn vẹn`), khẩu ngữ sồn sã (`rủi ro sát sườn`) và lỗi kỷ luật số liệu. |
+| `VIS-AI-001..007` | Tín hiệu sinh văn của AI | `7` | Câu rào đón/kết thúc kiểu chatbot, mở bài chung chung (*"Trong bối cảnh..."*), bắt hình dung tình huống giả (*"Hãy thử tưởng tượng..."*), câu gom mọi nhóm người đọc (*"Dù bạn là..."*) và `placeholder` chưa điền. |
+| `VIS-RHET-001..007` | Tu từ phóng đại và dàn ý lộ liễu | `7` | Cấu trúc *"không chỉ... mà còn"*, *"hơn cả X, đây là Y"*, cặp vế tạo kịch tính giả (*"tưởng chừng... nhưng"*), tự khen phóng đại (*"đóng vai trò then chốt"*), ẩn dụ sáo rỗng và dẫn nguồn không tên. |
+| `VIS-FMT-001..006` | Định dạng và nhịp đoạn máy móc | `6` | Danh sách đóng khuôn `**Nhãn:**` hoặc `**Nhãn.**`, từ nối đầu câu dày đặc, lạm dụng gạch ngang dài (`—`), xếp chồng tính từ khen ngợi, chia đều đoạn văn hoặc chuỗi 3 câu cụt kiểu khẩu hiệu. |
+| `VIS-TRANS-001..010` | Dịch từng chữ từ tiếng Anh | `10` | Câu bị động dịch từ *by* (*"được phê duyệt bởi"*), danh từ hóa (*"sự sụt giảm của"*), chuỗi sở hữu *"của... của... của"*, lặp lại dày đặc cặp quan hệ từ, *"đến từ"* chỉ nguồn gốc trừu tượng và lặp *"mang tính"*. |
+| `VIS-CLICHE-001..005` | Sáo ngữ hành chính và quảng cáo | `5` | Nhét động từ rỗng (*"tiến hành việc kiểm tra"*), khẩu hiệu thiếu đầu ra, cụm từ trùng nghĩa, lời kêu gọi kiểu quảng cáo và chồng nhiều lớp từ rào đón. |
+| `VIS-LEX` · `VIS-TONE` · `VIS-STRUCT` · `VIS-LEN` | Từ vựng, giọng văn, độ dài câu và kỷ luật bằng chứng | `7` | Báo lỗi ngay câu dài quá `35` từ (`45` từ ở văn bản pháp lý, tính cả ô bảng), câu nối nhiều dấu phẩy và mở câu vòng vo (`VIS-LEN-001`). Bắt lỗi sai từ Hán - Việt (`thực chứng`), sai chính tả vỏ ngữ âm (`sồn sã`, `chỉnh chu`, `cập nhập`, `sát nhập`), dịch thô (`khung hợp đồng`, `hiện thực lớp`) và dịch ngược (`thư điện tử`). Đồng thời chặn giọng giật gân (`phát lộ`, `vạch trần`, `sập API`, `vỏn vẹn`), khẩu ngữ suồng sã (`rủi ro sát sườn`), lặp từ gần nhau và lỗi kỷ luật số liệu. |
 
-## Cách sử dụng dòng lệnh
+## Chạy từ dòng lệnh
 
 ```bash
 # 1. Quét mặc định (chế độ 'all' xuất đủ 100% tín hiệu của cả 7 nhóm văn bản)
@@ -75,14 +77,14 @@ python -B scripts/vi_scanner.py scan BAO_CAO.docx --profile audit_report --ignor
 # 3. Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 12 chỉ số kỷ luật lập luận DHDNA
 python -B scripts/vi_scanner.py profile BAO_CAO.docx --ignore-table-cols 2,3 --json
 
-# 4. Đối soát bảo toàn số liệu, phủ định, điều kiện và trích dẫn trước - sau khi sửa
+# 4. Đối chiếu số liệu, phủ định, điều kiện và trích dẫn trước - sau khi sửa
 python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 
 # 5. Kiểm tra hạn rà soát định kỳ danh sách từ tiếng Anh quen dùng
 python -B scripts/vi_scanner.py check-maintenance
 
-# 6. Chạy bộ kiểm thử tự động (100+ mẫu kiểm thử độc lập và kiểm tra cấu trúc Skill)
-python -B -m unittest discover -s tests -v
+# 6. Chạy bộ kiểm thử tự động (100+ mẫu kiểm thử độc lập, giới hạn mã nguồn và cấu trúc Skill)
+python -B -m pytest -v
 ```
 
 ## Cấu trúc thư mục
@@ -91,14 +93,13 @@ python -B -m unittest discover -s tests -v
 |---|---|
 | [SKILL.md](SKILL.md) | Hướng dẫn chính cho AI Agent (kèm phần khai báo đầu tệp chuẩn `YAML frontmatter`). |
 | [AGENTS.md](AGENTS.md) | Quy tắc rút gọn khi mở trực tiếp thư mục dự án. |
-| [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.011` mục từ vựng và `42` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở và chỉnh sửa trực tiếp bằng Excel. |
+| [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.057` mục từ vựng và `42` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở và chỉnh sửa trực tiếp bằng Excel. |
 | [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ dòng lệnh quét văn bản, lập hồ sơ giọng văn DHDNA, đọc `.docx` và đối soát dữ kiện. |
-| [scripts/check_code_limits.py](scripts/check_code_limits.py) | Trình kiểm tra giới hạn độ dài tệp, hàm, lớp và cấu trúc dữ liệu theo `[tool.code_limits]`. |
 | [references/rule-catalog.md](references/rule-catalog.md) | Bảng tra cứu chi tiết 42 quy tắc kèm dấu hiệu nhận diện và cách viết lại. |
 | [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) | Bốn kiểu giọng văn chức năng, 6 kỷ luật dẫn số liệu/bằng chứng và bảng chuyển ngữ quản trị. |
 | [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) | Quy trình cập nhật danh sách từ tiếng Anh quen dùng và ngoại lệ của 7 nhóm văn bản. |
 | [evals/evals.json](evals/evals.json) | Bộ kịch bản kiểm thử hành vi biên tập thực tế cho Agent. |
-| [tests/test_vi_scanner.py](tests/test_vi_scanner.py) | Bộ kiểm thử đơn vị (100+ mẫu đối chứng, kiểm tra đồng bộ gợi ý sửa, chống treo máy và kiểm tra gói kỹ năng). |
+| [tests/](tests/) | Bộ kiểm thử `pytest` (100+ mẫu đối chứng, hồi quy 16 họ lỗi, giới hạn mã `[tool.code_limits]` và cấu trúc gói kỹ năng). |
 | [pyproject.toml](pyproject.toml) | Cấu hình kiểm tra kiểu tĩnh `mypy`, độ phức tạp mã nguồn với `ruff` và giới hạn kích thước `[tool.code_limits]`. |
 | [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) | Hướng dẫn đóng góp quy tắc mới và lịch sử phiên bản. |
 

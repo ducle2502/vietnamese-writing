@@ -1,4 +1,4 @@
-"""Bộ miễn trừ ngôn ngữ học/ngữ cảnh và các quy tắc thuật toán về nhịp câu, từ mượn, độ dài & diễn đạt vòng vo."""
+"""Bộ loại trừ ngôn ngữ học/ngữ cảnh và các quy tắc thuật toán về nhịp câu, từ mượn, độ dài & diễn đạt vòng vo."""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ import math
 import re as stdlib_re
 from typing import TYPE_CHECKING
 
+from _vi_context_and_echo import is_lex001_context_exempt
 from _vi_masker import SemanticMasker, make_finding, sentence_around
 from _vi_phrase_matcher import PhraseHit, select_first_reverse_calque, tokenize_prose
 from _vi_rules_data import DEFAULT_VOCAB
@@ -31,16 +32,15 @@ _EX_RHET004_RE = stdlib_re.compile(r"(?i)^từ\s+(?:ngày|tháng|năm|quý|đợ
 _EX_RHET005_TAIL_RE = stdlib_re.compile(r"^\s*(?:\(|\[|theo\s+[A-ZÀ-ỸĐ])")
 _EX_ATTRIB_HEAD_RE = stdlib_re.compile(r"(?i)^(?:nhiều\s+nghiên\s+cứu|các\s+nghiên\s+cứu|các\s+chuyên\s+gia|báo\s+cáo)")
 _EX_TRANS001_RE = stdlib_re.compile(r"(?i)\bđược\s+xác định\s+bởi\s+công thức\b")
-_EX_LEX001_RE = stdlib_re.compile(r"(?i)\b(?:chủ nghĩa|triết học|trường phái)\s+thực chứng\b")
 _SENT_EXEMPT_PATTERNS: dict[str, stdlib_re.Pattern[str]] = {
     "VIS-RHET-002": _EX_19XX_RE,
     "VIS-RHET-003": _EX_RHET003_RE,
     "VIS-TRANS-001": _EX_TRANS001_RE,
-    "VIS-LEX-001": _EX_LEX001_RE,
 }
 _LINGUISTIC_EXEMPT_RULES: frozenset[str] = frozenset(
     {
         "VIS-AI-003",
+        "VIS-LEX-001",
         "VIS-RHET-004",
         "VIS-RHET-005",
         "VIS-CLICHE-001",
@@ -128,9 +128,11 @@ def _is_direct_slice_exempt(rule_id: str, target_text: str, start: int, end: int
 
 
 def is_linguistically_exempt(rule_id: str, target_text: str, start: int, end: int) -> bool:
-    """Các trường hợp miễn trừ phổ quát về mặt ngôn ngữ học (không gắn tên riêng dự án)."""
+    """Các trường hợp loại trừ phổ quát về mặt ngôn ngữ học (không gắn tên riêng dự án)."""
     if rule_id not in _LINGUISTIC_EXEMPT_RULES:
         return False
+    if rule_id == "VIS-LEX-001":
+        return is_lex001_context_exempt(target_text, start, end)
     if _is_direct_slice_exempt(rule_id, target_text, start, end):
         return True
     sent = sentence_around(target_text, start, end)
@@ -145,7 +147,7 @@ def is_linguistically_exempt(rule_id: str, target_text: str, start: int, end: in
 
 
 def is_profile_exempt(rule_id: str, target_text: str, start: int, end: int, prof: Profile | None) -> bool:
-    """Miễn trừ riêng theo từng nhóm văn bản cụ thể khi người dùng truyền `--profile` đơn lẻ."""
+    """Loại trừ riêng theo từng nhóm văn bản cụ thể khi người dùng truyền `--profile` đơn lẻ."""
     if prof is None:
         return False
     sliced = target_text[start:end].strip()
@@ -331,7 +333,7 @@ def run_loanword_and_jargon_rule(
         raw_hit = buf.raw_text[m_rev.start() : m_rev.end()]
         hint = m_rev.entry.hint
         if m_rev.entry.is_code_mixing:
-            advice = f"Tránh chêm từ ngoại lai lửng lơ; nên diễn đạt bằng tiếng Việt: '{hint}'."
+            advice = f"Tránh chêm từ ngoại lai tùy tiện; nên diễn đạt bằng tiếng Việt: '{hint}'."
         else:
             advice = (
                 f"Giữ nguyên từ thông dụng đã quen dùng ({hint}) thay vì dịch từng chữ."

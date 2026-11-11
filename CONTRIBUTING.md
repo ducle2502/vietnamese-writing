@@ -4,14 +4,14 @@ Hướng dẫn thiết lập môi trường, nguyên tắc viết quy tắc mớ
 
 ## 1. Yêu cầu môi trường
 
-Công cụ chạy trực tiếp trên thư viện chuẩn của `Python 3.11+` ở cả Windows, macOS và Linux (nếu máy có sẵn `google-re2`, bộ quét tự dùng để tăng tốc). Khi phát triển mã nguồn, cài thêm `mypy` và `ruff` theo cấu hình trong [pyproject.toml](pyproject.toml) để kiểm tra kiểu tĩnh, định dạng và giới hạn độ phức tạp mã nguồn.
+Công cụ chạy trực tiếp trên thư viện chuẩn của `Python 3.11+` ở cả Windows, macOS và Linux (nếu máy có sẵn `google-re2`, bộ quét tự dùng để tăng tốc). Khi phát triển mã nguồn, cài thêm `mypy`, `pytest` và `ruff` theo cấu hình trong [pyproject.toml](pyproject.toml) để kiểm tra kiểu tĩnh, định dạng và chạy bộ kiểm thử.
 
 ```bash
 git clone https://github.com/ducle2502/vietnamese-writing.git
 cd vietnamese-writing
-python -m pip install "mypy>=1.11" "ruff>=0.8"
+python -m pip install "mypy>=1.11" "pytest>=8.0" "ruff>=0.8"
 python -B scripts/vi_scanner.py selftest
-python -B -m unittest discover -s tests -v
+python -B -m pytest -v
 ```
 
 > Lưu ý: Luôn truyền cờ `-B` (`python -B`) khi chạy lệnh cục bộ để Python không sinh thư mục `__pycache__` làm bẩn cây thư mục.
@@ -20,9 +20,9 @@ python -B -m unittest discover -s tests -v
 
 Mỗi quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py) phải thỏa mãn 4 điều kiện:
 
-1. Không gắn cứng dữ liệu nội bộ: Tuyệt đối không đưa tên hệ thống, mã bảng riêng, tên phòng ban hay số liệu dự án vào mã nguồn mặc định. Các quy tắc đặc thù của riêng từng tổ chức phải nạp qua cờ `--custom-rules <tệp.json>`.
+1. Không ghi cố định dữ liệu nội bộ: Tuyệt đối không đưa tên hệ thống, mã bảng riêng, tên phòng ban hay số liệu dự án vào mã nguồn mặc định. Các quy tắc đặc thù của riêng từng tổ chức phải nạp qua cờ `--custom-rules <tệp.json>`.
 2. Khớp tuyến tính an toàn: Biểu thức chính quy không được chứa lượng từ lồng nhau gây treo máy trên văn bản dài. Mọi quy tắc mới phải vượt qua bài kiểm thử chuỗi độc hại hơn 200.000 ký tự dưới `500 ms` trong [tests/test_vi_scanner.py](tests/test_vi_scanner.py).
-3. Phân định rõ nhóm văn bản miễn trừ (`exempt_profiles`): Một cấu trúc câu có thể gượng gạo trong tin bài chung (`general`) nhưng lại hợp lệ trong văn bản pháp lý (`legal`) hoặc học thuật (`academic`). Luôn khai báo rõ `applicable_profiles` và `exempt_profiles`.
+3. Phân định rõ nhóm văn bản không áp dụng (`exempt_profiles`): Một cấu trúc câu có thể gượng gạo trong tin bài chung (`general`) nhưng lại hợp lệ trong văn bản pháp lý (`legal`) hoặc học thuật (`academic`). Luôn khai báo rõ `applicable_profiles` và `exempt_profiles`.
 4. Câu ví dụ sửa (`better_example`) phải tự vượt qua máy quét: Mọi chuỗi `better_example` trong quy tắc mới phải đạt `0` lỗi khi quét ở chế độ `all`. Câu sửa cũng phải giữ nguyên toàn bộ số liệu, từ phủ định và điều kiện so với `bad_example`.
 
 ## 3. Quy trình cập nhật quy tắc và từ vựng trên CSV
@@ -41,8 +41,7 @@ Khi sửa bảng CSV, mã nguồn hoặc tài liệu, hãy giữ đồng bộ gi
 ruff check scripts tests
 ruff format --check scripts tests
 mypy scripts tests
-python -B scripts/check_code_limits.py
 python -B scripts/vi_scanner.py selftest
-python -B -m unittest discover -s tests -v
+python -B -m pytest -v
 python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md .github/PULL_REQUEST_TEMPLATE.md references/rule-catalog.md references/voice-and-argument-patterns.md references/loanwords-and-exceptions.md --fail-on any --json
 ```

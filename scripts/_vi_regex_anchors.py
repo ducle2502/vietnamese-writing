@@ -183,9 +183,9 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
     "VIS-AI-004": "Bỏ câu dẫn dắt hoặc tự hỏi tự đáp kiểu văn mẫu; nêu thẳng luận điểm hoặc kết quả chính.",
     "VIS-AI-005": "Cắt bỏ lời kết hứa hẹn tương lai chung chung; khép lại bằng kết quả thực tế hoặc bước tiếp theo.",
     "VIS-AI-006": "Bỏ câu mở đầu 'Hãy thử tưởng tượng/hình dung...'; đi thẳng vào tình huống thực tế hoặc số liệu.",
-    "VIS-AI-007": "Bỏ mệnh đề bao sân 'Dù bạn là...'; nêu trực tiếp công dụng hoặc đối tượng sử dụng chính.",
-    "VIS-RHET-001": "Bỏ khung đòn bẩy 'Không chỉ là X, mà còn là Y'; nêu thẳng chức năng hoặc tác động thực tế.",
-    "VIS-RHET-002": "Thay cụm tán dương phóng đại tầm vóc bằng tác động thực tế hoặc con số đo kiểm được.",
+    "VIS-AI-007": "Bỏ câu gom mọi nhóm người đọc 'Dù bạn là...'; nêu trực tiếp công dụng hoặc đối tượng sử dụng chính.",
+    "VIS-RHET-001": "Bỏ cấu trúc 'Không chỉ là X, mà còn là Y'; nêu thẳng chức năng hoặc tác động thực tế.",
+    "VIS-RHET-002": "Thay cụm tán dương phóng đại bằng tác động thực tế hoặc con số đo kiểm được.",
     "VIS-RHET-004": "Bỏ khung liệt kê hai đầu mút 'Từ [A] cho đến [B], tất cả đều...'; gọi tên thẳng đối tượng.",
     "VIS-RHET-005": "Nêu rõ tên tổ chức, tác giả và năm công bố, hoặc bỏ cụm 'Các chuyên gia/Nhiều nghiên cứu'.",
     "VIS-RHET-006": "Bỏ khung nâng tầm 'Hơn cả X, đây là Y' / 'Không phải X, mà chính là Y'; mô tả thẳng chức năng.",
@@ -255,6 +255,45 @@ _LEX001_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
         ("phục vụ", "dò ", "máy"),
         "Thay cụm dịch sát kỹ thuật bằng động từ tiếng Việt tự nhiên ('kiểm thử', 'quét cổng', 'đối chiếu tự động').",
     ),
+    (
+        (" cứng",),
+        "Tránh khẩu ngữ dịch sát 'chặn/khóa/ép/gắn cứng'; dùng 'báo lỗi ngay', 'từ chối ngay' hoặc 'ghi cố định'.",
+    ),
+    (
+        ("dịch sát", " sát"),
+        "Không cắt cụt từ nối ('bị động dịch sát', 'sửa sát'); viết rõ 'câu bị động dịch từng chữ', 'bám sát'.",
+    ),
+    (
+        ("lặp ",),
+        "Tránh từ ghép tự chế ('lặp khuôn', 'lặp dày', 'lặp đều'); dùng 'rập khuôn', 'lặp lại dày đặc'.",
+    ),
+    (
+        (" cũ",),
+        "Danh từ chỉ chu kỳ thời gian ('kỳ', 'đợt', 'quý', 'tháng') đi với 'trước', không ghép với 'cũ'.",
+    ),
+    (
+        ("che chắn", "bảo toàn"),
+        "Tránh dịch thô 'masking/invariant' thành 'che chắn vùng', 'đối soát bảo toàn'; mô tả thẳng thao tác.",
+    ),
+    (
+        ("lối ", "lửng lơ"),
+        "Bỏ lối gọi tên văn vẻ giả tạo ('lối chêm từ', 'chêm ... lửng lơ'); dùng 'chêm tiếng Anh tùy tiện'.",
+    ),
+    (
+        (
+            "vĩ mô",
+            "giả định",
+            "bao sân",
+            "nhắc điền",
+            "đòn bẩy",
+            "kịch tính",
+            "biện chứng",
+            "tầm vóc",
+            "sóng đôi",
+            "sử dụng",
+        ),
+        "Thay thuật ngữ dịch thô hoặc tự chế kiểu AI bằng tiếng Việt tự nhiên, phổ thông.",
+    ),
 )
 _TRANS005_PREFIX_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
     (("nó ", "có một sự"), "Bỏ chủ ngữ giả ('Nó là...', 'Có một sự...'); đưa chủ ngữ thực và động từ lên đầu câu."),
@@ -314,7 +353,7 @@ def resolve_regex_suggestion(rid: str, matched_text: str) -> str | None:
         out = (
             "Xóa tham số theo dõi nguồn chatbot ('?utm_source=...') khỏi đường dẫn."
             if "utm_source=" in low
-            else "Điền thông tin thực tế hoặc xóa hẳn chỗ trống nhắc điền còn sót trong bản thảo."
+            else "Điền thông tin thực tế hoặc xóa hẳn chỗ trống chưa điền còn sót trong bản thảo."
         )
     elif rid == "VIS-CLICHE-002":
         if low.startswith(("tiến hành ", "thực hiện ")):

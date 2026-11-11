@@ -15,21 +15,49 @@ Tùy vai trò của đơn vị phát hành và quyết định mà người đ�
 
 ## 2. Kỹ thuật đặt tiêu đề và mở đoạn theo từng kiểu giọng
 
-1. **Tiêu đề cụm danh từ ngắn hoặc câu hỏi điều hành trực diện (`DIRECT_EXECUTIVE_GATEKEEPER`).** Khi trình cấp phê duyệt cao nhất, hãy dùng cụm danh từ ngắn từ 3 đến 8 chữ gọi thẳng mảng rủi ro. Trong bảng tóm tắt, có thể đặt câu hỏi trực diện (*Hạ tầng đã sẵn sàng đáp ứng tải thực tế chưa?*, *Dữ liệu chuyển đổi đã đủ điều kiện nghiệm thu chưa?*) rồi chốt ngay trạng thái đạt hay chưa đạt ở câu đầu.
-2. **Tiêu đề câu ghép hai vế đối lập (`BALANCED_COMPARATIVE_SUPERVISORY`).** Lối đặt tiêu đề này ghi nhận nỗ lực của đơn vị thực hiện mà không làm mờ rủi ro trọng yếu. Mở vế đầu bằng tên mảng việc và điểm tiến bộ, nối bằng chữ *nhưng* rồi nêu thẳng điểm nghẽn cốt lõi để người đọc nắm trọn kết luận ngay từ mục lục.
-3. **Nhãn phân đoạn kết thúc bằng dấu chấm (`.`).** Áp dụng cho khung 5 bước (*Thực trạng và bằng chứng.*, *Yêu cầu cần đạt.*, *Nguyên nhân kiểm soát.*, *Rủi ro và ảnh hưởng.*, *Kiến nghị kiểm toán.*). Hãy đặt nhãn ngắn kết thúc bằng dấu chấm ngay đầu đoạn. Viết tiếp câu chủ đề trên cùng một dòng để đoạn văn gọn hơn danh sách hai chấm và không chạm lỗi `VIS-FMT-001`.
-4. **Công thức nén nhận định trong ô bảng theo dõi (2 đến 4 mệnh đề ngắn).** Khi viết cột nhận xét tiến độ trong bảng lớn, hãy giữ thứ tự cố định. Mở đầu bằng trạng thái thời hạn (*quá hạn 62 ngày*, *còn 13 ngày đến hạn*, *chưa giao hạn cụ thể*), tiếp theo là độ lùi hạn (*dự kiến lùi 92 ngày*). Cuối cùng, chốt chất lượng đầu ra (*kết quả mới dừng ở hoạt động trung gian, chưa có sản phẩm kiểm chứng*).
+### 2.1. Tiêu đề cụm danh từ ngắn hoặc câu hỏi điều hành trực diện (`DIRECT_EXECUTIVE_GATEKEEPER`)
+
+Khi trình cấp phê duyệt cao nhất, hãy dùng cụm danh từ ngắn từ 3 đến 8 chữ gọi thẳng mảng rủi ro. Trong bảng tóm tắt, có thể đặt câu hỏi trực diện (*Hạ tầng đã sẵn sàng đáp ứng tải thực tế chưa?*, *Dữ liệu chuyển đổi đã đủ điều kiện nghiệm thu chưa?*) rồi chốt ngay trạng thái đạt hay chưa đạt ở câu đầu.
+
+### 2.2. Tiêu đề câu ghép hai vế đối lập (`BALANCED_COMPARATIVE_SUPERVISORY`)
+
+Cách đặt tiêu đề này ghi nhận kết quả bước đầu của đơn vị thực hiện mà không làm mờ rủi ro trọng yếu. Mở vế đầu bằng tên mảng việc và điểm tiến bộ, nối bằng chữ *nhưng* rồi nêu thẳng điểm nghẽn cốt lõi để người đọc nắm trọn kết luận ngay từ mục lục.
+
+### 2.3. Nhãn phân đoạn văn xuôi kết thúc bằng dấu chấm (`.`)
+
+Áp dụng cho đoạn văn độc lập theo khung 5 bước (*Thực trạng và bằng chứng.*, *Yêu cầu cần đạt.*, *Nguyên nhân kiểm soát.*, *Rủi ro và ảnh hưởng.*, *Kiến nghị kiểm toán.*). Đặt nhãn ngắn kết thúc bằng dấu chấm ngay đầu đoạn văn xuôi (không thêm dấu gạch đầu dòng `-` hay số thứ tự) rồi viết tiếp câu chủ đề trên cùng một dòng.
+
+### 2.4. Thứ tự nén nhận định trong ô bảng theo dõi (2 đến 4 mệnh đề ngắn)
+
+Khi viết cột nhận xét tiến độ trong bảng lớn, hãy giữ thứ tự cố định. Mở đầu bằng trạng thái thời hạn (*quá hạn 62 ngày*, *còn 13 ngày đến hạn*, *chưa giao hạn cụ thể*), tiếp theo là độ lùi hạn (*dự kiến lùi 92 ngày*). Cuối cùng, chốt chất lượng đầu ra (*kết quả mới dừng ở hoạt động trung gian, chưa có sản phẩm kiểm chứng*).
 
 ## 3. Sáu kỷ luật dẫn số liệu và khóa ranh giới bằng chứng
 
 Công cụ [scripts/vi_scanner.py](../scripts/vi_scanner.py) tự động rà 6 nguyên tắc này qua quy tắc `VIS-STRUCT-002` và lệnh `profile`:
 
-1. **Ghép cặp `Tử số/Mẫu số (Tỷ lệ %)` khi chốt kết luận.** Không viết tỷ lệ phần trăm hoàn thành đứng trơ một mình vì dễ che giấu mẫu số nhỏ. Luôn ghi đủ cả tử số, mẫu số và tỷ lệ như *Có 138/213 đơn vị gửi báo cáo đánh giá, tương đương 64,8%*.
-2. **Tách bạch hoạt động trung gian với đầu ra kiểm chứng được.** Các bước họp bàn, dự thảo, đang trình duyệt, gửi công văn nhắc hay hướng dẫn lại chỉ phản ánh tiến độ xử lý, chưa phải hoàn thành. Chỉ ghi nhận đã đóng lỗi khi có biên bản nghiệm thu hoặc kết quả kiểm tra lại đạt yêu cầu.
-3. **Tách tỷ lệ hoàn thành không lỗi khỏi tỷ lệ thực hiện còn vướng mắc.** Trong báo cáo tiến độ hoặc kiểm thử, tuyệt đối không cộng gộp giao dịch còn lỗi vào tỷ lệ hoàn thành chung. Báo cáo phải tách rõ ba nhóm: hoàn thành không lỗi, thực hiện được nhưng còn lỗi và không thực hiện được.
-4. **Không dùng cân đối tổng hợp hoặc bù trừ ròng để kết luận khớp đúng từng dòng.** Tổng phát sinh Nợ bằng tổng phát sinh Có không chứng minh dữ liệu khớp ở cấp giao dịch đơn lẻ. Tương tự, tổng chênh lệch ròng bằng 0 do các khoản thừa thiếu tự bù trừ nhau vẫn có thể che khuất lỗi. Khi đối soát dữ liệu tài chính, hãy kiểm tra theo tổng giá trị tuyệt đối của chênh lệch trên từng tài khoản và hợp đồng.
-5. **Tam giác đối chứng đa nguồn và kiểm soát trôi mẫu số.** Khi nhiều nguồn cùng báo cáo về một sự kiện, hãy đặt các con số cạnh nhau trong cùng một câu để đối chiếu trực tiếp. Kết hợp chạy `python scripts/vi_scanner.py profile` để rà trường `ung_vien_lech_mau_so`, phát hiện sớm chỗ lệch mẫu số giữa các trang hoặc sót tiêu đề từ tệp mẫu kỳ trước (`template_title_mismatch`).
-6. **Chuẩn hóa từ tình thái và ranh giới phạm vi đánh giá (`Metacognition`).** Với sự kiện đã xảy ra và có số liệu, dùng động từ khẳng định hoặc phủ định dứt khoát (*mới đạt 48,6%*, *chưa hoàn thành*). Khi nêu hệ quả rủi ro tương lai nếu vận hành sớm, chỉ dùng đúng một từ tình thái *có thể* (*Khách hàng có thể bị tính sai dư nợ*). Không khẳng định tuyệt đối vô căn cứ và không chồng nhiều từ rào đón. Đầu báo cáo luôn nêu rõ nguồn dữ liệu tạm giả định, phạm vi chưa kiểm chứng độc lập và điều kiện thay đổi ý kiến đánh giá.
+### 3.1. Ghép cặp `Tử số/Mẫu số (Tỷ lệ %)` khi chốt kết luận
+
+Không viết tỷ lệ phần trăm đứng trơ một mình. Cách viết thiếu mẫu số rất dễ che giấu quy mô mẫu nhỏ. Hãy ghi đủ cả tử số, mẫu số và tỷ lệ, chẳng hạn *Có 138/213 đơn vị gửi báo cáo đánh giá, tương đương 64,8%*.
+
+### 3.2. Tách bạch hoạt động trung gian với đầu ra kiểm chứng được
+
+Họp bàn, gửi công văn nhắc hay hướng dẫn lại chưa phải kết quả hoàn thành. Các hoạt động này chỉ phản ánh tiến độ xử lý trung gian. Chỉ ghi nhận đã đóng lỗi khi đơn vị có biên bản nghiệm thu hoặc kết quả kiểm tra lại thực tế đạt yêu cầu.
+
+### 3.3. Tách tỷ lệ hoàn thành không lỗi khỏi tỷ lệ thực hiện còn vướng mắc
+
+Tuyệt đối không gộp giao dịch còn lỗi vào tỷ lệ hoàn thành chung. Báo cáo kiểm thử phải tách rõ ba nhóm kết quả: hoàn thành không lỗi, thực hiện được nhưng còn vướng thao tác và không thực hiện được.
+
+### 3.4. Không dùng cân đối tổng hợp hoặc bù trừ ròng để kết luận khớp đúng từng dòng
+
+Tổng phát sinh Nợ bằng tổng phát sinh Có không chứng minh dữ liệu khớp ở cấp giao dịch đơn lẻ. Tương tự, tổng chênh lệch ròng bằng 0 do các khoản thừa thiếu tự bù trừ nhau vẫn có thể che khuất lỗi. Khi đối soát dữ liệu tài chính, hãy kiểm tra theo tổng giá trị tuyệt đối của chênh lệch trên từng tài khoản và hợp đồng.
+
+### 3.5. Tam giác đối chứng đa nguồn và kiểm soát trôi mẫu số
+
+Khi nhiều nguồn cùng báo cáo về một sự kiện, hãy đặt các con số cạnh nhau trong cùng một câu để đối chiếu trực tiếp. Kết hợp chạy `python scripts/vi_scanner.py profile` để rà trường `ung_vien_lech_mau_so`, phát hiện sớm chỗ lệch mẫu số giữa các trang hoặc sót tiêu đề từ tệp mẫu kỳ trước (`template_title_mismatch`).
+
+### 3.6. Chuẩn hóa từ tình thái và ranh giới phạm vi đánh giá (`Metacognition`)
+
+Với sự kiện đã xảy ra và có số liệu, dùng động từ khẳng định hoặc phủ định dứt khoát (*mới đạt 48,6%*, *chưa hoàn thành*). Khi nêu hệ quả rủi ro tương lai nếu vận hành sớm, chỉ dùng đúng một từ tình thái *có thể* (*Khách hàng có thể bị tính sai dư nợ*). Không khẳng định tuyệt đối vô căn cứ và không chồng nhiều từ rào đón. Đầu báo cáo luôn nêu rõ nguồn dữ liệu tạm giả định, phạm vi chưa kiểm chứng độc lập và điều kiện thay đổi ý kiến đánh giá.
 
 ## 4. Chuyển ngữ từ dữ liệu kỹ thuật và báo cáo tiến độ sang văn phong quản trị
 

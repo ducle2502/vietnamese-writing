@@ -238,11 +238,6 @@ nhắm mắt đưa chân,banned_phrase,VIS-TONE-001,"Thành ngữ khẩu ngữ k
 vỡ trận,banned_phrase,VIS-TONE-001,"Từ lóng kịch tính hóa hiện trường; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Từ lóng kịch tính hóa hiện trường
 vỡ trần,banned_phrase,VIS-TONE-001,"Khẩu ngữ suồng sã; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Khẩu ngữ suồng sã
 tê liệt hoàn toàn,banned_phrase,VIS-TONE-001,"Cụm kịch tính hóa quá mức bằng chứng; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Cụm kịch tính hóa quá mức bằng chứng
-sập toàn tuyến,banned_phrase,VIS-TONE-001,"Cụm kịch tính hóa hiện trường; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Cụm kịch tính hóa hiện trường
-khủng hoảng khóa tài khoản,banned_phrase,VIS-TONE-001,"Gắn nhãn khủng hoảng cảm tính; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Gắn nhãn khủng hoảng cảm tính
-khủng hoảng hệ thống,banned_phrase,VIS-TONE-001,"Gắn nhãn khủng hoảng cảm tính; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Gắn nhãn khủng hoảng cảm tính
-khủng hoảng dữ liệu,banned_phrase,VIS-TONE-001,"Gắn nhãn khủng hoảng cảm tính; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Gắn nhãn khủng hoảng cảm tính
-khủng hoảng vận hành,banned_phrase,VIS-TONE-001,"Gắn nhãn khủng hoảng cảm tính; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Gắn nhãn khủng hoảng cảm tính
 trực chiến 24/7,banned_phrase,VIS-TONE-001,"Khẩu ngữ quân sự hóa hoạt động vận hành; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Khẩu ngữ quân sự hóa hoạt động vận hành
 trực chiến,banned_phrase,VIS-TONE-001,"Khẩu ngữ quân sự hóa hoạt động vận hành; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Khẩu ngữ quân sự hóa hoạt động vận hành
 cứu nguy ngoạn mục,banned_phrase,VIS-TONE-001,"Tán dương kịch tính hóa; đổi sang cách diễn đạt trung tính, bám sát mức độ bằng chứng.",active,Tán dương kịch tính hóa
@@ -284,32 +279,9 @@ kiểm tra tự động đối soát,banned_phrase,VIS-LEX-001,"Trật tự từ
 dấu ấn công việc,banned_phrase,VIS-LEX-001,"Dịch từng chữ sáo rỗng; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ sáo rỗng
 điểm cốt lõi vận hành,banned_phrase,VIS-LEX-001,"Dịch từng chữ gượng gạo; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ gượng gạo
 đọc nhanh trước khi vào,banned_phrase,VIS-LEX-001,"Tiêu đề dịch thô; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Tiêu đề dịch thô
-khung hợp đồng,banned_phrase,VIS-LEX-001,Dịch từng chữ từ 'contract framework / interface'; sửa thành 'giao diện dùng chung' hoặc 'đặc tả dữ liệu'.,active,Dịch từng chữ từ 'contract framework / interface'
-khung vận hành,banned_phrase,VIS-LEX-001,Dịch từng chữ từ 'operational framework'; nêu trực tiếp quy trình vận hành cụ thể.,active,Dịch từng chữ từ 'operational framework'
 bộ khung chạy sẵn,banned_phrase,VIS-LEX-001,Dịch từng chữ từ 'runtime harness / skeleton'; sửa thành 'mã khung chạy thử'.,active,Dịch từng chữ từ 'runtime harness / skeleton'
-khung chạy sẵn,banned_phrase,VIS-LEX-001,Dịch từng chữ từ 'runtime skeleton'; sửa thành 'mã khung chạy thử'.,active,Dịch từng chữ từ 'runtime skeleton'
-khung kiểm thử,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'test harness / framework'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'test harness / framework'
-khung màn hình,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'screen frame'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'screen frame'
-khung giao diện,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'UI shell / frame'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'UI shell / frame'
-khung quyết định,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'decision framework'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'decision framework'
-khung thực thi,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'execution framework'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'execution framework'
-khung dữ liệu,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'dataframe / data schema'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'dataframe / data schema'
-khung kiến trúc,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'architecture framework'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'architecture framework'
-khung quản trị,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'governance framework'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'governance framework'
-khung điều phối,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'orchestration framework'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'orchestration framework'
-khung rào đón,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'guardrail framework'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'guardrail framework'
 khóa hợp đồng,banned_phrase,VIS-LEX-001,Dịch từng chữ từ 'lock the interface contract'; sửa thành 'chốt đặc tả giao diện / tệp khai báo chung'.,active,Dịch từng chữ từ 'lock the interface contract'
-hợp đồng dữ liệu,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'data contract'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'data contract'
-hợp đồng module,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'module contract'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'module contract'
-hợp đồng mô-đun,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'module contract'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'module contract'
-hợp đồng api,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'API contract'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'API contract'
-hợp đồng giao diện,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'interface contract'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'interface contract'
-hợp đồng header,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'header contract'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'header contract'
 thay đổi hợp đồng phải cập nhật,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'contract changes must update'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'contract changes must update'
-giao kèo dữ liệu,banned_phrase,VIS-LEX-001,Tự chế từ dịch 'data contract'; sửa thành 'quy ước cấu trúc dữ liệu'.,active,Tự chế từ dịch 'data contract'
-giao kèo giao diện,banned_phrase,VIS-LEX-001,Tự chế từ dịch 'interface contract'; sửa thành 'quy ước giao diện'.,active,Tự chế từ dịch 'interface contract'
-giao kèo api,banned_phrase,VIS-LEX-001,Tự chế từ dịch 'API contract'; sửa thành 'đặc tả API'.,active,Tự chế từ dịch 'API contract'
-giao kèo module,banned_phrase,VIS-LEX-001,Tự chế từ dịch 'module contract'; sửa thành 'quy ước giao tiếp giữa các mô-đun'.,active,Tự chế từ dịch 'module contract'
 mô hình vận hành theo chu kỳ,banned_phrase,VIS-LEX-001,"Dịch thô từ 'cyclic operating model'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch thô từ 'cyclic operating model'
 mô hình vận hành,banned_phrase,VIS-LEX-001,"Dịch thô từ 'operating model'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch thô từ 'operating model'
 tác vụ vận hành,banned_phrase,VIS-LEX-001,"Dịch thô từ 'operational task'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch thô từ 'operational task'
@@ -367,18 +339,6 @@ mẫu thông điệp,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'messag
 thông điệp commit,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'commit message'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'commit message'
 thông điệp lỗi,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'error message'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'error message'
 thông điệp cảnh báo,banned_phrase,VIS-LEX-001,"Dịch từng chữ từ 'warning message'; nên diễn đạt lại bằng thuật ngữ tiếng Việt tự nhiên, sát thực tế công việc.",active,Dịch từng chữ từ 'warning message'
-hiện thực lớp,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a class'; sửa thành 'viết / lập trình lớp' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a class'
-hiện thực hàm,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a function'; sửa thành 'viết / lập trình hàm' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a function'
-hiện thực phương thức,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a method'; sửa thành 'viết / lập trình phương thức' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a method'
-hiện thực bộ,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a handler/scanner'; sửa thành 'viết / lập trình bộ' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a handler/scanner'
-hiện thực bảng,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a table/panel'; sửa thành 'viết / lập trình bảng' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a table/panel'
-hiện thực cơ chế,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a mechanism'; sửa thành 'viết / lập trình cơ chế' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a mechanism'
-hiện thực giao diện,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement an interface/UI'; sửa thành 'viết / lập trình giao diện' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement an interface/UI'
-hiện thực thuật toán,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement an algorithm'; sửa thành 'viết / lập trình thuật toán' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement an algorithm'
-hiện thực mô-đun,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a module'; sửa thành 'viết / lập trình mô-đun' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a module'
-hiện thực module,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a module'; sửa thành 'viết / lập trình module' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a module'
-hiện thực kịch bản,banned_phrase,VIS-LEX-001,Dịch sát từ 'implement a script'; sửa thành 'viết / lập trình kịch bản' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'implement a script'
-hiện thực độc lập,banned_phrase,VIS-LEX-001,Dịch sát từ 'standalone implementation'; sửa thành 'viết / lập trình độc lập' thay vì dùng 'hiện thực'.,active,Dịch sát từ 'standalone implementation'
 ", biến thách thức thành động lực tăng trưởng",banned_phrase,VIS-RHET-002,Cắt bỏ mệnh đề phụ tán dương cuối câu; giữ lại kết quả định lượng kiểm chứng được.,active,"Khuôn câu AI cố định, nhóm 05"
 ", củng cố vị thế tiên phong trên thị trường",banned_phrase,VIS-RHET-002,Cắt bỏ mệnh đề phụ tán dương cuối câu; giữ lại kết quả định lượng kiểm chứng được.,active,"Khuôn câu AI cố định, nhóm 05"
 ", hài hòa giữa lợi ích kinh tế và bền vững",banned_phrase,VIS-RHET-002,Cắt bỏ mệnh đề phụ tán dương cuối câu; giữ lại kết quả định lượng kiểm chứng được.,active,"Khuôn câu AI cố định, nhóm 05"
@@ -400,7 +360,7 @@ bài viết dưới đây sẽ cung cấp cái nhìn,banned_phrase,VIS-AI-004,B�
 bên cạnh đó,banned_phrase,VIS-FMT-002,Hạn chế mở đầu nhiều câu liên tiếp bằng từ nối 'bên cạnh đó'; hãy gộp câu hoặc vào thẳng chủ ngữ.,active,"Cụm văn mẫu AI, nhóm 14 trong tài liệu nguồn"
 bí mật thực sự là gì?,banned_phrase,VIS-CLICHE-004,Bỏ câu hỏi tu từ / câu chốt một dòng tạo kịch tính; viết câu trần thuật trực tiếp.,active,"Khuôn câu AI cố định, nhóm 07"
 bước ngoặt,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
-bước nhảy vọt,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
+bước nhảy vọt,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn (bắt ngay)"
 bước tiến đáng kể,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
 bước vào kỷ nguyên mới,banned_phrase,VIS-AI-003,"Bỏ cụm mở đầu vĩ mô sáo rỗng; đi thẳng vào chủ thể, thời điểm và số liệu cụ thể.",active,"Cụm văn mẫu AI, nhóm 01 trong tài liệu nguồn"
 bước đệm,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
@@ -409,7 +369,7 @@ bạn có đang gặp khó khăn với,banned_phrase,VIS-CLICHE-004,Bỏ lời c
 bạn hoàn toàn đúng khi nghĩ vậy,banned_phrase,VIS-AI-001,Xóa câu xã giao của chatbot; đi thẳng vào nội dung công việc.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
 bạn không tưởng tượng đâu,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn giật gân một dòng; viết thành câu trần thuật rõ chủ ngữ và vị ngữ.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
 bạn đã sẵn sàng bứt phá chưa?,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn giật gân một dòng; viết thành câu trần thuật rõ chủ ngữ và vị ngữ.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
-bản giao hưởng,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
+bản giao hưởng,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn (bắt ngay)"
 bản thiết kế chi tiết,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('bản thiết kế chi tiết'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
 bảng điều khiển trực quan động,banned_phrase,VIS-LEX-001,Dịch từng chữ từ 'dynamic interactive dashboard'; sửa thành 'bảng theo dõi số liệu trực tiếp'.,active,"Cụm văn mẫu AI, nhóm 12 trong tài liệu nguồn"
 bất chấp thực tế là,banned_phrase,VIS-TRANS-005,"Dịch sát cấu trúc rào đón tiếng Anh; thay bằng liên từ gọn ('dù', 'vì', 'thực tế').",active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
@@ -441,8 +401,8 @@ chuẩn hóa,banned_phrase,VIS-CLICHE-001,Hạn chế lặp động từ trừu 
 chuẩn quốc tế,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
 chuỗi giá trị,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('chuỗi giá trị'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
 chào mừng bạn đến với cẩm nang,banned_phrase,VIS-CLICHE-004,Bỏ lời chào/câu hỏi câu khách; đi thẳng vào vấn đề chính.,active,"Cụm văn mẫu AI, nhóm 02 trong tài liệu nguồn"
-châm ngòi nổ,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
-chân trời mới,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
+châm ngòi nổ,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn (bắt ngay)"
+chân trời mới,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn (bắt ngay)"
 chèo lái,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
 chìa khóa trao tay,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
 chính vì vậy,banned_phrase,VIS-FMT-002,Hạn chế mở đầu nhiều câu liên tiếp bằng từ nối 'chính vì vậy'; hãy gộp câu hoặc vào thẳng chủ ngữ.,active,"Cụm văn mẫu AI, nhóm 14 trong tài liệu nguồn"
@@ -470,7 +430,7 @@ các chuyên gia đầu ngành đều đồng thuận rằng,banned_phrase,VIS-R
 các nghiên cứu chứng minh,banned_phrase,VIS-RHET-005,"Nêu rõ nguồn trích dẫn cụ thể (tác giả, báo cáo, năm) thay vì dẫn nguồn ẩn danh.",active,"Cụm văn mẫu AI, nhóm 14 trong tài liệu nguồn"
 các nhà phân tích lưu ý,banned_phrase,VIS-RHET-005,"Nêu rõ nguồn trích dẫn cụ thể (tác giả, báo cáo, năm) thay vì dẫn nguồn ẩn danh.",active,"Cụm văn mẫu AI, nhóm 14 trong tài liệu nguồn"
 cách mạng,banned_phrase,VIS-FMT-004,Tránh xếp liên tiếp các tính từ khen ngợi chung chung; thay bằng số liệu cụ thể.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
-cách mạng hóa,banned_phrase,VIS-RHET-002,Bỏ động từ tán dương phóng đại; mô tả kết quả thay đổi bằng số liệu thực tế.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
+cách mạng hóa,banned_phrase,VIS-RHET-002,Bỏ động từ tán dương phóng đại; mô tả kết quả thay đổi bằng số liệu thực tế.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
 cánh cửa thần kỳ,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 câu hỏi đầy thú vị,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
 câu trả lời nằm ở đâu?,banned_phrase,VIS-CLICHE-004,Bỏ câu hỏi tu từ / câu chốt một dòng tạo kịch tính; viết câu trần thuật trực tiếp.,active,"Khuôn câu AI cố định, nhóm 07"
@@ -489,11 +449,11 @@ công phu,banned_phrase,VIS-FMT-004,Tránh xếp liên tiếp các tính từ kh
 cú hích chiến lược,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 căn cứ vào sự thật là,banned_phrase,VIS-TRANS-005,"Dịch sát cấu trúc rào đón tiếng Anh; thay bằng liên từ gọn ('dù', 'vì', 'thực tế').",active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
 cơ sở hạ tầng đám mây,banned_phrase,VIS-CLICHE-001,Tránh lặp dày danh từ khẩu hiệu công nghệ ('cơ sở hạ tầng đám mây'); nêu rõ hệ thống và thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 12 trong tài liệu nguồn"
-cơn địa chấn,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
+cơn địa chấn,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn (bắt ngay)"
 cải tiến liên tục,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('cải tiến liên tục'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
 cảm ơn bạn đã đồng hành đến cuối bài viết chuyên sâu này,banned_phrase,VIS-AI-001,Xóa câu mở đầu/kết thúc hội thoại của trợ lý AI; chỉ giữ nội dung chính.,active,"Khuôn câu AI cố định, nhóm 10"
 cảnh quan,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Thị trường [X], ngành [Y], thực trạng, tình hình thực tế.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh
-cảnh quan số,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
+cảnh quan số,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn (bắt ngay)"
 cầm ngọn cờ đầu,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 cần cân nhắc kỹ lưỡng cả hai mặt của đồng xu trước khi,banned_phrase,VIS-CLICHE-001,Bỏ câu rào đón nước đôi chung chung; nêu rõ điều kiện áp dụng cụ thể.,active,"Khuôn câu AI cố định, nhóm 08"
 cần ghi nhớ rằng,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
@@ -511,7 +471,7 @@ củng cố vững chắc luận điểm,banned_phrase,VIS-RHET-002,Lược bỏ
 cực kỳ có ý nghĩa,banned_phrase,VIS-RHET-002,Lược bỏ trạng từ cường điệu dư thừa; giữ lại nhận định khách quan.,active,"Cụm văn mẫu AI, nhóm 09 trong tài liệu nguồn"
 cực kỳ quan trọng,banned_phrase,VIS-RHET-002,Lược bỏ trạng từ cường điệu dư thừa; giữ lại nhận định khách quan.,active,"Cụm văn mẫu AI, nhóm 09 trong tài liệu nguồn"
 cực kỳ sáng tạo,banned_phrase,VIS-RHET-002,Lược bỏ trạng từ cường điệu dư thừa; giữ lại nhận định khách quan.,active,"Cụm văn mẫu AI, nhóm 09 trong tài liệu nguồn"
-cực đại hóa,banned_phrase,VIS-RHET-002,Bỏ động từ tán dương phóng đại; mô tả kết quả thay đổi bằng số liệu thực tế.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
+cực đại hóa,banned_phrase,VIS-RHET-002,Bỏ động từ tán dương phóng đại; mô tả kết quả thay đổi bằng số liệu thực tế.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
 di sản phong phú,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
 diễn đạt theo cách khác,banned_phrase,VIS-AI-004,Bỏ câu dẫn dắt chuyển đoạn vòng vo; trình bày thẳng nội dung hoặc số liệu.,active,"Cụm văn mẫu AI, nhóm 02 trong tài liệu nguồn"
 do thực tế hiển nhiên là,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
@@ -532,7 +492,7 @@ dấu ấn không phai mờ,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩ
 dẫn dắt sáng kiến,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 dẫn đầu xu hướng,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
 dẫu vậy,banned_phrase,VIS-FMT-002,Hạn chế mở đầu nhiều câu liên tiếp bằng từ nối 'dẫu vậy'; hãy gộp câu hoặc vào thẳng chủ ngữ.,active,"Cụm văn mẫu AI, nhóm 14 trong tài liệu nguồn"
-dệt nên,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
+dệt nên,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
 dịch chuyển cây kim,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 dữ liệu lớn,banned_phrase,VIS-CLICHE-001,Tránh lặp dày danh từ khẩu hiệu công nghệ ('dữ liệu lớn'); nêu rõ hệ thống và thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 12 trong tài liệu nguồn"
 dữ liệu thời gian thực,banned_phrase,VIS-CLICHE-001,Tránh lặp dày danh từ khẩu hiệu công nghệ ('dữ liệu thời gian thực'); nêu rõ hệ thống và thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 12 trong tài liệu nguồn"
@@ -543,7 +503,7 @@ dựa trên thông tin hiện có,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn g
 dựng khung ý tưởng,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 "giao thoa giữa nghệ thuật, khoa học và công nghệ",banned_phrase,VIS-FMT-004,Tránh ghép bộ 3 vế khen ngợi cân xứng kiểu văn mẫu; nêu chỉ số thực tế đạt được.,active,"Khuôn câu AI cố định, nhóm 06"
 giao thoa truyền thống và hiện đại,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
-gieo mầm cho,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
+gieo mầm cho,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
 giàu bản sắc,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
 giàu tiềm năng,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
 giá trị cốt lõi,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('giá trị cốt lõi'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
@@ -659,7 +619,7 @@ không còn nghi ngờ gì nữa,banned_phrase,VIS-AI-004,Lược bỏ cụm rà
 không có gì ngạc nhiên khi,banned_phrase,VIS-RHET-002,Lược bỏ trạng từ cường điệu dư thừa; giữ lại nhận định khách quan.,active,"Cụm văn mẫu AI, nhóm 09 trong tài liệu nguồn"
 không có một công thức chung nào áp dụng cho tất cả,banned_phrase,VIS-CLICHE-001,Bỏ câu rào đón nước đôi chung chung; nêu rõ điều kiện áp dụng cụ thể.,active,"Khuôn câu AI cố định, nhóm 08"
 không cần bàn cãi rằng,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
-không lay chuyển,banned_phrase,VIS-RHET-002,Bỏ cụm tính từ phóng đại tầm vóc; thay bằng thông tin định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
+không lay chuyển,banned_phrase,VIS-RHET-002,Bỏ cụm tính từ phóng đại tầm vóc; thay bằng thông tin định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn (bắt ngay)"
 không lý thuyết rườm rà. đi thẳng vào việc,banned_phrase,VIS-CLICHE-004,Bỏ câu hỏi tu từ / câu chốt một dòng tạo kịch tính; viết câu trần thuật trực tiếp.,active,"Khuôn câu AI cố định, nhóm 07"
 không lý thuyết suông,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn giật gân một dòng; viết thành câu trần thuật rõ chủ ngữ và vị ngữ.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
 không màu mè,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn giật gân một dòng; viết thành câu trần thuật rõ chủ ngữ và vị ngữ.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
@@ -672,10 +632,10 @@ không phải sự hỗn loạn. mà là sự rõ ràng,banned_phrase,VIS-CLICHE
 không phải điểm đến mà là hành trình,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn giật gân một dòng; viết thành câu trần thuật rõ chủ ngữ và vị ngữ.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
 không thể phủ nhận rằng,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
 không thể đánh giá quá cao việc,banned_phrase,VIS-TRANS-005,"Dịch sát cấu trúc rào đón tiếng Anh; thay bằng liên từ gọn ('dù', 'vì', 'thực tế').",active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
-không tì vết,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
+không tì vết,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn (bắt ngay)"
 không tốn công sức,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
 không ít nhà phê bình đã lên tiếng cho rằng,banned_phrase,VIS-RHET-005,"Nêu rõ tên tác giả, tổ chức và năm công bố thay vì dẫn nguồn chung chung.",active,"Khuôn câu AI cố định, nhóm 08"
-không đối thủ,banned_phrase,VIS-RHET-002,Bỏ cụm tính từ phóng đại tầm vóc; thay bằng thông tin định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
+không đối thủ,banned_phrase,VIS-RHET-002,Bỏ cụm tính từ phóng đại tầm vóc; thay bằng thông tin định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn (bắt ngay)"
 không ồn ào. không phô trương. chỉ kết quả,banned_phrase,VIS-CLICHE-004,Bỏ câu hỏi tu từ / câu chốt một dòng tạo kịch tính; viết câu trần thuật trực tiếp.,active,"Khuôn câu AI cố định, nhóm 07"
 khơi dậy nguồn cảm hứng cho,banned_phrase,VIS-RHET-002,Lược bỏ cụm phóng đại tầm quan trọng; nêu thẳng tác động đo lường được.,active,"Cụm văn mẫu AI, nhóm 06 trong tài liệu nguồn"
 khả năng mở rộng quy mô,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('khả năng mở rộng quy mô'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
@@ -683,7 +643,7 @@ khả năng vô tận,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dươ
 khắc họa rõ nét,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
 khẳng định vị thế độc tôn,banned_phrase,VIS-RHET-002,Lược bỏ cụm phóng đại tầm quan trọng; nêu thẳng tác động đo lường được.,active,"Cụm văn mẫu AI, nhóm 06 trong tài liệu nguồn"
 khỏi phải nói cũng biết,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
-kim chỉ nam,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
+kim chỉ nam,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn (bắt ngay)"
 kiên định,banned_phrase,VIS-FMT-004,Tránh xếp liên tiếp các tính từ khen ngợi chung chung; thay bằng số liệu cụ thể.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
 "kiến thức sâu rộng, kỹ năng sắc bén và tư duy đổi mới",banned_phrase,VIS-FMT-004,Tránh ghép bộ 3 vế khen ngợi cân xứng kiểu văn mẫu; nêu chỉ số thực tế đạt được.,active,"Khuôn câu AI cố định, nhóm 06"
 kiến trúc tổng thể,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('kiến trúc tổng thể'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
@@ -715,11 +675,11 @@ luồng sinh khí mới,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn d�
 là minh chứng sống động cho,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Cho thấy rõ, chứng minh rằng, phản ánh việc....",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh
 làm nhạc trưởng điều phối,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 làm nổi bật,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
-làn gió mới,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
+làn gió mới,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn (bắt ngay)"
 lý do vấn đề này quan trọng là,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
 lăng kính đa chiều,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 lấy khách hàng làm trung tâm,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
-lặn sâu vào,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
+lặn sâu vào,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
 lẽ dĩ nhiên là,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
 lộ trình chuyển đổi,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('lộ trình chuyển đổi'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
 lợi thế cạnh tranh cốt lõi,banned_phrase,VIS-CLICHE-001,Tránh nhồi thuật ngữ quản trị chung chung ('lợi thế cạnh tranh cốt lõi'); nêu rõ chỉ số hoặc đầu việc cụ thể.,active,"Cụm văn mẫu AI, nhóm 11 trong tài liệu nguồn"
@@ -739,7 +699,7 @@ may đo riêng biệt,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/kh�
 minh chứng cho nỗ lực không ngừng,banned_phrase,VIS-RHET-002,Lược bỏ cụm phóng đại tầm quan trọng; nêu thẳng tác động đo lường được.,active,"Cụm văn mẫu AI, nhóm 06 trong tài liệu nguồn"
 minh chứng sống động,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 minh họa sinh động,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
-miền đất hứa,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
+miền đất hứa,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn (bắt ngay)"
 mài sắc kỹ năng,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 mê cung quyết định,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 mô hình hóa dự báo,banned_phrase,VIS-CLICHE-001,Tránh lặp dày danh từ khẩu hiệu công nghệ ('mô hình hóa dự báo'); nêu rõ hệ thống và thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 12 trong tài liệu nguồn"
@@ -1010,9 +970,9 @@ tuyệt vời! tôi rất sẵn lòng hỗ trợ bạn soạn thảo nội dung 
 tuyệt đối,banned_phrase,VIS-FMT-004,Tránh xếp liên tiếp các tính từ khen ngợi chung chung; thay bằng số liệu cụ thể.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
 tác động cao,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
 tác động sâu rộng,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
-tái kiến tạo,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
-tái định hình,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Tạo ra, xây dựng, làm thay đổi cách..., thiết kế lại.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh
-tái định nghĩa,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
+tái kiến tạo,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
+tái định hình,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Tạo ra, xây dựng, làm thay đổi cách..., thiết kế lại.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh (bắt ngay)
+tái định nghĩa,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
 tích hợp dữ liệu,banned_phrase,VIS-CLICHE-001,Tránh lặp dày danh từ khẩu hiệu công nghệ ('tích hợp dữ liệu'); nêu rõ hệ thống và thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 12 trong tài liệu nguồn"
 tích hợp liền mạch,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
 tính khái quát hóa,banned_phrase,VIS-CLICHE-001,Tránh lặp dày danh từ khẩu hiệu công nghệ ('tính khái quát hóa'); nêu rõ hệ thống và thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 12 trong tài liệu nguồn"
@@ -1044,7 +1004,7 @@ tạo tiền đề vững chắc cho,banned_phrase,VIS-RHET-002,Lược bỏ c�
 tạo đà cất cánh,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 tảng băng chìm phức tạp,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 tấm gương phản chiếu,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
-tấm thảm,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Sự giao thoa, nét đa dạng, tổng hòa, tập hợp, sự pha trộn.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh
+tấm thảm,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Sự giao thoa, nét đa dạng, tổng hòa, tập hợp, sự pha trộn.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh (bắt ngay)
 tấm toan khả năng,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 tất cả những dữ kiện trên đều hội tụ về một điểm chung:,banned_phrase,VIS-AI-004,Bỏ câu chuyển ý kết luận rườm rà; nêu thẳng hệ quả hoặc hành động cần làm.,active,"Khuôn câu AI cố định, nhóm 09"
 tất cả trong một,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
@@ -1072,7 +1032,7 @@ tự hào sở hữu,banned_phrase,VIS-CLICHE-002,"Thay cụm vòng vo né độ
 tựu trung lại,banned_phrase,VIS-AI-005,Hạn chế dùng cụm tóm tắt công thức cuối bài; nêu thẳng kết luận định lượng.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
 "tựu trung lại, qua những phân tích chi tiết ở trên",banned_phrase,VIS-AI-005,Bỏ lời tóm tắt kết bài chung chung; kết thúc bằng kết quả hoặc bước tiếp theo cụ thể.,active,"Khuôn câu AI cố định, nhóm 10"
 vai trò sống còn,banned_phrase,VIS-RHET-002,Thay cụm danh từ tán dương sáo rỗng bằng mô tả định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 13 trong tài liệu nguồn"
-viên đá tảng,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
+viên đá tảng,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn (bắt ngay)"
 vun đắp,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
 và phần tuyệt vời nhất?,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn giật gân một dòng; viết thành câu trần thuật rõ chủ ngữ và vị ngữ.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
 và thành thật mà nói? điều đó rất hiếm,banned_phrase,VIS-CLICHE-004,Bỏ câu hỏi tu từ / câu chốt một dòng tạo kịch tính; viết câu trần thuật trực tiếp.,active,"Khuôn câu AI cố định, nhóm 07"
@@ -1143,11 +1103,11 @@ xứng tầm đẳng cấp,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng 
 điểm nổi bật thực sự nằm ở,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
 điểm tựa vững vàng,banned_phrase,VIS-RHET-003,"Thay cụm danh từ ẩn dụ sáo rỗng bằng tên đối tượng, quy trình hoặc rủi ro cụ thể.",active,"Cụm văn mẫu AI, nhóm 10 trong tài liệu nguồn"
 đào sâu,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
-đào sâu vào,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Tìm hiểu kỹ, phân tích, mổ xẻ, xét cụ thể, bàn về.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh
+đào sâu vào,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Tìm hiểu kỹ, phân tích, mổ xẻ, xét cụ thể, bàn về.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh (bắt ngay)
 đáng chú ý hơn cả là,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
 đáng chú ý là,banned_phrase,VIS-FMT-002,Hạn chế mở đầu nhiều câu liên tiếp bằng từ nối 'đáng chú ý là'; hãy gộp câu hoặc vào thẳng chủ ngữ.,active,"Cụm văn mẫu AI, nhóm 14 trong tài liệu nguồn"
 đáng khen ngợi,banned_phrase,VIS-RHET-002,Bỏ cụm tính từ phóng đại tầm vóc; thay bằng thông tin định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
-đáng kinh ngạc,banned_phrase,VIS-RHET-002,Bỏ cụm tính từ phóng đại tầm vóc; thay bằng thông tin định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
+đáng kinh ngạc,banned_phrase,VIS-RHET-002,Bỏ cụm tính từ phóng đại tầm vóc; thay bằng thông tin định lượng kiểm chứng được.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn (bắt ngay)"
 đáng kể,banned_phrase,VIS-FMT-004,Tránh xếp liên tiếp các tính từ khen ngợi chung chung; thay bằng số liệu cụ thể.,active,"Cụm văn mẫu AI, nhóm 07 trong tài liệu nguồn"
 đáng kể hơn hết,banned_phrase,VIS-RHET-002,Lược bỏ trạng từ cường điệu dư thừa; giữ lại nhận định khách quan.,active,"Cụm văn mẫu AI, nhóm 09 trong tài liệu nguồn"
 đáng lưu tâm là,banned_phrase,VIS-AI-004,Lược bỏ cụm rào đón khẳng định hiển nhiên; nêu thẳng nhận định và bằng chứng.,active,"Cụm văn mẫu AI, nhóm 03 trong tài liệu nguồn"
@@ -1164,7 +1124,7 @@ xứng tầm đẳng cấp,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng 
 đây mới là cú ngoặt thực sự:,banned_phrase,VIS-CLICHE-004,Bỏ câu hỏi tu từ / câu chốt một dòng tạo kịch tính; viết câu trần thuật trực tiếp.,active,"Khuôn câu AI cố định, nhóm 07"
 đây mới là điểm mấu chốt:,banned_phrase,VIS-CLICHE-004,Bỏ câu dẫn giật gân một dòng; viết thành câu trần thuật rõ chủ ngữ và vị ngữ.,active,"Cụm văn mẫu AI, nhóm 15 trong tài liệu nguồn"
 đòn bẩy,banned_phrase,VIS-RHET-003,"Thay từ sáo mẫu bằng diễn đạt cụ thể: Dùng, sử dụng, áp dụng, tận dụng.",active,Cụm văn mẫu AI; thay bằng mô tả cụ thể theo ngữ cảnh
-đòn bẩy hóa,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn"
+đòn bẩy hóa,banned_phrase,VIS-RHET-003,Thay động từ ẩn dụ văn mẫu bằng động từ chỉ hành động nghiệp vụ trực tiếp.,active,"Cụm văn mẫu AI, nhóm 04 trong tài liệu nguồn (bắt ngay)"
 đóng gói giá trị,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 đóng vai trò là,banned_phrase,VIS-CLICHE-002,"Thay cụm vòng vo né động từ bằng 'là', 'có' hoặc động từ hành động trực tiếp.",active,"Cụm văn mẫu AI, nhóm 06 trong tài liệu nguồn"
 đóng vai trò như một,banned_phrase,VIS-CLICHE-002,"Thay cụm vòng vo né động từ bằng 'là', 'có' hoặc động từ hành động trực tiếp.",active,"Cụm văn mẫu AI, nhóm 06 trong tài liệu nguồn"
@@ -1183,7 +1143,7 @@ xứng tầm đẳng cấp,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng 
 đảm bảo sự phát triển hài hòa,banned_phrase,VIS-RHET-002,Lược bỏ cụm phóng đại tầm quan trọng; nêu thẳng tác động đo lường được.,active,"Cụm văn mẫu AI, nhóm 06 trong tài liệu nguồn"
 đầu tiên và quan trọng nhất,banned_phrase,VIS-FMT-002,Hạn chế mở đầu nhiều câu liên tiếp bằng từ nối 'đầu tiên và quan trọng nhất'; hãy gộp câu hoặc vào thẳng chủ ngữ.,active,"Cụm văn mẫu AI, nhóm 14 trong tài liệu nguồn"
 đầy hứa hẹn,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
-đầy mê hoặc,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
+đầy mê hoặc,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn (bắt ngay)"
 đẩy lùi mọi ranh giới,banned_phrase,VIS-RHET-003,Bỏ ẩn dụ hành trình/khám phá hoa mỹ; diễn đạt bằng động từ công việc trực tiếp.,active,"Cụm văn mẫu AI, nhóm 05 trong tài liệu nguồn"
 đậm đà bản sắc dân tộc,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
 đẳng cấp thế giới,banned_phrase,VIS-CLICHE-002,Bỏ sáo ngữ quảng cáo chung chung; mô tả trực tiếp tính năng hoặc thông số thực tế.,active,"Cụm văn mẫu AI, nhóm 08 trong tài liệu nguồn"
@@ -1380,7 +1340,6 @@ cải tiến to,banned_phrase,VIS-LEX-001,Dịch sát từng chữ từ tiếng 
 cẩu huyết,banned_phrase,VIS-LEX-001,Từ lậm convert hoặc khẩu ngữ dịch thô; nên diễn đạt là 'tình tiết kịch tính phi lý'.,active,"Mục dịch thô/dùng sai, nhóm 13 trong tài liệu nguồn"
 cắn bàn tay nuôi mình,banned_phrase,VIS-LEX-001,Dịch từng chữ thành ngữ nước ngoài; tương đương tiếng Việt tự nhiên là 'ăn cây nào rào cây ấy'.,active,"Mục dịch thô/dùng sai, nhóm 04 trong tài liệu nguồn"
 cắn một ngụm bánh,banned_phrase,VIS-LEX-001,Dùng sai lượng từ 'ngụm' cho đồ ăn đặc; sửa thành 'cắn một miếng bánh'.,active,Từ lậm convert hoặc dịch thô Đông Á
-cọ sát thực tế,banned_phrase,VIS-LEX-001,Sai chính tả hoặc dùng từ chưa chuẩn; sửa thành 'cọ xát'.,active,"Mục dịch thô/dùng sai, nhóm 15 trong tài liệu nguồn"
 cỏ bên kia xanh hơn,banned_phrase,VIS-LEX-001,Dịch từng chữ thành ngữ nước ngoài; tương đương tiếng Việt tự nhiên là 'đứng núi này trông núi nọ'.,active,"Mục dịch thô/dùng sai, nhóm 04 trong tài liệu nguồn"
 cổn,banned_phrase,VIS-LEX-001,Từ lậm convert hoặc khẩu ngữ dịch thô; nên diễn đạt là 'cút ngay!'.,active,"Mục dịch thô/dùng sai, nhóm 11 trong tài liệu nguồn"
 cộng đồng,banned_phrase,VIS-LEX-001,"Lậm nghĩa chữ Hán đồng hình dị nghĩa; trong ngữ cảnh này cần diễn đạt là 'cùng nhau, chung - phó từ'.",active,"Mục dịch thô/dùng sai, nhóm 08 trong tài liệu nguồn"
@@ -2010,3 +1969,44 @@ ngân sách hàng tỷ milliard,banned_phrase,VIS-LEX-001,Lẫn từ ngoại lai
 ở cú rơi của mũ,banned_phrase,VIS-LEX-001,Dịch từng chữ thành ngữ nước ngoài; tương đương tiếng Việt tự nhiên là 'ngay lập tức'.,active,"Mục dịch thô/dùng sai, nhóm 04 trong tài liệu nguồn"
 ủy khuất,banned_phrase,VIS-LEX-001,"Từ lậm convert hoặc khẩu ngữ dịch thô; nên diễn đạt là 'Ấm ức, tủi thân, oan ức, thiệt thòi, uất nghẹn'.",active,Từ lậm convert hoặc dịch thô Đông Á
 ủy khúc cầu toàn,banned_phrase,VIS-LEX-001,Từ lậm convert hoặc khẩu ngữ dịch thô; nên diễn đạt là 'nhẫn nhịn chịu thiệt để yên chuyện'.,active,"Mục dịch thô/dùng sai, nhóm 12 trong tài liệu nguồn"
+phát lộ,banned_phrase,VIS-TONE-002,"Tránh từ Hán - Việt cổ/điều tra 'phát lộ' cho lỗi hoặc dữ liệu; thay bằng 'phát hiện', 'ghi nhận' hoặc 'bộc lộ'.",active,Động từ cổ văn/điều tra lệch giọng báo cáo
+phát giác,banned_phrase,VIS-TONE-002,Tránh từ điều tra hình sự 'phát giác' cho sai lệch nghiệp vụ/kỹ thuật; thay bằng 'phát hiện' hoặc 'ghi nhận'.,active,Động từ điều tra hình sự lệch giọng báo cáo
+bại lộ,banned_phrase,VIS-TONE-002,Tránh từ cổ văn/hình sự 'bại lộ'; thay bằng 'bị phát hiện' hoặc 'lộ rõ'.,active,Động từ cổ văn/hình sự lệch giọng báo cáo
+vạch trần,banned_phrase,VIS-TONE-002,"Tránh động từ đả kích báo chí 'vạch trần'; thay bằng 'chỉ rõ', 'nêu rõ' hoặc 'xác định'.",active,Động từ báo chí đả kích lệch giọng trang trọng
+lật tẩy,banned_phrase,VIS-TONE-002,Tránh từ báo chí điều tra 'lật tẩy'; thay bằng 'làm rõ' hoặc 'phát hiện sai lệch'.,active,Động từ báo chí điều tra lệch giọng trang trọng
+bóc trần,banned_phrase,VIS-TONE-002,Tránh từ giật gân 'bóc trần'; thay bằng 'chỉ rõ' hoặc 'phân tích rõ'.,active,Động từ báo chí giật gân lệch giọng trang trọng
+lột trần,banned_phrase,VIS-TONE-002,Tránh từ giật gân 'lột trần'; thay bằng 'chỉ rõ' hoặc 'làm rõ'.,active,Động từ báo chí giật gân lệch giọng trang trọng
+bóc phốt,banned_phrase,VIS-TONE-002,Tránh tiếng lóng mạng xã hội 'bóc phốt'; thay bằng 'phản ánh sai phạm' hoặc 'nêu tồn tại'.,active,Tiếng lóng mạng xã hội trong văn bản trang trọng
+hiện nguyên hình,banned_phrase,VIS-TONE-002,Tránh cụm kịch tính hóa 'hiện nguyên hình'; mô tả trực tiếp trạng thái hoặc kết quả kiểm tra.,active,Cụm kịch tính hóa báo chí
+báo động đỏ,banned_phrase,VIS-TONE-002,Tránh nhãn giật gân báo chí 'báo động đỏ'; nêu thẳng mức độ rủi ro và ngưỡng vượt trần.,active,Nhãn báo chí giật gân
+nhức nhối,banned_phrase,VIS-TONE-002,"Tránh tính từ cảm thán báo chí 'nhức nhối'; nêu thẳng quy mô, thời gian tồn đọng và tác động.",active,Tính từ cảm thán báo chí
+rúng động,banned_phrase,VIS-TONE-002,Tránh tính từ giật gân 'rúng động'; mô tả khách quan phạm vi ảnh hưởng và số liệu.,active,Tính từ báo chí giật gân
+chấn động dư luận,banned_phrase,VIS-TONE-002,Tránh cụm báo chí giật gân 'chấn động dư luận'; nêu thẳng tác động truyền thông hoặc pháp lý nếu có.,active,Cụm báo chí giật gân
+bủa vây,banned_phrase,VIS-TONE-002,Tránh động từ kịch tính hóa 'bủa vây'; liệt kê trực tiếp các nhóm rủi ro hoặc vướng mắc.,active,Động từ kịch tính hóa báo chí
+dậm chân,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm đầu 'd/gi'; viết đúng là 'giậm chân' (trong báo cáo nên đổi sang 'chưa tăng / giữ nguyên ở mức').,active,Lỗi chính tả vỏ ngữ âm công sở ('d/gi')
+cập nhập,banned_phrase,VIS-LEX-001,Sai chính tả âm cuối 'p/t'; viết đúng là 'cập nhật'.,active,Lỗi chính tả vỏ ngữ âm công sở ('p/t')
+sát nhập,banned_phrase,VIS-LEX-001,Sai chính tả âm cuối 't/p'; viết đúng là 'sáp nhập'.,active,Lỗi chính tả vỏ ngữ âm công sở ('t/p')
+xoay sở,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 's/x'; viết đúng là 'xoay xở'.,active,Lỗi chính tả vỏ ngữ âm công sở ('s/x')
+xử dụng,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'x/s'; viết đúng là 'sử dụng'.,active,Lỗi chính tả vỏ ngữ âm công sở ('x/s')
+sử lý,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 's/x'; viết đúng là 'xử lý'.,active,Lỗi chính tả vỏ ngữ âm công sở ('s/x')
+bổ xung,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'x/s'; viết đúng là 'bổ sung'.,active,Lỗi chính tả vỏ ngữ âm công sở ('x/s')
+xúc tích,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'x/s'; viết đúng là 'súc tích'.,active,Lỗi chính tả vỏ ngữ âm công sở ('x/s')
+suất sắc,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 's/x'; viết đúng là 'xuất sắc'.,active,Lỗi chính tả vỏ ngữ âm công sở ('s/x')
+xuất sứ,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 's/x'; viết đúng là 'xuất xứ' (ví dụ: 'nguồn gốc xuất xứ').,active,Lỗi chính tả vỏ ngữ âm công sở ('s/x')
+kiểm xoát,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'x/s'; viết đúng là 'kiểm soát'.,active,Lỗi chính tả vỏ ngữ âm công sở ('x/s')
+rà xoát,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'x/s'; viết đúng là 'rà soát'.,active,Lỗi chính tả vỏ ngữ âm công sở ('x/s')
+đối xoát,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'x/s'; viết đúng là 'đối soát'.,active,Lỗi chính tả vỏ ngữ âm công sở ('x/s')
+suông sẻ,banned_phrase,VIS-LEX-001,Sai chính tả vần 'uông/uôn'; viết đúng là 'suôn sẻ'.,active,Lỗi chính tả vỏ ngữ âm công sở
+xuôn xẻ,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'x/s'; viết đúng là 'suôn sẻ'.,active,Lỗi chính tả vỏ ngữ âm công sở ('x/s')
+chau chuốt,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'ch/tr'; viết đúng là 'trau chuốt'.,active,Lỗi chính tả vỏ ngữ âm công sở ('ch/tr')
+chân trọng,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'ch/tr'; viết đúng là 'trân trọng'.,active,Lỗi chính tả vỏ ngữ âm công sở ('ch/tr')
+khẩn chương,banned_phrase,VIS-LEX-001,Sai chính tả phụ âm 'ch/tr'; viết đúng là 'khẩn trương'.,active,Lỗi chính tả vỏ ngữ âm công sở ('ch/tr')
+giành riêng,banned_phrase,VIS-LEX-001,"Sai chính tả 'gi/d'; viết đúng là 'dành riêng' ('giành' là tranh giành, 'dành' là để dành).",active,Lỗi chính tả vỏ ngữ âm công sở ('gi/d')
+giành thời gian,banned_phrase,VIS-LEX-001,Sai chính tả 'gi/d'; viết đúng là 'dành thời gian'.,active,Lỗi chính tả vỏ ngữ âm công sở ('gi/d')
+bắt buột,banned_phrase,VIS-LEX-001,Sai chính tả âm cuối 't/c'; viết đúng là 'bắt buộc'.,active,Lỗi chính tả vỏ ngữ âm công sở ('t/c')
+chặc chẽ,banned_phrase,VIS-LEX-001,Sai chính tả âm cuối 'c/t'; viết đúng là 'chặt chẽ'.,active,Lỗi chính tả vỏ ngữ âm công sở ('c/t')
+khắc khe,banned_phrase,VIS-LEX-001,Sai chính tả âm cuối 'c/t'; viết đúng là 'khắt khe'.,active,Lỗi chính tả vỏ ngữ âm công sở ('c/t')
+lãng mạng,banned_phrase,VIS-LEX-001,Sai chính tả âm cuối 'ng/n'; viết đúng là 'lãng mạn'.,active,Lỗi chính tả vỏ ngữ âm công sở ('ng/n')
+sáng lạn,banned_phrase,VIS-LEX-001,Sai chính tả 's/x' và 'ng/n'; viết đúng là 'xán lạn'.,active,"Lỗi chính tả vỏ ngữ âm công sở ('s/x', 'ng/n')"
+bàng giao,banned_phrase,VIS-LEX-001,Sai chính tả âm cuối 'ng/n'; viết đúng là 'bàn giao'.,active,Lỗi chính tả vỏ ngữ âm công sở ('ng/n')
+chẩn chỉnh,banned_phrase,VIS-LEX-001,Sai chính tả thanh điệu; viết đúng là 'chấn chỉnh'.,active,Lỗi chính tả vỏ ngữ âm công sở

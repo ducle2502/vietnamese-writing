@@ -15,7 +15,7 @@ from _vi_algo_rules import (
     run_loanword_and_jargon_rule,
     run_monotony_rule,
 )
-from _vi_docx_dhdna import compute_sliding_mattr, compute_stylometry
+from _vi_docx_dhdna import compute_sliding_mattr, compute_stylometry, max_table_sentence_words
 from _vi_hygiene_rules import run_document_and_table_hygiene
 from _vi_masker import (
     SemanticMasker,
@@ -488,6 +488,6 @@ class ViScanner:
             maintenance_due=check_loanwords_maintenance()["due_for_quarterly_review"],
             disclaimer=self.DISCLAIMER,
             semantic_invariants_summary={k: len(v) for k, v in SemanticMasker.extract_invariants(text).items()},
-            stylometry=compute_stylometry(prose_only),
+            stylometry=compute_stylometry(prose_only, max_table_sent=max_table_sentence_words(buf.masked_full)),
             findings=findings,
         )

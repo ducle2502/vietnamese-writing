@@ -84,20 +84,15 @@ _EN_PHONOTACTIC_RE = stdlib_re.compile(
 )
 
 _HR_LINE_RE = stdlib_re.compile(r"^\s*[-*_]{3,}\s*$")
+_BR_TAG_RE = stdlib_re.compile(r"(?i)<br\s*/?>")
 _SENT_BOUNDARY_RE = stdlib_re.compile(
-    r"[.!?…]+(?:[*_)\"”’\]])*\s+|\n[ \t]*\n+|\n(?=[ \t]*(?:[-*•◦–>]|\d+[.)])[ \t]+)|:\s*\n"
+    r"[.!?…]+(?:[*_)\"”’\]])*\s+|\||;\s*(?=[•◦*-]|\d+[.)]\s)"
+    r"|\n[ \t]*\n+|\n(?=[ \t]*(?:[-*•◦–>]|\d+[.)])[ \t]+)|:\s*\n"
 )
 _SENT_LEAD_STRIP_RE = stdlib_re.compile(r"^(?:\s*(?:[-*•◦–>]|\d+[.)])\s+)?[\s*_([>]*")
 _SENT_WORD_RE = stdlib_re.compile(r"[0-9A-Za-zÀ-ỹĐđ]+(?:[.,/-][0-9A-Za-zÀ-ỹĐđ]+)*")
 _CLAUSE_COMMA_RE = stdlib_re.compile(r"(?<!\d),(?!\d)(?![^(\n]*\))")
-_NON_LEGAL_PROFILES: tuple[str, ...] = (
-    "general",
-    "audit_report",
-    "academic",
-    "marketing",
-    "social_media",
-    "translation",
-)
+_NON_LEGAL_PROFILES = ("general", "audit_report", "academic", "marketing", "social_media", "translation")
 _ROUNDABOUT_PHRASE_RE = stdlib_re.compile(
     r"(?i)(?:(?:^|[,;]\s*)thông\s+qua\s+việc\s+[a-zà-ỹđ]+"
     r"|\b(?:liên\s+quan\s+đến|xoay\s+quanh|đối\s+với)\s+(?:vấn\s+đề|câu\s+chuyện|nội\s+dung\s+về)\b"
@@ -366,20 +361,22 @@ def run_loanword_and_jargon_rule(
 
 
 def _prepare_length_prose(buf: _ScanBuffer) -> str:
-    """Che toàn bộ ngoặc kép, dòng bảng Markdown, tiêu đề và sơ đồ cây nhưng bảo toàn độ dài gốc."""
+    """Che ngoặc kép, dòng kẻ bảng, tiêu đề và sơ đồ cây nhưng giữ nguyên độ dài gốc."""
     masked = SemanticMasker.QUOTED_SPEECH_RE.sub(
         lambda m: "".join("\n" if ch == "\n" else " " for ch in m.group(0)),
         buf.masked_full,
     )
+    if "<br" in buf.raw_text.lower():
+        chars = list(masked)
+        for m_br in _BR_TAG_RE.finditer(buf.raw_text):
+            if chars[m_br.start()] == " ":
+                chars[m_br.start()] = "|"
+        masked = "".join(chars)
     out: list[str] = []
     for ln in masked.splitlines(keepends=True):
-        stripped = ln.strip()
-        if (
-            (stripped.startswith("|") and stripped.endswith("|"))
-            or stripped.startswith("#")
-            or _HR_LINE_RE.match(ln)
-            or any(ch in ln for ch in ("├", "└", "│"))
-        ):
+        st = ln.strip()
+        is_skip = SemanticMasker.MD_TABLE_SEP_RE.match(st) or st.startswith("#") or _HR_LINE_RE.match(ln)
+        if is_skip or any(ch in ln for ch in ("├", "└", "│")):
             out.append("".join("\n" if ch == "\n" else " " for ch in ln))
         else:
             out.append(ln)
@@ -444,10 +441,10 @@ def _evaluate_sentence_bloat(
     wc = len(_SENT_WORD_RE.findall(sent_text))
     if wc < 5 or not VI_DIACRITIC_RE.search(sent_text):
         return None
-    word_limit = 55 if prof == Profile.LEGAL else 45
+    word_limit = 45 if prof == Profile.LEGAL else 35
     over_length = wc > word_limit
     clause_commas = len(_CLAUSE_COMMA_RE.findall(sent_text))
-    comma_sprawl = prof != Profile.LEGAL and wc >= 36 and clause_commas >= 5 and (wc / (clause_commas + 1)) >= 5.0
+    comma_sprawl = prof != Profile.LEGAL and wc >= 28 and clause_commas >= 5 and (wc / (clause_commas + 1)) >= 4.5
     has_len = over_length or comma_sprawl
     rb_hit = _find_roundabout_hit(sent_text, wc, prof)
     if not (has_len or rb_hit):
@@ -472,7 +469,7 @@ def _evaluate_sentence_bloat(
 
     hit_off = sent_start + (rb_hit[0] if rb_hit and not has_len else 0)
     raw_snippet = " ".join(buf.raw_text[hit_off : sent_start + len(sent_text)].split())[:100]
-    exempt_legal = prof is None and wc <= 55 and (rb_hit is None or rb_hit[2])
+    exempt_legal = prof is None and wc <= 45 and (rb_hit is None or rb_hit[2])
     finding = make_finding(
         rule,
         buf,

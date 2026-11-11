@@ -88,6 +88,9 @@ _BOLD_COLON_BULLET_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"^\s*(?:[-*•◦–]|\d+[.)])\s+(?:\*\*[^*\n]{2,65}?:\*\*|\*\*[^*\n]{2,65}?\*\*\s*:)"
 )
 _EX_LEGAL_GLOSSARY_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)\b(?:giải thích từ ngữ|bên a|bên b)\b")
+_CLUSTER_ELIGIBLE_RULES: frozenset[str] = frozenset(
+    {"VIS-AI-004", "VIS-AI-005", "VIS-CLICHE-001", "VIS-CLICHE-002", "VIS-FMT-004", "VIS-RHET-002", "VIS-RHET-003"}
+)
 
 
 def sanitize_hint(raw_hint: str) -> str:
@@ -203,7 +206,8 @@ def build_vocab_entry(
     buzz_group = rule_id == "VIS-CLICHE-001" and any(g in note for g in ("nhóm 04", "nhóm 11", "nhóm 12"))
     max_cl_words = 5 if buzz_group else 3
     has_conj = "," in term_key or " và " in term_key
-    req_cluster = is_bulk_ai and not sent_init and not has_conj and len(words) <= max_cl_words
+    can_cluster = is_bulk_ai and rule_id in _CLUSTER_ELIGIBLE_RULES and "bắt ngay" not in note
+    req_cluster = can_cluster and not has_conj and len(words) <= max_cl_words
     return PhraseEntry(
         rule_id=rule_id,
         term_key=term_key,

@@ -40,6 +40,9 @@ _FORBIDDEN_XML_DECL_RE = stdlib_re.compile(rb"(?i)<!(?:DOCTYPE|ENTITY)\b")
 _PARA_BREAK_RE = stdlib_re.compile(r"\n\s*\n")
 _SENT_SPLIT_NL_RE = stdlib_re.compile(r"[.!?…]+(?:[*_)\"”’\]])*\s+|\n+")
 _SENT_SPLIT_INLINE_RE = stdlib_re.compile(r"[.!?…]+(?:[*_)\"”’\]])*\s+")
+_TBL_SENT_SPLIT_RE = stdlib_re.compile(r"[.!?…]+(?:[*_)\"”’\]])*\s+|\||;\s*(?=[•◦*-]|\d+[.)]\s)")
+_SENT_WORD_TOKEN_RE = stdlib_re.compile(r"[0-9A-Za-zÀ-ỹĐđ]+(?:[.,/-][0-9A-Za-zÀ-ỹĐđ]+)*")
+_VI_DIAC_RE = stdlib_re.compile(r"[à-ỹđÀ-ỸĐ]")
 _VI_ALPHA_WORD_RE = stdlib_re.compile(r"[A-Za-zÀ-ỹĐđ]+")
 _PARTICLES_RE = stdlib_re.compile(r"(?i)\b(?:nhé|nhỉ|nha|thôi|đấy|đâu|sao|chứ|hả|ạ|ơi|hen|nghen|vậy|thế)\b[!.?…]?")
 _FORMAL_CONN_RE = stdlib_re.compile(
@@ -261,7 +264,19 @@ def compute_sliding_mattr(tokens: Sequence[str], window: int = 50, step: int = 1
     return statistics.mean(ratios)
 
 
-def _sentence_length_stats(lengths: Sequence[int]) -> tuple[float, float, float, list[str]]:
+def max_table_sentence_words(masked_full: str) -> int:
+    """Đo độ dài câu lớn nhất (theo số từ) bên trong các ô bảng Markdown/docx."""
+    max_wc = 0
+    for ln in masked_full.splitlines():
+        st = ln.strip()
+        if st.startswith("|") and st.endswith("|") and not SemanticMasker.MD_TABLE_SEP_RE.match(st):
+            for seg in _TBL_SENT_SPLIT_RE.split(st):
+                if _VI_DIAC_RE.search(seg):
+                    max_wc = max(max_wc, len(_SENT_WORD_TOKEN_RE.findall(seg)))
+    return max_wc
+
+
+def _sentence_length_stats(lengths: Sequence[int], *, max_table_sent: int = 0) -> tuple[float, float, float, list[str]]:
     warnings: list[str] = []
     mean_len = statistics.mean(lengths) if lengths else 0.0
     cv = (statistics.pstdev(lengths) / mean_len) if len(lengths) >= 3 and mean_len else 0.0
@@ -269,9 +284,9 @@ def _sentence_length_stats(lengths: Sequence[int]) -> tuple[float, float, float,
         warnings.append(f"Độ dài câu quá đều (CV={cv:.2f} < 0.30) — thiếu nhịp câu ngắn xen câu dài.")
     if mean_len > 28:
         warnings.append(f"Câu trung bình khá dài ({mean_len:.1f} âm tiết) — nên tách bớt mệnh đề phụ.")
-    max_len = max(lengths, default=0)
-    if max_len > 45:
-        warnings.append(f"Có câu dài tới {max_len} từ (> 45 từ) — cần tách thành các câu ngắn độc lập.")
+    max_len = max(max(lengths, default=0), max_table_sent)
+    if max_len > 35:
+        warnings.append(f"Có câu dài tới {max_len} từ (> 35 từ) — cần tách thành các câu ngắn độc lập.")
     skew = 0.0
     if len(lengths) >= 5 and cv > 0:
         std = statistics.pstdev(lengths)
@@ -292,16 +307,18 @@ def _punct_entropy_and_zlib(sample_prose: str, prose: str) -> tuple[float, float
     return entropy, comp_ratio
 
 
-def compute_stylometry(masked_prose: str) -> StylometryReport:
+def compute_stylometry(masked_prose: str, *, max_table_sent: int = 0) -> StylometryReport:
     """Tính 18 chỉ số nhịp học (`stylometry`) kèm cảnh báo câu quá dài hoặc nhịp đều."""
     sample_prose = masked_prose[:30000]
     prose = "\n".join(ln.strip() for ln in sample_prose.splitlines() if ln.strip() and not ln.lstrip().startswith("#"))
-    lengths = [len(s.split()) for s in _SENT_SPLIT_NL_RE.split(prose) if len(s.strip().split()) >= 2]
+    lengths = [wc for s in _SENT_SPLIT_NL_RE.split(prose) if (wc := len(_SENT_WORD_TOKEN_RE.findall(s))) >= 2]
     paras = [p.strip() for p in _PARA_BREAK_RE.split(sample_prose) if p.strip() and not p.lstrip().startswith("#")]
-    para_sent_counts = [sum(1 for s in _SENT_SPLIT_INLINE_RE.split(p) if len(s.split()) >= 2) for p in paras]
+    para_sent_counts = [
+        sum(1 for s in _SENT_SPLIT_INLINE_RE.split(p) if len(_SENT_WORD_TOKEN_RE.findall(s)) >= 2) for p in paras
+    ]
     para_w_lens = [len(p.split()) for p in paras if len(p.split()) >= 5]
 
-    mean_len, cv, skew, warnings = _sentence_length_stats(lengths)
+    mean_len, cv, skew, warnings = _sentence_length_stats(lengths, max_table_sent=max_table_sent)
     para_cv = (
         statistics.pstdev(para_w_lens) / statistics.mean(para_w_lens)
         if len(para_w_lens) >= 3 and statistics.mean(para_w_lens)
@@ -425,7 +442,7 @@ def profile_text(
         ln for ln in masked_full.splitlines() if not (ln.strip().startswith("|") and ln.strip().endswith("|"))
     )
     masked_all_text = SemanticMasker.flatten_markdown_tables_preserve_lines(masked_full)
-    stylo = compute_stylometry(prose_only_text)
+    stylo = compute_stylometry(prose_only_text, max_table_sent=max_table_sentence_words(masked_full))
     total_wc = max(len(masked_all_text.split()), 1)
     dhdna_metrics = _compute_dhdna_metrics(masked_full, prose_only_text, masked_all_text, total_wc)
     return {

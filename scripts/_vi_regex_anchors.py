@@ -202,8 +202,60 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
     "VIS-TRANS-010": "Thay cụm 'mang tính + danh/tính từ' lặp lại bằng tính từ trực tiếp hoặc chỉ tiêu cụ thể.",
     "VIS-CLICHE-005": "Chỉ giữ một từ chỉ khả năng ('có thể' hoặc 'dự kiến') thay vì ghép chồng nhiều từ rào đón.",
     "VIS-TONE-001": "Đổi sang giọng văn trung tính, trang trọng phù hợp với văn bản trình duyệt; bỏ từ khẩu ngữ.",
+    "VIS-TONE-002": (
+        "Tránh từ ngữ điều tra hình sự, cổ văn hoặc báo chí giật gân; "
+        "dùng động từ trung tính ('phát hiện', 'ghi nhận')."
+    ),
     "VIS-STRUCT-001": "Xóa lời tự thuyết minh bố cục hoặc nhãn dàn ý nội bộ; đi thẳng vào nội dung phân tích của mục.",
 }
+_TONE002_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
+    (
+        ("vỏn vẹn",),
+        "Bỏ từ bình phẩm cảm tính 'vỏn vẹn'; ghi thẳng con số kèm 'chỉ đạt' hoặc 'chỉ có'.",
+    ),
+    (
+        ("dậm chân", "giậm chân"),
+        "Tránh thành ngữ 'giậm chân tại chỗ/ở mức' (và lỗi 'dậm chân'); ghi thẳng 'chưa tăng' hoặc 'giữ nguyên ở mức'.",
+    ),
+    (
+        ("sập ",),
+        "Tránh từ kịch tính 'sập' cho sự cố kỹ thuật; mô tả đúng hiện tượng ('mất kết nối', 'ngừng phản hồi', 'lỗi').",
+    ),
+    (
+        ("tê liệt", "vỡ trận", "khủng hoảng"),
+        "Tránh gắn nhãn kịch tính ('tê liệt', 'vỡ trận', 'khủng hoảng'); nêu rõ phạm vi và thời gian gián đoạn.",
+    ),
+    (
+        ("phơi bày", "hé lộ", "lộ diện", "trồi lên"),
+        "Tránh động từ gợi sự/báo chí cho báo cáo, dữ liệu hoặc lỗi; dùng 'cho thấy', 'ghi nhận' hoặc 'phát sinh'.",
+    ),
+)
+_LEX001_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
+    (
+        ("thực chứng",),
+        "Từ 'thực chứng' chỉ trường phái triết học; hãy thay bằng 'dựa trên bằng chứng' hoặc 'thực tế'.",
+    ),
+    (
+        ("hiện thực",),
+        "Tránh dịch sát 'implement' thành 'hiện thực'; dùng 'viết', 'lập trình' hoặc 'xây dựng'.",
+    ),
+    (
+        ("khung ",),
+        "Tránh dịch từng chữ 'framework/frame/harness' thành 'khung ...'; nêu thẳng quy trình, bộ mã hoặc giao diện.",
+    ),
+    (
+        ("hợp đồng ", "giao kèo "),
+        "Tránh dịch sát 'data/API/module contract'; thay bằng 'đặc tả API/dữ liệu' hoặc 'quy ước giao diện'.",
+    ),
+    (
+        ("cọ sát",),
+        "Sai chính tả phụ âm 's/x'; viết đúng là 'cọ xát' (ví dụ: 'cọ xát thực tế').",
+    ),
+    (
+        ("phục vụ", "dò ", "máy"),
+        "Thay cụm dịch sát kỹ thuật bằng động từ tiếng Việt tự nhiên ('kiểm thử', 'quét cổng', 'đối chiếu tự động').",
+    ),
+)
 _TRANS005_PREFIX_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
     (("nó ", "có một sự"), "Bỏ chủ ngữ giả ('Nó là...', 'Có một sự...'); đưa chủ ngữ thực và động từ lên đầu câu."),
     (("—", "–", "-", ","), "Tránh nối mệnh đề bằng đại từ quan hệ dịch sát ('nơi mà', 'điều mà'); hãy tách câu."),
@@ -232,12 +284,12 @@ def _resolve_trans_or_lex_hint(rid: str, low: str) -> str | None:
             "Không gán hành vi tâm lý ('vô tình', 'bỏ quên', 'tưởng nhầm') cho bảng biểu, con số vô tri.",
         )
     elif rid == "VIS-LEX-001":
-        if "thực chứng" in low:
-            out = "Từ 'thực chứng' chỉ trường phái triết học; hãy thay bằng 'dựa trên bằng chứng' hoặc 'thực tế'."
-        elif any(k in low for k in ("phục vụ", "dò ", "hiện thực", "máy")):
-            out = "Thay cụm dịch sát kỹ thuật bằng động từ tiếng Việt tự nhiên ('kiểm thử', 'quét cổng', 'xây dựng')."
-        else:
-            out = "Thay cụm từ sai nghĩa, sai chính tả hoặc dịch sát bằng cách diễn đạt tiếng Việt chuẩn xác."
+        out = next(
+            (msg for keys, msg in _LEX001_SUBSTR_HINTS if any(k in low for k in keys)),
+            "Thay cụm từ sai nghĩa, sai chính tả hoặc dịch sát bằng cách diễn đạt tiếng Việt chuẩn xác.",
+        )
+    elif rid == "VIS-TONE-002":
+        out = next((msg for keys, msg in _TONE002_SUBSTR_HINTS if any(k in low for k in keys)), None)
     return out
 
 

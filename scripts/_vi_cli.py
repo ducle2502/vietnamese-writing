@@ -60,6 +60,8 @@ def print_profile_report(prof_data: ProfileReport) -> None:
     )
     if dm["ung_vien_lech_mau_so"]:
         print(f"  [CẢNH BÁO MẪU SỐ] Các cụm có nhiều mẫu số khác nhau: {dm['ung_vien_lech_mau_so']}")
+    for w in st.get("canh_bao", []):
+        print(f"  [CẢNH BÁO NHỊP CÂU] {w}")
     mismatch = (prof_data.get("docx_metadata") or {}).get("template_title_mismatch")
     if mismatch:
         print(f"  [CẢNH BÁO TỆP MẪU] {mismatch}")
@@ -171,7 +173,7 @@ def build_parser() -> argparse.ArgumentParser:
     ver_p.add_argument("--json", action="store_true")
     ver_p.add_argument("--output", type=Path)
 
-    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 41 quy tắc hiện có")
+    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 42 quy tắc hiện có")
     list_p.add_argument("--profile", choices=profile_choices, default="all")
     list_p.add_argument("--json", action="store_true")
 
@@ -244,12 +246,15 @@ def _cmd_profile(args: argparse.Namespace) -> int:
         print(payload)
     else:
         print_profile_report(prof_data)
-    return 0
+    has_overlong = any("> 35 từ" in w for w in prof_data["stylometry"].get("canh_bao", []))
+    return 1 if has_overlong else 0
 
 
 def _scan_exit_code(report: ScanReport, fail_on: str) -> int:
     if fail_on == "never":
         return 0
+    if any(f.rule_id == "VIS-LEN-001" for f in report.findings):
+        return 1
     if fail_on == "error":
         return 1 if report.error_count > 0 else 0
     if fail_on == "warning":

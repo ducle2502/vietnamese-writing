@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from _vi_phrase_matcher import PhraseEntry, PhraseTrie, build_vocab_entry, sanitize_hint
 from _vi_types import (
     ALL_PROFILES,
     LOANWORDS_REVIEW_META,
@@ -61,10 +62,10 @@ _KNOWN_ALGO_TOKENS: frozenset[str] = frozenset(
         "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK",
         "ALGO:DOCUMENT_AND_TABLE_HYGIENE",
         "ALGO:LENGTHY_AND_ROUNDABOUT_SENTENCE",
+        "ALGO:STACCATO_FRAGMENT_STREAK_MIN_3",
     }
 )
 _META_ESCAPE_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"([.^$*+?{}\[\]\\|()])")
-_INLINE_FLAG_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"^\(\?[im]+\)")
 
 
 @dataclass(slots=True)
@@ -75,6 +76,7 @@ class _VocabAccumulator:
     reverse_hints: dict[str, str] = field(default_factory=dict)
     banned_by_rule: dict[str, list[str]] = field(default_factory=lambda: collections.defaultdict(list))
     phrase_hints: dict[tuple[str, str], str] = field(default_factory=dict)
+    trie_entries: list[PhraseEntry] = field(default_factory=list)
 
 
 def _normalize_space_key(text: str) -> str:
@@ -135,7 +137,8 @@ def _register_vocab_row(row: dict[str, str], label: str, acc: _VocabAccumulator)
     term = " ".join(row["term"].split())
     kind = row["kind"].lower()
     rid = row["rule_id"]
-    hint = row["replacement_hint"]
+    hint = sanitize_hint(row["replacement_hint"])
+    note = row["note"]
     if not term:
         raise ValueError(f"{label}: Cột 'term' không được để trống.")
     if kind not in _VALID_VOCAB_KINDS:
@@ -146,28 +149,26 @@ def _register_vocab_row(row: dict[str, str], label: str, acc: _VocabAccumulator)
         acc.workplace.add(term.lower())
     elif kind == "reverse_calque":
         acc.reverse_terms.append(term)
+        acc.trie_entries.append(
+            build_vocab_entry(term=term, kind=kind, rule_id="VIS-LEX-002", raw_hint=hint, note=note)
+        )
         if hint:
             acc.reverse_hints[_normalize_space_key(term)] = hint
     else:
         if not rid:
             raise ValueError(f"{label}: Cụm banned_phrase {term!r} bắt buộc khai báo 'rule_id'.")
         acc.banned_by_rule[rid].append(term)
+        acc.trie_entries.append(build_vocab_entry(term=term, kind=kind, rule_id=rid, raw_hint=hint, note=note))
         if hint:
             acc.phrase_hints[(rid, _normalize_space_key(term))] = hint
 
 
 def load_vocab_catalog(vocab_path: Path = DEFAULT_VOCAB_CSV) -> VocabCatalog:
-    """Nạp bảng từ vựng `vocab.csv` và biên dịch sẵn các mẫu dò dịch ngược / cụm từ cấm."""
+    """Nạp bảng từ vựng `vocab.csv` và biên dịch sẵn cây tiền tố `PhraseTrie` tuyến tính O(N)."""
     acc = _VocabAccumulator()
     for line_no, row in _read_csv_rows(vocab_path, _VOCAB_REQUIRED_COLS):
         _register_vocab_row(row, f"{vocab_path.name}:{line_no}", acc)
 
-    rev_sorted = sorted(set(acc.reverse_terms), key=lambda s: (-len(s), s))
-    rev_re = (
-        stdlib_re.compile("(?i)(?:" + "|".join(phrase_to_regex_branch(t) for t in rev_sorted) + ")")
-        if rev_sorted
-        else None
-    )
     banned_map = {
         rid: tuple(sorted(set(terms), key=lambda s: (-len(s), s))) for rid, terms in acc.banned_by_rule.items()
     }
@@ -177,10 +178,11 @@ def load_vocab_catalog(vocab_path: Path = DEFAULT_VOCAB_CSV) -> VocabCatalog:
         universal_loanwords=univ,
         workplace_loanwords=work,
         all_allowed_loanwords=univ | work,
-        reverse_calque_re=rev_re,
+        reverse_calque_re=None,
         reverse_calque_hints=acc.reverse_hints,
         banned_phrases_by_rule=banned_map,
         phrase_hints=acc.phrase_hints,
+        phrase_trie=PhraseTrie(acc.trie_entries),
     )
 
 
@@ -192,22 +194,16 @@ def _resolve_rule_pattern(rid: str, raw_expr: str, vocab_phrases: Sequence[str],
             raise ValueError(f"{label}: Quy tắc thuật toán {rid} không nhận banned_phrase từ vocab.csv.")
         return raw_expr
 
-    vocab_alt = "|".join(phrase_to_regex_branch(p) for p in vocab_phrases)
     if raw_expr in ("", "VOCAB"):
-        if not vocab_alt:
+        if not vocab_phrases:
             raise ValueError(f"{label}: Quy tắc {rid} đặt 'VOCAB' nhưng không có cụm từ đang bật trong vocab.csv.")
-        combined = f"(?i)(?:{vocab_alt})"
-    elif vocab_alt:
-        body = _INLINE_FLAG_RE.sub("", raw_expr)
-        combined = f"(?i)(?:{body}|{vocab_alt})"
-    else:
-        combined = raw_expr
+        return "VOCAB"
 
     try:
-        compile_rule_regex(combined)
+        compile_rule_regex(raw_expr)
     except stdlib_re.error as exc:
         raise ValueError(f"{label}: Biểu thức regex lỗi ở quy tắc {rid}: {exc}") from exc
-    return combined
+    return raw_expr
 
 
 def _parse_profiles(raw_profiles: str, label: str) -> frozenset[Profile]:
@@ -243,6 +239,8 @@ def _parse_grammar_row(row: dict[str, str], label: str, vocab: VocabCatalog) -> 
 
     exc_raw = row["exceptions"]
     exceptions = tuple(e.strip() for e in exc_raw.split("|") if e.strip() and e.strip().lower() != "none")
+    profs = _parse_profiles(row["profiles"], label)
+    prof_ex = {Profile(e.removeprefix("profile:")) for e in exceptions if e.startswith("profile:")}
     pat_type = row["pattern_type"] or ("dictionary" if raw_expr in ("", "VOCAB") else "regex")
     return RuleDefinition(
         rule_id=rid,
@@ -252,7 +250,7 @@ def _parse_grammar_row(row: dict[str, str], label: str, vocab: VocabCatalog) -> 
         regex_or_algorithm=resolved_expr,
         severity=sev,
         weight=weight,
-        profiles=_parse_profiles(row["profiles"], label),
+        profiles=profs - prof_ex,
         threshold=thresh,
         exceptions=exceptions,
         bad_example=row["bad_example"],

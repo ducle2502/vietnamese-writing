@@ -7,6 +7,7 @@ import re as stdlib_re
 from typing import TYPE_CHECKING
 
 from _vi_masker import SemanticMasker, make_finding, sentence_around
+from _vi_phrase_matcher import PhraseHit, select_first_reverse_calque, tokenize_prose
 from _vi_rules_data import DEFAULT_VOCAB
 from _vi_types import Finding, Profile, RuleDefinition, VocabCatalog, _ScanBuffer
 
@@ -23,11 +24,12 @@ _EX_PCT_RE = stdlib_re.compile(r"\b\d+(?:[.,]\d+)?%")
 _EX_AI003_GROWTH_RE = stdlib_re.compile(r"(?i)ngày càng\s+(?:phát triển|biến đổi)")
 _EX_19XX_RE = stdlib_re.compile(r"\b1\d{3}\b")
 _EX_RHET003_RE = stdlib_re.compile(
-    r"(?i)(?:\b\d+\s*(?:m|km|cm|mm|hải lý)\b|\bthế kỷ\s+[ivx]+\b|"
+    r"(?i)(?:\b\d+\s*(?:m|km|cm|mm|hải lý)\b|\bthế kỷ\s+[ivx]+\b|\b1\d{3}\b|"
     r"\b(?:tàu thuyền|hàng hải|mực nước biển|dệt|tơ tằm|khung cửi)\b)"
 )
 _EX_RHET004_RE = stdlib_re.compile(r"(?i)^từ\s+(?:ngày|tháng|năm|quý|đợt|lần|mức|khoảng|số|\d+)")
 _EX_RHET005_TAIL_RE = stdlib_re.compile(r"^\s*(?:\(|\[|theo\s+[A-ZÀ-ỸĐ])")
+_EX_ATTRIB_HEAD_RE = stdlib_re.compile(r"(?i)^(?:nhiều\s+nghiên\s+cứu|các\s+nghiên\s+cứu|các\s+chuyên\s+gia|báo\s+cáo)")
 _EX_TRANS001_RE = stdlib_re.compile(r"(?i)\bđược\s+xác định\s+bởi\s+công thức\b")
 _EX_LEX001_RE = stdlib_re.compile(r"(?i)\b(?:chủ nghĩa|triết học|trường phái)\s+thực chứng\b")
 _SENT_EXEMPT_PATTERNS: dict[str, stdlib_re.Pattern[str]] = {
@@ -37,9 +39,19 @@ _SENT_EXEMPT_PATTERNS: dict[str, stdlib_re.Pattern[str]] = {
     "VIS-LEX-001": _EX_LEX001_RE,
 }
 _LINGUISTIC_EXEMPT_RULES: frozenset[str] = frozenset(
-    {"VIS-AI-003", "VIS-RHET-004", "VIS-RHET-005", *_SENT_EXEMPT_PATTERNS}
+    {
+        "VIS-AI-003",
+        "VIS-RHET-004",
+        "VIS-RHET-005",
+        "VIS-CLICHE-001",
+        "VIS-CLICHE-004",
+        "VIS-TRANS-005",
+        "VIS-TRANS-007",
+        *_SENT_EXEMPT_PATTERNS,
+    }
 )
 
+_EX_MKT_PRAISE_RE = stdlib_re.compile(r"(?i)\b(?:minh\s+chứng\s+sống\s+động|vai\s+trò\s+then\s+chốt)\b")
 _EX_LEGAL_CLAUSE_RE = stdlib_re.compile(
     r"(?i)\b(?:điều|khoản|mục|chương|nghị định|thông tư|luật|bộ luật|hợp đồng)\s+(?:số\s+)?\d+"
 )
@@ -50,9 +62,6 @@ _LEGAL_SENT_PATTERNS: dict[str, stdlib_re.Pattern[str]] = {
     "VIS-CLICHE-002": _EX_LEGAL_AGENCY_RE,
 }
 
-_BOLD_COLON_BULLET_RE = stdlib_re.compile(
-    r"^\s*(?:[-*•◦–]|\d+[.)])\s+(?:\*\*[^*\n]{2,65}?:\*\*|\*\*[^*\n]{2,65}?\*\*\s*:)"
-)
 _EXEMPT_OPENERS: frozenset[str] = frozenset({"điều", "bước", "phần", "giai", "mục", "chương", "khoản", "nhóm"})
 _LINE_PREFIX_STRIP_RE = stdlib_re.compile(r"^\s*(?:[-*•◦–>#]|\d+[.)])+\s*")
 _VI_ALPHA_WORD_RE = stdlib_re.compile(r"[A-Za-zÀ-ỹĐđ]+")
@@ -109,14 +118,26 @@ _SUBORDINATE_HINGE_RE = stdlib_re.compile(
 )
 
 
+def _is_direct_slice_exempt(rule_id: str, target_text: str, start: int, end: int) -> bool:
+    matched = target_text[start:end].strip()
+    low = matched.casefold()
+    if rule_id == "VIS-RHET-004":
+        return bool(_EX_RHET004_RE.match(matched))
+    if rule_id == "VIS-RHET-005":
+        return bool(_EX_RHET005_TAIL_RE.match(target_text[end : end + 45]))
+    if rule_id in ("VIS-CLICHE-001", "VIS-CLICHE-004") and _EX_ATTRIB_HEAD_RE.match(matched):
+        return bool(_EX_RHET005_TAIL_RE.match(target_text[end : end + 45]))
+    if rule_id == "VIS-TRANS-005":
+        return low.startswith("hỗ trợ ") and target_text[end : end + 2] == ", "
+    return rule_id == "VIS-TRANS-007" and low.startswith("tuy nhiên")
+
+
 def is_linguistically_exempt(rule_id: str, target_text: str, start: int, end: int) -> bool:
     """Các trường hợp miễn trừ phổ quát về mặt ngôn ngữ học (không gắn tên riêng dự án)."""
     if rule_id not in _LINGUISTIC_EXEMPT_RULES:
         return False
-    if rule_id == "VIS-RHET-004":
-        return bool(_EX_RHET004_RE.match(target_text[start:end].strip()))
-    if rule_id == "VIS-RHET-005":
-        return bool(_EX_RHET005_TAIL_RE.match(target_text[end : end + 45]))
+    if _is_direct_slice_exempt(rule_id, target_text, start, end):
+        return True
     sent = sentence_around(target_text, start, end)
     if rule_id == "VIS-AI-003":
         return bool(
@@ -132,51 +153,18 @@ def is_profile_exempt(rule_id: str, target_text: str, start: int, end: int, prof
     """Miễn trừ riêng theo từng nhóm văn bản cụ thể khi người dùng truyền `--profile` đơn lẻ."""
     if prof is None:
         return False
-    if (
-        rule_id == "VIS-FMT-003"
-        and target_text[start:end].strip() == ";"
-        and prof in (Profile.AUDIT_REPORT, Profile.ACADEMIC, Profile.LEGAL)
-    ):
+    sliced = target_text[start:end].strip()
+    if rule_id == "VIS-FMT-003" and sliced == ";" and prof in (Profile.AUDIT_REPORT, Profile.ACADEMIC, Profile.LEGAL):
         return True
+    if rule_id == "VIS-RHET-003" and prof in (Profile.MARKETING, Profile.SOCIAL_MEDIA):
+        return len(sliced.split()) <= 3 or bool(_EX_MKT_PRAISE_RE.search(sliced))
     if prof != Profile.LEGAL:
         return False
-    if rule_id == "VIS-FMT-001":
-        return bool(_EX_LEGAL_GLOSSARY_RE.search(target_text))
     pat = _LEGAL_SENT_PATTERNS.get(rule_id)
-    return bool(pat and pat.search(sentence_around(target_text, start, end)))
-
-
-def run_bold_colon_list_rule(rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None) -> list[Finding]:
-    if is_profile_exempt(rule.rule_id, buf.masked_prose, 0, len(buf.masked_prose), prof):
-        return []
-    streak = 0
-    streak_start_offset = 0
-    offset = 0
-    for ln in buf.masked_prose.splitlines(keepends=True):
-        if not ln.strip():
-            offset += len(ln)
-            continue
-        if _BOLD_COLON_BULLET_RE.match(ln):
-            if streak == 0:
-                streak_start_offset = offset
-            streak += 1
-            if streak == 3:
-                sample = buf.raw_text[streak_start_offset : offset + len(ln)].strip().splitlines()[0]
-                return [
-                    make_finding(
-                        rule,
-                        buf,
-                        streak_start_offset,
-                        sample,
-                        custom_suggestion=(
-                            "Bỏ nhãn in đậm đầu dòng và viết thành câu hoàn chỉnh mở đầu bằng chủ ngữ cụ thể."
-                        ),
-                    )
-                ]
-        else:
-            streak = 0
-        offset += len(ln)
-    return []
+    return bool(
+        (_EX_LEGAL_GLOSSARY_RE.search(target_text) if rule_id == "VIS-FMT-001" else False)
+        or (pat and pat.search(sentence_around(target_text, start, end)))
+    )
 
 
 def _check_paragraph_cv(rule: RuleDefinition, buf: _ScanBuffer) -> Finding | None:
@@ -333,13 +321,20 @@ def _find_foreign_word_finding(
 
 
 def run_loanword_and_jargon_rule(
-    rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None, vocab: VocabCatalog = DEFAULT_VOCAB
+    rule: RuleDefinition,
+    buf: _ScanBuffer,
+    prof: Profile | None,
+    vocab: VocabCatalog = DEFAULT_VOCAB,
+    rev_hits: Sequence[PhraseHit] | None = None,
 ) -> list[Finding]:
     findings: list[Finding] = []
-    m_rev = vocab.reverse_calque_re.search(buf.masked_prose) if vocab.reverse_calque_re else None
-    if m_rev:
+    candidates = (
+        rev_hits if rev_hits is not None else vocab.phrase_trie.scan_all(tokenize_prose(buf.masked_prose_lower))[1]
+    )
+    m_rev = select_first_reverse_calque(candidates, buf.masked_prose, prof)
+    if m_rev is not None:
         raw_hit = buf.raw_text[m_rev.start() : m_rev.end()]
-        hint = vocab.reverse_calque_hints.get(" ".join(raw_hit.split()).casefold())
+        hint = m_rev.entry.hint
         advice = (
             f"Giữ nguyên từ thông dụng đã quen dùng ({hint}) thay vì dịch từng chữ."
             if hint

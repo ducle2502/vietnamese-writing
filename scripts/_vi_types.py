@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING, Any, Protocol, TypedDict, cast
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+    from _vi_phrase_matcher import PhraseTrie
+
 try:
     import re2 as _re2_engine  # type: ignore[import-not-found]
 
@@ -169,6 +171,7 @@ class VocabCatalog:
     reverse_calque_hints: dict[str, str]
     banned_phrases_by_rule: dict[str, tuple[str, ...]]
     phrase_hints: dict[tuple[str, str], str]
+    phrase_trie: PhraseTrie
 
 
 class Profile(StrEnum):

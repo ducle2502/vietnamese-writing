@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING, ClassVar
 from _vi_algo_rules import (
     is_linguistically_exempt,
     is_profile_exempt,
-    run_bold_colon_list_rule,
     run_lengthy_and_roundabout_rule,
     run_loanword_and_jargon_rule,
     run_monotony_rule,
@@ -25,6 +24,14 @@ from _vi_masker import (
     line_end_offset,
     make_finding,
     offset_to_line_col,
+)
+from _vi_phrase_matcher import (
+    PhraseHit,
+    filter_non_overlapping_hits,
+    filter_statistical_cluster_hits,
+    run_bold_colon_list_rule,
+    run_staccato_fragment_rule,
+    tokenize_prose,
 )
 from _vi_rules_data import (
     DEFAULT_GRAMMAR_CSV,
@@ -61,13 +68,54 @@ _BRIDGE_NEGATION_RE = stdlib_re.compile(
     r"không\s+có\s+nghĩa\s+là|không\s+phải\s+là\s+hai\s+cực\s+đối\s+lập)\b"
 )
 _DECIMAL_COMMA_RE = stdlib_re.compile(r"(?<=\d),(?=\d)")
+_SENT_SEP_CHARS = frozenset(".!?…\n")
+_AI007_ROLE_LIST_RE = compile_rule_regex(
+    r"(?i)\b(?:dù|cho\s+dù|bất\s+kể)\s+bạn\s+là\s+[^.;:!?\n]{2,90},\s*(?:bạn|nội\s+dung|bài\s+viết|hướng\s+dẫn)\b"
+)
 _ALGO_RUNNERS: dict[str, Callable[[RuleDefinition, _ScanBuffer, Profile | None], list[Finding]]] = {
     "ALGO:BOLD_COLON_LIST_STREAK_MIN_3": run_bold_colon_list_rule,
     "ALGO:PARAGRAPH_CV_AND_OPENING_MONOTONY": run_monotony_rule,
     "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK": run_loanword_and_jargon_rule,
     "ALGO:DOCUMENT_AND_TABLE_HYGIENE": run_document_and_table_hygiene,
     "ALGO:LENGTHY_AND_ROUNDABOUT_SENTENCE": run_lengthy_and_roundabout_rule,
+    "ALGO:STACCATO_FRAGMENT_STREAK_MIN_3": run_staccato_fragment_rule,
 }
+
+
+def _select_para_threshold_matches(
+    valid_matches: Sequence[_RegexMatch],
+    para_spans: Sequence[tuple[int, int, str]],
+    word_count: int,
+    thresh: ThresholdSpec,
+) -> list[_RegexMatch]:
+    assert thresh.per_para is not None  # noqa: S101
+    triggered: list[_RegexMatch] = []
+    m_idx = 0
+    n_matches = len(valid_matches)
+    for p_start, p_end, _ in para_spans:
+        while m_idx < n_matches and valid_matches[m_idx].start() < p_start:
+            m_idx += 1
+        start_idx = m_idx
+        while m_idx < n_matches and valid_matches[m_idx].start() < p_end:
+            m_idx += 1
+        if (m_idx - start_idx) >= thresh.per_para:
+            triggered.extend(valid_matches[start_idx:m_idx] if thresh.per_para == 1 else [valid_matches[start_idx]])
+    if (
+        not triggered
+        and thresh.per_1000_words is not None
+        and word_count >= 250
+        and (len(valid_matches) * 1000.0 / word_count) >= thresh.per_1000_words
+    ):
+        triggered.append(valid_matches[0])
+    return triggered
+
+
+def _has_same_sentence_pair(valid_matches: Sequence[_RegexMatch], raw_text: str) -> _RegexMatch | None:
+    for idx in range(len(valid_matches) - 1):
+        gap = raw_text[valid_matches[idx].end() : valid_matches[idx + 1].start()]
+        if not any(ch in _SENT_SEP_CHARS for ch in gap):
+            return valid_matches[idx]
+    return None
 
 
 def _select_triggered_matches(
@@ -75,32 +123,26 @@ def _select_triggered_matches(
     para_spans: Sequence[tuple[int, int, str]],
     word_count: int,
     thresh: ThresholdSpec,
+    *,
+    rule_id: str = "",
+    raw_text: str = "",
 ) -> list[_RegexMatch]:
     """Lọc kết quả vượt ngưỡng bằng thuật toán hai con trỏ tuyến tính O(P + M)."""
     if thresh.per_para is not None:
-        triggered: list[_RegexMatch] = []
-        m_idx = 0
-        n_matches = len(valid_matches)
-        for p_start, p_end, _ in para_spans:
-            while m_idx < n_matches and valid_matches[m_idx].start() < p_start:
-                m_idx += 1
-            start_idx = m_idx
-            while m_idx < n_matches and valid_matches[m_idx].start() < p_end:
-                m_idx += 1
-            if (m_idx - start_idx) >= thresh.per_para:
-                triggered.extend(valid_matches[start_idx:m_idx] if thresh.per_para == 1 else [valid_matches[start_idx]])
-        if (
-            not triggered
-            and thresh.per_1000_words is not None
-            and word_count >= 250
-            and (len(valid_matches) * 1000.0 / word_count) >= thresh.per_1000_words
-        ):
-            triggered.append(valid_matches[0])
+        triggered = _select_para_threshold_matches(valid_matches, para_spans, word_count, thresh)
+        if not triggered and rule_id == "VIS-TRANS-010" and len(valid_matches) >= 2:
+            pair_hit = _has_same_sentence_pair(valid_matches, raw_text)
+            return [pair_hit] if pair_hit is not None else []
         return triggered
     if thresh.per_doc is not None:
-        if len(valid_matches) >= thresh.per_doc:
-            return list(valid_matches) if thresh.per_doc == 1 else [valid_matches[0]]
-        return []
+        return (
+            (list(valid_matches) if thresh.per_doc == 1 else [valid_matches[0]])
+            if len(valid_matches) >= thresh.per_doc
+            else []
+        )
+    if thresh.per_1000_words is not None:
+        dense = (len(valid_matches) * 1000.0 / max(word_count, 1)) >= thresh.per_1000_words
+        return list(valid_matches) if dense else []
     return list(valid_matches)
 
 
@@ -181,12 +223,12 @@ class ViScanner:
         self._compiled: dict[str, _CompiledRegex] = {
             rid: compile_rule_regex(rule.regex_or_algorithm)
             for rid, rule in self.rules.items()
-            if not rule.regex_or_algorithm.startswith("ALGO:")
+            if not rule.regex_or_algorithm.startswith("ALGO:") and rule.regex_or_algorithm != "VOCAB"
         }
         self._rule_anchors: dict[str, tuple[str, ...]] = {
             rid: ((*anchors, "chưa") if rid == "VIS-RHET-001" and anchors else anchors)
             for rid, rule in self.rules.items()
-            if not rule.regex_or_algorithm.startswith("ALGO:")
+            if rid in self._compiled
             for anchors in (_extract_regex_anchors(rule.regex_or_algorithm),)
         }
 
@@ -242,17 +284,54 @@ class ViScanner:
                     valid_line_end = line_end_offset(target_text, m.start(), nl_offsets)
                     if valid_line_end >= text_len - 1:
                         break
+        if rid == "VIS-AI-007" and not valid_matches:
+            valid_matches.extend(
+                m
+                for m in _AI007_ROLE_LIST_RE.finditer(target_text)
+                if not is_profile_exempt(rid, target_text, m.start(), m.end(), prof)
+            )
         return valid_matches
 
-    def _scan_regex_rule(self, rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None) -> list[Finding]:
+    def _collect_valid_vocab_matches(
+        self,
+        rid: str,
+        raw_hits: Sequence[PhraseHit],
+        target_text: str,
+        para_spans: Sequence[tuple[int, int, str]],
+        prof: Profile | None,
+    ) -> list[_RegexMatch]:
+        if not raw_hits:
+            return []
+        filtered = [
+            h
+            for h in raw_hits
+            if not is_linguistically_exempt(rid, target_text, h.pos, h.end_pos)
+            and not is_profile_exempt(rid, target_text, h.pos, h.end_pos, prof)
+        ]
+        if not filtered:
+            return []
+        non_overlapping = filter_non_overlapping_hits(filtered)
+        return filter_statistical_cluster_hits(non_overlapping, para_spans)
+
+    def _scan_regex_rule(
+        self,
+        rule: RuleDefinition,
+        buf: _ScanBuffer,
+        prof: Profile | None,
+        vocab_hits: Sequence[PhraseHit] = (),
+    ) -> list[Finding]:
         rid = rule.rule_id
-        anchors = self._rule_anchors.get(rid, ())
-        if anchors:
-            lower_haystack = buf.masked_no_code_lower if rid == "VIS-AI-002" else buf.masked_prose_lower
-            if not any(sub in lower_haystack for sub in anchors):
-                return []
         target_text = _prepare_rule_target_text(rid, buf)
-        valid_matches = self._collect_valid_regex_matches(rule, target_text, buf.nl_offsets, prof)
+        valid_matches: list[_RegexMatch] = []
+        if rid in self._compiled:
+            anchors = self._rule_anchors.get(rid, ())
+            lower_haystack = buf.masked_no_code_lower if rid == "VIS-AI-002" else buf.masked_prose_lower
+            if not anchors or any(sub in lower_haystack for sub in anchors):
+                valid_matches = self._collect_valid_regex_matches(rule, target_text, buf.nl_offsets, prof)
+        if vocab_hits:
+            v_matches = self._collect_valid_vocab_matches(rid, vocab_hits, target_text, buf.para_spans, prof)
+            if v_matches:
+                valid_matches = sorted([*valid_matches, *v_matches], key=lambda m: (m.start(), -m.end()))
 
         if rid == "VIS-RHET-001" and not valid_matches:
             bridge_hits = list(_BRIDGE_NEGATION_RE.finditer(target_text))
@@ -274,14 +353,30 @@ class ViScanner:
         if not valid_matches:
             return []
 
-        triggered = _select_triggered_matches(valid_matches, buf.para_spans, buf.word_count, rule.threshold)
+        triggered = _select_triggered_matches(
+            valid_matches,
+            buf.para_spans,
+            buf.word_count,
+            rule.threshold,
+            rule_id=rid,
+            raw_text=buf.raw_text,
+        )
         return _build_regex_findings(rule, buf, triggered, self.vocab.phrase_hints)
 
-    def _run_rule(self, rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None) -> list[Finding]:
+    def _run_rule(
+        self,
+        rule: RuleDefinition,
+        buf: _ScanBuffer,
+        prof: Profile | None,
+        vocab_hits: Sequence[PhraseHit] = (),
+        rev_hits: Sequence[PhraseHit] = (),
+    ) -> list[Finding]:
         if rule.regex_or_algorithm == "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK":
-            return run_loanword_and_jargon_rule(rule, buf, prof, self.vocab)
+            return run_loanword_and_jargon_rule(rule, buf, prof, self.vocab, rev_hits=rev_hits)
         algo_runner = _ALGO_RUNNERS.get(rule.regex_or_algorithm)
-        return algo_runner(rule, buf, prof) if algo_runner is not None else self._scan_regex_rule(rule, buf, prof)
+        if algo_runner is not None:
+            return algo_runner(rule, buf, prof)
+        return self._scan_regex_rule(rule, buf, prof, vocab_hits=vocab_hits)
 
     def prepend_docx_title_mismatch(
         self, report: ScanReport, raw_text: str, core_title: str, mismatch_note: str
@@ -316,13 +411,14 @@ class ViScanner:
             else (profile if isinstance(profile, Profile) else Profile(str(profile)))
         )
         buf = build_scan_buffer(text)
+        vocab_by_rule, rev_hits = self.vocab.phrase_trie.scan_all(tokenize_prose(buf.masked_prose_lower))
         findings: list[Finding] = []
         for rid, rule in self.rules.items():
             if (active_rule_ids is not None and rid not in active_rule_ids) or (
                 prof is not None and prof not in rule.profiles
             ):
                 continue
-            findings.extend(self._run_rule(rule, buf, prof))
+            findings.extend(self._run_rule(rule, buf, prof, vocab_hits=vocab_by_rule.get(rid, ()), rev_hits=rev_hits))
         findings.sort(key=lambda f: (f.line, f.col, f.rule_id))
         elapsed_ms = round((time.perf_counter() - t0) * 1000, 3)
         prose_only = "\n".join(

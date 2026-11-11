@@ -171,7 +171,7 @@ def build_parser() -> argparse.ArgumentParser:
     ver_p.add_argument("--json", action="store_true")
     ver_p.add_argument("--output", type=Path)
 
-    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 31 quy tắc hiện có")
+    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 41 quy tắc hiện có")
     list_p.add_argument("--profile", choices=profile_choices, default="all")
     list_p.add_argument("--json", action="store_true")
 

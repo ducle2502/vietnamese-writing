@@ -7,11 +7,11 @@
 1. Xác định rõ người đọc, quan hệ xưng hô và nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) trước khi viết hoặc sửa. Không tự ý sửa lại khi người dùng chỉ dán văn bản để hỏi nội dung.
 2. Đưa kết luận và số liệu lên đầu câu hoặc đầu đoạn. Ưu tiên chủ thể chỉ người, đơn vị cụ thể đi với động từ trực tiếp.
 3. Bảo toàn nguyên vẹn số liệu, ngày tháng, từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn.
-4. Tránh 4 lỗi sửa quá tay gồm vặn câu tuần tự để né máy quét, hạ giọng sồn sã trong văn bản trình duyệt, tự bịa từ trái thực tế đi làm và làm rơi từ hạn định mức chắc chắn.
+4. Tránh 5 lỗi sửa quá tay: đếm câu tuần tự né máy quét, hạ giọng sồn sã ở văn bản trình duyệt, tự bịa từ trái thực tế, làm rơi từ chỉ mức chắc chắn và xoay vòng động từ đầu ô bảng.
 
 ## Tự quét và kiểm tra trong repo
 
-Sau khi viết mới hoặc biên tập văn bản (trừ câu trả lời ngắn 1 đến 2 câu), luôn tự quét lại chính đầu ra của mình từ thư mục gốc của kỹ năng trước khi bàn giao:
+Sau khi viết mới hoặc biên tập văn bản (trừ câu trả lời hội thoại ngắn 1 đến 2 câu), luôn tự quét lại chính đầu ra của mình từ thư mục gốc của kỹ năng trước khi bàn giao:
 
 ```bash
 python -B scripts/vi_scanner.py scan TEP_VUA_VIET.md --json

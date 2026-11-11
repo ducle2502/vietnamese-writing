@@ -15,11 +15,11 @@ metadata:
 
 # vietnamese-writing
 
-Viết câu tiếng Việt đứng độc lập, rõ chủ thể, gọn ý và hợp người đọc. Tự nhiên không có nghĩa là xuề xòa hay loại bỏ hết từ Hán - Việt. Một câu phù hợp với báo cáo kiểm toán sẽ khác câu trên mạng xã hội hoặc trong hợp đồng pháp lý.
+Viết câu tiếng Việt đứng độc lập, rõ chủ thể, gọn ý và hợp người đọc. Viết tự nhiên là đặt đúng từ vào đúng ngữ cảnh công việc, không phải xuề xòa hay cực đoan xóa sạch từ Hán - Việt. Câu văn trong báo cáo kiểm toán tất nhiên phải khác câu trên mạng xã hội hoặc trong hợp đồng pháp lý.
 
 ## Xác định người đọc trước khi đặt bút
 
-Trước khi viết hoặc sửa, tự xác định văn bản thuộc nhóm nào trong 7 nhóm (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) và ai là người đọc trực tiếp. Đồng thời làm rõ quy mô chủ thể viết (cá nhân, nhóm sinh viên, dự án mã nguồn mở hay doanh nghiệp) cùng quyết định người đọc cần đưa ra. Chỉ hỏi lại người dùng khi thiếu thông tin làm sai lệch nội dung hoặc xưng hô.
+Trước khi viết hoặc sửa, hãy xác định văn bản thuộc nhóm nào trong 7 nhóm (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) và ai sẽ đọc trực tiếp. Làm rõ luôn quy mô của chủ thể viết (cá nhân, nhóm sinh viên, dự án mã nguồn mở hay doanh nghiệp) cùng quyết định mà người đọc cần đưa ra. Chỉ hỏi lại khi thiếu thông tin có nguy cơ làm sai nội dung hoặc xưng hô.
 
 | Nhóm văn bản | Yêu cầu trọng tâm |
 | :--- | :--- |
@@ -41,17 +41,17 @@ Giữ nhịp đoạn cô đọng và áp dụng kỷ luật bằng chứng theo 
 
 Giữ nhịp trình bày sạch, không lặp hai tầng. Không vẽ hộp tóm tắt 4 ô (`01` đến `04`) ngay trước bảng chức năng chi tiết và không mở thẻ `<details>` lặp lại bảng phân công đã có. Trong tài liệu đồ án nhỏ, không tự bịa bảng so sánh với công cụ lớn hay phương án bù nhìn. Giữ văn bản thay thế ảnh (`alt="..."`) ngắn gọn từ `2` đến `6` chữ nêu đúng tên hình mà không kèm khẩu hiệu quảng cáo. Chú thích sau dấu `#` trong cây thư mục không vượt quá `10` chữ, và chỉ bọc dấu nháy ngược quanh tên tệp, lệnh hoặc mã nguồn.
 
-Chọn đúng từ theo thực tế công việc và khớp vai người viết. Không dùng sai nghĩa từ Hán - Việt (như dùng chữ *"thực chứng"* của triết học để dịch cụm *dựa trên bằng chứng*). Không dịch từng chữ thuật ngữ phần mềm sang các cụm kỳ dị (*"khung hợp đồng"*, *"khung vận hành"*, *"khóa hợp đồng"*, *"giao kèo dữ liệu"*, *"khung chạy sẵn"*, *"hiện thực lớp"*, *"lớp phụ trách"*, *"di chuyển vệt sáng"*, *"túi chứa dữ liệu"*, *"mẫu thông điệp"*). Không tự phong chức danh tập đoàn (*"Kỹ sư giao thức mạng"*, *"20 tác vụ vòng đời phần mềm"*, *"tác vụ/thành viên"*) cho bài tập nhóm sinh viên, và không dịch ngược các từ tiếng Anh đã quen dùng hàng ngày (`email` thành *"thư điện tử"*, `pull request` thành *"yêu cầu kéo"*).
+Chọn đúng từ theo thực tế công việc và khớp vai người viết. Tránh dùng sai nghĩa từ Hán - Việt (như lấy chữ *"thực chứng"* của triết học để dịch *evidence-based*, hoặc viết *"khắc phục yếu điểm"* thay cho *điểm yếu*) và tránh sai chính tả vỏ ngữ âm (`chỉnh chu`, `chuẩn đoán`, `chắp bút`). Không dịch từng chữ thuật ngữ phần mềm sang các cụm xa lạ (*"khung hợp đồng"*, *"khung vận hành"*, *"khóa hợp đồng"*, *"giao kèo dữ liệu"*, *"khung chạy sẵn"*, *"hiện thực lớp"*, *"lớp phụ trách"*, *"di chuyển vệt sáng"*, *"túi chứa dữ liệu"*, *"mẫu thông điệp"*). Không tự phong chức danh tập đoàn (*"Kỹ sư giao thức mạng"*, *"20 tác vụ vòng đời phần mềm"*, *"tác vụ/thành viên"*) cho bài tập nhóm sinh viên, không dịch ngược từ tiếng Anh đã quen dùng (`email` thành *"thư điện tử"*, `pull request` thành *"yêu cầu kéo"*) và không chêm từ ngoại lai lửng lơ (`booking lịch`).
 
-## Năm cái bẫy cấm mắc khi sửa văn
+## Năm lỗi sửa quá tay cần tránh
 
-1. Tránh vặn câu thành lối đếm tuần tự ngô nghê (`Hồ sơ thứ nhất... Sang hồ sơ thứ hai... Ở hồ sơ thứ ba...`) chỉ để né cảnh báo lặp từ của máy quét. Khi có nhiều dòng số liệu cùng cấu trúc, hãy trình bày thành bảng.
+1. Tránh vặn câu thành lối đếm tuần tự ngô nghê (`Hồ sơ thứ nhất... Sang hồ sơ thứ hai... Ở hồ sơ thứ ba...`) chỉ để né cảnh báo lặp từ của máy quét. Khi có nhiều dòng số liệu cùng cấu trúc, hãy chuyển sang bảng.
 2. Tuyệt đối tránh biến văn bản trình lãnh đạo thành giọng sồn sã hoặc kịch tính hóa hiện trường (`Anh Minh ơi,`, `cố bấm nút`, `rủi ro sát sườn`, `tê liệt`, `sập toàn tuyến`, `khủng hoảng hệ thống`, `trực chiến 24/7`, `tử huyệt`). Văn quản trị cần điềm tĩnh, lễ độ chừng mực, để con số tự nói lên mức độ nghiêm trọng và bỏ các câu khen xã giao hoặc tự khoe xếp loại (`loại giỏi`, `very good`).
 3. Cấm tự bịa từ đời thường ngô nghê trái cách gọi nơi làm việc (`in đúp` thay vì *lặp dòng*, `chép thiếu tiền` thay vì *chuyển thiếu số dư*, `cho máy tính ghép` thay vì *chạy đối soát tự động*).
 4. Giữ nguyên dữ kiện và mức độ chắc chắn khi rút gọn câu. Không đổi *có thể giảm* thành *giảm*, không đổi *sau khi* thành *nhờ*, không xóa điều kiện *nếu / trừ khi* và không coi việc chưa tìm thấy hồ sơ là bằng chứng đơn vị không thực hiện.
 5. Cấm xoay vòng động từ đồng nghĩa gượng gạo (`Khóa hợp đồng / Thiết kế / Xây dựng / Hiện thực / Lập trình / Phát triển / Tính toán / Lập bộ / Soạn / Thiết lập`) ở đầu các ô bảng hoặc danh sách chỉ để lách cờ lặp từ `VIS-FMT-005`. Trong bảng phân công hoặc bảng liệt kê thành phần kỹ thuật, bỏ hẳn động từ dẫn đầu và ghi thẳng tên tệp, lớp hoặc đầu việc.
 
-## Tự quét lại bài viết, đo hồ sơ giọng văn và đối soát bằng `scripts/vi_scanner.py`
+## Tự quét bài viết, lập hồ sơ giọng văn và đối soát bằng `scripts/vi_scanner.py`
 
 Sau khi viết mới hoặc biên tập xong bất kỳ tệp `.md`, `.txt`, `.docx`, email, bài đăng hay báo cáo nào, bắt buộc tự quét lại chính đầu ra bằng [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi bàn giao. Chỉ miễn bước này với câu trả lời hội thoại ngắn 1 đến 2 câu:
 
@@ -62,19 +62,19 @@ python scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
 # Quét tệp báo cáo .docx và bỏ qua các cột bảng chứa văn bản trích lục của bên thứ ba
 python scripts/vi_scanner.py scan BAO_CAO.docx --profile audit_report --ignore-table-cols 2,3
 
-# Đo tất định 18 chỉ số nhịp câu (stylometry) và 12 chỉ số kỷ luật lập luận DHDNA
+# Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 12 chỉ số kỷ luật lập luận DHDNA
 python scripts/vi_scanner.py profile BAO_CAO.docx --ignore-table-cols 2,3 --json
 
 # Nếu sửa trên văn bản có sẵn của người dùng, chạy thêm bước đối soát dữ kiện
 python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 ```
 
-Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của tất cả 7 nhóm văn bản. Mỗi tín hiệu trả về đều ghi rõ `applicable_profiles` (nhóm văn bản bị ảnh hưởng) và `exempt_profiles` (nhóm được miễn). Agent đọc hai trường này đối chiếu với loại tài liệu thực tế đang làm để quyết định sửa hay giữ nguyên, không xóa máy móc mọi chỗ bị gắn cờ. Chỉ truyền `--profile <tên_nhóm>` khi muốn lọc riêng cho một thể loại cố định. Tra cứu danh mục đủ 41 mã quy tắc tại [references/rule-catalog.md](references/rule-catalog.md), mẫu giọng văn chức năng tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) và bảng ngoại lệ tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).
+Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của cả 7 nhóm văn bản. Mỗi kết quả đều ghi rõ `applicable_profiles` (nhóm áp dụng), `exempt_profiles` (nhóm miễn trừ) và gợi ý `suggestion_vi` khớp trực tiếp với cụm từ bị đánh dấu. Agent đối chiếu các trường này với loại tài liệu thực tế để quyết định sửa hay giữ nguyên, tránh xóa máy móc mọi chỗ có cảnh báo. Chỉ truyền `--profile <tên_nhóm>` khi cần lọc riêng cho một thể loại cố định. Tra cứu đủ 41 mã quy tắc tại [references/rule-catalog.md](references/rule-catalog.md), mẫu giọng văn chức năng tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) và bảng ngoại lệ tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).
 
-Ở bước hậu kiểm, luôn lưu bản gốc trước khi sửa để chạy lệnh `verify`. Lệnh này đối soát 6 nhóm dữ kiện bắt buộc giữ nguyên: con số (gồm ngày tháng, tỷ lệ phần trăm), từ phủ định, từ chỉ điều kiện và từ chỉ mức độ chắc chắn. Đường dẫn, khối code và nguồn trích dẫn cũng được kiểm tra đầy đủ. Nếu bản sửa làm lệch bất kỳ nhóm nào ngoài chủ đích (trừ trường hợp cố ý gọt bớt cụm rào đón chồng chéo như `dường như có vẻ như`), phải khôi phục lại chính xác nghĩa gốc trước khi trả kết quả.
+Ở bước hậu kiểm, luôn lưu bản gốc trước khi sửa để chạy lệnh `verify`. Công cụ đối soát 6 nhóm dữ kiện bắt buộc giữ nguyên: con số (kể cả ngày tháng, tỷ lệ phần trăm), từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn kèm khối code và nguồn trích dẫn. Nếu bản sửa làm lệch bất kỳ nhóm nào ngoài chủ đích (trừ trường hợp cố ý gọt bớt cụm rào đón chồng chéo như `dường như có vẻ như`), phải khôi phục đúng nghĩa gốc trước khi bàn giao.
 
-Khi trả kết quả cho người dùng, đưa thẳng sản phẩm đã hoàn thiện. Không đính kèm bảng điểm máy quét hay kể lại quy trình biên tập trừ khi người dùng yêu cầu nhận xét văn bản.
+Khi trả kết quả cho người dùng, gửi thẳng văn bản đã hoàn thiện. Không đính kèm bảng điểm máy quét hay kể lại quy trình biên tập trừ khi người dùng yêu cầu nhận xét câu chữ.
 
 ## Bảo trì bảng quy tắc và từ vựng trên CSV
 
-Toàn bộ quy tắc và từ vựng nằm tại hai tệp CSV chuẩn `UTF-8 BOM` mở trực tiếp bằng Excel. Tệp [data/vocab.csv](data/vocab.csv) quản lý từ mượn, cụm dịch ngược và cụm từ cấm, còn [data/grammar.csv](data/grammar.csv) chứa 41 quy tắc cấu trúc cùng trọng số. Định kỳ hàng quý hoặc hàng năm, chạy lệnh `python scripts/vi_scanner.py check-maintenance` và rà soát theo hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).
+Toàn bộ quy tắc và từ vựng nằm tại hai tệp CSV chuẩn `UTF-8 BOM` mở trực tiếp bằng Excel. Tệp [data/vocab.csv](data/vocab.csv) quản lý từ mượn quen dùng, cụm dịch ngược, lối chêm từ ngoại lai và các cụm văn mẫu cần tránh, còn [data/grammar.csv](data/grammar.csv) khai báo 41 quy tắc cấu trúc cùng trọng số. Định kỳ hàng quý hoặc hàng năm, chạy lệnh `python scripts/vi_scanner.py check-maintenance` và rà soát theo hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).

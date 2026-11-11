@@ -1,23 +1,27 @@
 # Lịch sử phiên bản (Changelog)
 
-Mọi thay đổi đáng chú ý của dự án được ghi nhận tại tệp này theo định dạng [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Các thay đổi đáng chú ý của dự án được ghi nhận tại đây theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.2.0] - 2026-11-10
 
 ### Thêm mới (Added)
 
-- Bổ sung lệnh `profile` trong [scripts/vi_scanner.py](scripts/vi_scanner.py). Lệnh này đo tất định 18 chỉ số nhịp câu (`stylometry`), 12 chỉ số kỷ luật lập luận theo khung `DHDNA v2.0`, bộ dò xung đột mẫu số (`ung_vien_lech_mau_so`) và nhận diện tự động 4 kiểu giọng văn chức năng.
-- Bổ sung trình đọc trực tiếp tệp Word `.docx` bằng thư viện chuẩn (`zipfile` + `xml.etree.ElementTree`). Hỗ trợ cờ `--ignore-table-cols` để loại trừ cột bảng trích lục của bên thứ ba và kiểm tra lỗi sót tiêu đề kỳ cũ (`template_title_mismatch`).
-- Bổ sung các kiểm tra tất định về kỷ luật số liệu và bằng chứng trong `VIS-STRUCT-002` và `VIS-TONE-001`. Công cụ phát hiện lỗi gộp mục còn lỗi vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian, dùng bù trừ ròng kết luận không sai lệch, chốt tỷ lệ hoàn thành thiếu `Tử số/Mẫu số` và từ ngữ kịch tính hiện trường.
-- Thêm tài liệu [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) tổng hợp 4 kiểu giọng văn chức năng, 6 kỷ luật dẫn số liệu và bảng chuyển ngữ quản trị.
+- Bổ sung lệnh `profile` trong [scripts/vi_scanner.py](scripts/vi_scanner.py). Lệnh mới tính 18 chỉ số nhịp câu (`stylometry`), 12 chỉ số kỷ luật lập luận (`DHDNA v2.0`), phát hiện lệch mẫu số (`ung_vien_lech_mau_so`) và xếp loại 4 kiểu giọng văn chức năng.
+- Bổ sung trình đọc tệp Word `.docx` bằng thư viện chuẩn (`zipfile` + `xml.etree.ElementTree`). Người dùng có thể truyền `--ignore-table-cols` để bỏ qua cột trích lục của bên thứ ba và kiểm tra lỗi sót tiêu đề kỳ cũ (`template_title_mismatch`).
+- Mở rộng `VIS-STRUCT-002` và `VIS-TONE-001` để rà kỷ luật số liệu và bằng chứng. Máy quét bắt lỗi gộp mục còn vướng mắc vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian, dùng bù trừ ròng kết luận không sai lệch, chốt tỷ lệ thiếu `Tử số/Mẫu số` và từ kịch tính hiện trường.
+- Thêm [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) tổng hợp 4 kiểu giọng văn chức năng, 6 kỷ luật dẫn số liệu và bảng chuyển ngữ quản trị.
+
+### Sửa lỗi (Fixed)
+
+- Chuẩn hóa đủ `2.011` mục từ tại [data/vocab.csv](data/vocab.csv) và `41` quy tắc tại [data/grammar.csv](data/grammar.csv). Gợi ý `suggestion_vi` nay khớp trực tiếp với từng nhánh biểu thức chính quy, cụm lặp vượt ngưỡng và bộ 3 tính từ khen ngợi.
 
 ## [2.1.0] - 2026-11-10
 
 ### Thêm mới (Added)
 
-- Tích hợp 100% tập mẫu P0/P1/P2 và 18 chỉ số nhịp học (`stylometry`) của `viet-humanize` vào báo cáo JSON của [scripts/vi_scanner.py](scripts/vi_scanner.py).
-- Mở rộng `SemanticMasker` để quét bên trong bảng Markdown, bảng HTML và chú thích tiếng Việt sau dấu `#` trong cây thư mục (`├──`, `└──`). Tự động che phần tiếng Anh sau neo `<a id="english"></a>` trong tài liệu song ngữ.
-- Bổ sung bộ nhận diện từ dịch can kỹ thuật (`khung hợp đồng`, `khung vận hành`, `khóa hợp đồng`, `giao kèo dữ liệu`, `khung chạy sẵn`, `hiện thực lớp`). Bắt thêm lỗi xoay vòng động từ đầu cột bảng (`VIS-FMT-005`), thuộc tính `alt` ảnh nhồi từ khóa, chú thích cây thư mục quá `10` từ, hộp HTML `01` đến `04` trùng lặp và bọc dấu nháy ngược quanh từ tiếng Việt thường (`VIS-STRUCT-002`).
+- Tích hợp 100% tập mẫu P0/P1/P2 và 18 chỉ số nhịp câu (`stylometry`) của `viet-humanize` vào báo cáo JSON của [scripts/vi_scanner.py](scripts/vi_scanner.py).
+- Mở rộng `SemanticMasker` để quét bên trong bảng Markdown, bảng HTML và chú thích tiếng Việt sau dấu `#` trong cây thư mục (`├──`, `└──`), đồng thời tự che phần tiếng Anh sau neo `<a id="english"></a>` trong tài liệu song ngữ.
+- Bổ sung bộ nhận diện cụm dịch từng chữ trong tài liệu kỹ thuật (`khung hợp đồng`, `khung vận hành`, `khóa hợp đồng`, `giao kèo dữ liệu`, `khung chạy sẵn`, `hiện thực lớp`). Bắt thêm lỗi xoay vòng động từ đầu cột bảng (`VIS-FMT-005`), thuộc tính `alt` ảnh nhồi từ khóa, chú thích cây thư mục quá `10` từ, hộp HTML `01` đến `04` trùng lặp và bọc dấu nháy ngược quanh từ tiếng Việt thường (`VIS-STRUCT-002`).
 
 ## [2.0.0] - 2026-11-10
 

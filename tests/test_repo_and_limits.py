@@ -229,6 +229,12 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
         for rule in self.scanner.rules.values():
             self.assertEqual(self.scanner.scan_text(rule.better_example, profile="all").findings_count, 0, rule.rule_id)
 
+        vap_txt = (ROOT / "references" / "voice-and-argument-patterns.md").read_text(encoding="utf-8")
+        for ln in vap_txt.splitlines():
+            if ln.startswith('| "'):
+                for cell in [c.strip().strip('"') for c in ln.strip().strip("|").split("|")[1:]]:
+                    self.assertEqual(self.scanner.scan_text(cell, profile="all").findings_count, 0, cell)
+
     def test_zero_hardcoded_project_leaks_in_repo(self) -> None:
         """Đảm bảo không còn mã băm hay số liệu nội bộ cũ rò rỉ trong bất kỳ tệp nào của repo."""
         forbidden_sha256 = {

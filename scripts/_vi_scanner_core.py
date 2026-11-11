@@ -244,7 +244,7 @@ class ViScanner:
     VERSION: ClassVar[str] = VERSION
     SCHEMA_VERSION: ClassVar[str] = SCHEMA_VERSION
     DISCLAIMER: ClassVar[str] = (
-        "Công cụ vi_scanner chỉ chỉ ra các vị trí câu chữ máy móc, sáo rỗng, dịch sát hoặc dài dòng "
+        "Công cụ vi_scanner chỉ đánh dấu các vị trí câu chữ máy móc, sáo rỗng, dịch sát hoặc dài dòng "
         "cần người viết đọc lại. Kết quả này KHÔNG suy đoán tác giả và KHÔNG kết luận văn bản do AI tạo ra."
     )
 

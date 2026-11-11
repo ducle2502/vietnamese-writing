@@ -8,12 +8,19 @@ Các thay đổi đáng chú ý của dự án được ghi nhận tại đây t
 
 - Bổ sung lệnh `profile` trong [scripts/vi_scanner.py](scripts/vi_scanner.py). Lệnh mới tính 18 chỉ số nhịp câu (`stylometry`), 12 chỉ số kỷ luật lập luận (`DHDNA v2.0`), phát hiện lệch mẫu số (`ung_vien_lech_mau_so`) và xếp loại 4 kiểu giọng văn chức năng.
 - Bổ sung trình đọc tệp Word `.docx` bằng thư viện chuẩn (`zipfile` + `xml.etree.ElementTree`). Người dùng có thể truyền `--ignore-table-cols` để bỏ qua cột trích lục của bên thứ ba và kiểm tra lỗi sót tiêu đề kỳ cũ (`template_title_mismatch`).
-- Mở rộng `VIS-STRUCT-002` và `VIS-TONE-001` để rà kỷ luật số liệu và bằng chứng. Máy quét bắt lỗi gộp mục còn vướng mắc vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian, dùng bù trừ ròng kết luận không sai lệch, chốt tỷ lệ thiếu `Tử số/Mẫu số` và từ kịch tính hiện trường.
+- Mở rộng `VIS-STRUCT-002` và `VIS-TONE-001` để rà kỷ luật số liệu và bằng chứng. Máy quét bắt lỗi gộp mục còn vướng mắc vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian và dùng bù trừ ròng kết luận khớp đúng. Bộ quét cũng chặn lỗi chốt tỷ lệ thiếu `Tử số/Mẫu số` và từ kịch tính hiện trường.
+- Bổ sung quy tắc `VIS-TONE-002` bắt họ động từ điều tra/cổ văn (`phát lộ`, `phát giác`, `bại lộ`, `vạch trần`) và mẫu câu kịch tính hóa sự cố hoặc con số (`sập API`, `vỏn vẹn`, `giậm chân tại chỗ`).
+- Khái quát hóa khung ngữ pháp dịch từng chữ của `VIS-LEX-001` (`hiện thực + <danh từ>`, `khung + <danh từ>`, `hợp đồng/giao kèo + <danh từ>`) và bổ sung họ lỗi chính tả công sở (`cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`, `xuất sứ`).
 - Thêm [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) tổng hợp 4 kiểu giọng văn chức năng, 6 kỷ luật dẫn số liệu và bảng chuyển ngữ quản trị.
+
+### Thay đổi (Changed)
+
+- Hạ trần độ dài câu `VIS-LEN-001` xuống `35` từ (`45` từ với văn bản pháp lý) và quét cả câu trong ô bảng. Cả hai lệnh `scan` và `profile` đều trả mã lỗi `1` ngay khi gặp câu vượt ngưỡng.
 
 ### Sửa lỗi (Fixed)
 
-- Chuẩn hóa đủ `2.011` mục từ tại [data/vocab.csv](data/vocab.csv) và `41` quy tắc tại [data/grammar.csv](data/grammar.csv). Gợi ý `suggestion_vi` nay khớp trực tiếp với từng nhánh biểu thức chính quy, cụm lặp vượt ngưỡng và bộ 3 tính từ khen ngợi.
+- Gỡ ngưỡng gom cụm ẩn (`>= 3` lần/đoạn) trên các ẩn dụ dịch sát không mơ hồ của `VIS-RHET-002`, `VIS-RHET-003`, `VIS-CLICHE-002` và `VIS-CLICHE-004` để bắt ngay từ lần xuất hiện đầu tiên.
+- Chuẩn hóa đủ `2.011` mục từ tại [data/vocab.csv](data/vocab.csv) và `42` quy tắc tại [data/grammar.csv](data/grammar.csv). Gợi ý `suggestion_vi` nay khớp trực tiếp với từng nhánh biểu thức chính quy, cụm lặp vượt ngưỡng và bộ 3 tính từ khen ngợi.
 
 ## [2.1.0] - 2026-11-10
 
@@ -21,7 +28,7 @@ Các thay đổi đáng chú ý của dự án được ghi nhận tại đây t
 
 - Tích hợp 100% tập mẫu P0/P1/P2 và 18 chỉ số nhịp câu (`stylometry`) của `viet-humanize` vào báo cáo JSON của [scripts/vi_scanner.py](scripts/vi_scanner.py).
 - Mở rộng `SemanticMasker` để quét bên trong bảng Markdown, bảng HTML và chú thích tiếng Việt sau dấu `#` trong cây thư mục (`├──`, `└──`), đồng thời tự che phần tiếng Anh sau neo `<a id="english"></a>` trong tài liệu song ngữ.
-- Bổ sung bộ nhận diện cụm dịch từng chữ trong tài liệu kỹ thuật (`khung hợp đồng`, `khung vận hành`, `khóa hợp đồng`, `giao kèo dữ liệu`, `khung chạy sẵn`, `hiện thực lớp`). Bắt thêm lỗi xoay vòng động từ đầu cột bảng (`VIS-FMT-005`), thuộc tính `alt` ảnh nhồi từ khóa, chú thích cây thư mục quá `10` từ, hộp HTML `01` đến `04` trùng lặp và bọc dấu nháy ngược quanh từ tiếng Việt thường (`VIS-STRUCT-002`).
+- Bổ sung bộ nhận diện cụm dịch từng chữ trong tài liệu kỹ thuật (`khung hợp đồng`, `khung vận hành`, `khóa hợp đồng`, `giao kèo dữ liệu`, `khung chạy sẵn`, `hiện thực lớp`). Máy quét kiểm tra thêm lỗi xoay vòng động từ đầu cột bảng (`VIS-FMT-005`), thuộc tính `alt` ảnh nhồi từ khóa, chú thích cây thư mục quá `10` từ, hộp HTML `01` đến `04` trùng lặp và bọc dấu nháy ngược quanh từ tiếng Việt thường (`VIS-STRUCT-002`).
 
 ## [2.0.0] - 2026-11-10
 

@@ -1,0 +1,121 @@
+[project]
+name = "vietnamese-writing"
+version = "2.2.0"
+description = "Kỹ năng viết, biên tập và kiểm tra tiếng Việt tự nhiên kèm công cụ dòng lệnh vi_scanner.py cho AI Agent"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11",
+    "ruff>=0.8",
+]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = ["scripts", "tests"]
+files = ["scripts", "tests"]
+strict = true
+warn_unreachable = true
+pretty = true
+show_error_codes = true
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+    "truthy-iterable",
+    "unused-awaitable",
+    "possibly-undefined",
+    "mutable-override",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+src = ["scripts", "tests"]
+
+[tool.ruff.lint]
+# Kiểm soát chặt độ dài dòng/tài liệu, độ phức tạp thuật toán & lồng khối (C90, PLR),
+# cấu trúc dữ liệu (B, C4, RUF, SLOT, PIE, FURB) và hiệu năng tuyến tính (PERF).
+preview = true
+explicit-preview-rules = true
+select = [
+    "E",       # pycodestyle errors (bao gồm E501 giới hạn độ dài dòng 120 ký tự)
+    "W",       # pycodestyle warnings (bao gồm W505 giới hạn độ dài dòng docstring/chú thích)
+    "F",       # Pyflakes
+    "I",       # isort
+    "N",       # pep8-naming
+    "UP",      # pyupgrade (Python 3.11+)
+    "B",       # flake8-bugbear (data-structure & loop pitfalls, strict zip)
+    "A",       # flake8-builtins
+    "C4",      # flake8-comprehensions (optimal set/list/dict comprehensions)
+    "C90",     # mccabe cyclomatic complexity
+    "SIM",     # flake8-simplify
+    "PERF",    # Perflint (algorithmic & loop performance anti-patterns)
+    "FURB",    # refurb (modern data-structure & stdlib idioms)
+    "PIE",     # flake8-pie
+    "PL",      # Pylint stable rules (PLC, PLE, PLR, PLW)
+    "PLR0904", # Pylint preview: max-public-methods
+    "PLR0914", # Pylint preview: max-locals
+    "PLR0916", # Pylint preview: max-bool-expr
+    "PLR1702", # Pylint preview: max-nested-blocks
+    "PLW0717", # Pylint preview: max-statements-in-try
+    "RUF",     # Ruff-specific rules (ClassVar mutability, unused noqa, collection checks)
+    "SLOT",    # flake8-slots
+    "RET",     # flake8-return
+    "RSE",     # flake8-raise
+    "SLF",     # flake8-self (encapsulation)
+    "FBT",     # flake8-boolean-trap
+    "DTZ",     # flake8-datetimez
+    "PTH",     # flake8-use-pathlib
+    "ARG",     # flake8-unused-arguments
+    "ERA",     # eradicate (commented-out dead code)
+    "PGH",     # pygrep-hooks (typed ignore / noqa discipline)
+    "TC",      # flake8-type-checking
+    "FLY",     # flynt
+    "S",       # flake8-bandit (security & XML safety)
+]
+ignore = [
+    "PLR2004", # Hằng số ngưỡng ngôn ngữ học / stylometry đặt trực tiếp tại công thức đo
+    "RUF001",  # Dấu gạch ngang dài/ngắn (–, —) và ngoặc kép cong chủ đích trong tiếng Việt
+    "RUF002",  # Ký tự dấu câu tiếng Việt trong docstring
+    "RUF003",  # Ký tự dấu câu tiếng Việt trong chú thích
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/fixtures_100.py" = ["E501"]
+"tests/*.py" = ["SLF001"]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 120
+max-doc-length = 120
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 6
+max-positional-args = 5
+max-branches = 10
+max-returns = 5
+max-statements = 40
+max-locals = 15
+max-public-methods = 12
+max-bool-expr = 5
+max-nested-blocks = 4
+max-statements-in-try = 6
+
+[tool.code_limits]
+# Giới hạn vật lý về kích thước tệp, hàm, lớp và literal dữ liệu do scripts/check_code_limits.py kiểm tra
+paths = ["scripts", "tests"]
+max_file_lines = 500
+max_function_lines = 55
+max_class_lines = 260
+max_class_methods = 15
+max_class_attributes = 20
+max_object_literal_items = 65
+data_module_globs = [
+    "tests/fixtures_100.py",
+]
+max_data_object_literal_items = 120

@@ -18,5 +18,6 @@
 
 - [ ] Không gắn cứng tên hệ thống, mã bảng hay con số đặc thù của dự án nội bộ vào mã nguồn
 - [ ] Đã đồng bộ nội dung giữa `scripts/vi_scanner.py`, `SKILL.md`, `README.md` và `references/`
+- [ ] Chạy `ruff check scripts tests`, `ruff format --check scripts tests`, `mypy scripts tests` và `python -B scripts/check_code_limits.py` đạt `0` lỗi
 - [ ] Chạy `python -B scripts/vi_scanner.py selftest` và `python -B -m unittest discover -s tests -v` đạt 100%
 - [ ] Chạy `python -B scripts/vi_scanner.py scan` trên toàn bộ các tệp `.md` trong repo đạt `0` lỗi

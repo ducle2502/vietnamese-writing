@@ -24,6 +24,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install static analysis tools (mypy & ruff)
+        run: |
+          python -m pip install --upgrade pip "mypy>=1.11" "ruff>=0.8"
+
+      - name: Run ruff lint, format check, strict mypy & code limits
+        run: |
+          ruff check scripts tests
+          ruff format --check scripts tests
+          mypy scripts tests
+          python -B scripts/check_code_limits.py
+
       - name: Run scanner selftest & maintenance check
         run: |
           python -B scripts/vi_scanner.py selftest
@@ -35,4 +46,4 @@ jobs:
 
       - name: Self-scan all repository Markdown documents
         run: |
-          python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md references/rule-catalog.md references/loanwords-and-exceptions.md --json
+          python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md references/rule-catalog.md references/voice-and-argument-patterns.md references/loanwords-and-exceptions.md --json

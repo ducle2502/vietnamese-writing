@@ -18,7 +18,11 @@ python -B scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
 python -B scripts/vi_scanner.py profile TEP_VUA_VIET.md --json
 python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 python -B scripts/vi_scanner.py check-maintenance
+ruff check scripts tests
+ruff format --check scripts tests
+mypy scripts tests
+python -B scripts/check_code_limits.py
 python -B -m unittest discover -s tests -v
 ```
 
-Khi cập nhật quy tắc trong [scripts/vi_scanner.py](scripts/vi_scanner.py), giữ đồng bộ nội dung giữa [SKILL.md](SKILL.md), [README.md](README.md), [references/rule-catalog.md](references/rule-catalog.md), [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) và [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md), sau đó chạy lại bộ kiểm thử đơn vị và quét chính các tệp `.md` trong repo.
+Khi cập nhật quy tắc trong [data/vocab.csv](data/vocab.csv), [data/grammar.csv](data/grammar.csv) hoặc [scripts/vi_scanner.py](scripts/vi_scanner.py), giữ đồng bộ nội dung giữa [SKILL.md](SKILL.md), [README.md](README.md) và ba tệp tham chiếu ([rule-catalog.md](references/rule-catalog.md), [voice-and-argument-patterns.md](references/voice-and-argument-patterns.md), [loanwords-and-exceptions.md](references/loanwords-and-exceptions.md)). Sau đó, chạy lại bộ kiểm thử đơn vị và quét chính các tệp `.md` trong repo.

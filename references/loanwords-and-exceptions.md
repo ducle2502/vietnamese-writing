@@ -2,9 +2,10 @@
 
 ## 1. Quy trình rà soát hàng quý hoặc hàng năm cho danh sách từ mượn
 
-Công cụ `scripts/vi_scanner.py` dò các từ tiếng Anh chêm giữa câu tiếng Việt thông qua đặc trưng mặt chữ. Các dấu hiệu gồm chữ cái `f, j, w, z`, cụm phụ âm đầu/cuối tiếng Anh như `bl-, cr-, st-, -ck, -tion, -ment` hoặc cách viết `SNAKE_CASE`. Sau đó, máy quét bỏ qua các từ nằm trong hai tập hợp ở đầu tệp `scripts/vi_scanner.py`:
-1. `UNIVERSAL_NATURALIZED_LOANWORDS` dành cho những từ đã đi hẳn vào tiếng Việt hàng ngày (`email`, `web`, `website`, `internet`, `wifi`, `video`, `logic`, `logistics`, `container`, `pdf`, `qr`, `otp`...). Các từ này xuất hiện tự nhiên trong cả báo cáo kiểm toán, văn bản pháp lý lẫn bài báo khoa học.
-2. `WORKPLACE_TECH_LOANWORDS` dành cho những từ thông dụng trong giao tiếp công sở, truyền thông và kỹ thuật (`app`, `file`, `link`, `code`, `team`, `slide`, `deadline`, `feedback`, `api`, `sql`, `cloud`...). Nhóm từ này hợp lệ ở bài viết chung hoặc mạng xã hội, nhưng máy quét vẫn nhắc cân nhắc Việt hóa khi trình báo cáo quản trị cấp cao (`audit_report`).
+Công cụ `scripts/vi_scanner.py` dò các từ tiếng Anh chêm giữa câu tiếng Việt thông qua đặc trưng mặt chữ. Các dấu hiệu gồm chữ cái `f, j, w, z`, cụm phụ âm đầu/cuối tiếng Anh như `bl-, cr-, st-, -ck, -tion, -ment` hoặc cách viết `SNAKE_CASE`. Sau đó, máy quét đối chiếu trực tiếp bảng từ vựng [../data/vocab.csv](../data/vocab.csv) (chuẩn `UTF-8 BOM` mở bằng Excel):
+1. Nhóm `loanword_universal` (`UNIVERSAL_NATURALIZED_LOANWORDS`) dành cho những từ đã đi hẳn vào tiếng Việt hàng ngày (`email`, `web`, `website`, `internet`, `wifi`, `video`, `logic`, `logistics`, `container`, `pdf`, `qr`, `otp`...). Các từ này xuất hiện tự nhiên trong cả báo cáo kiểm toán, văn bản pháp lý lẫn bài báo khoa học.
+2. Nhóm `loanword_workplace` (`WORKPLACE_TECH_LOANWORDS`) dành cho những từ thông dụng trong giao tiếp công sở, truyền thông và kỹ thuật (`app`, `file`, `link`, `code`, `team`, `slide`, `deadline`, `feedback`, `api`, `sql`, `cloud`...). Nhóm từ này hợp lệ ở bài viết chung hoặc mạng xã hội, nhưng máy quét vẫn nhắc cân nhắc Việt hóa khi trình báo cáo quản trị cấp cao (`audit_report`).
+3. Nhóm `reverse_calque` bắt các cụm dịch ngược ngô nghê (`thư điện tử`, `yêu cầu kéo`, `kho mã nguồn`) kèm gợi ý từ gốc thông dụng ở cột `replacement_hint`, còn nhóm `banned_phrase` gắn các cụm từ cấm cố định vào mã `rule_id` tương ứng bên [../data/grammar.csv](../data/grammar.csv).
 
 Mỗi quý (90 ngày) hoặc ít nhất mỗi năm một lần, chạy lệnh sau để kiểm tra hạn rà soát:
 

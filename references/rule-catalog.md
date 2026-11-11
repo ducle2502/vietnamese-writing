@@ -1,6 +1,6 @@
-# Danh mục 30 quy tắc trong `scripts/vi_scanner.py`
+# Danh mục 31 quy tắc trong `scripts/vi_scanner.py`
 
-Tài liệu này tóm tắt 30 mã quy tắc thuộc 6 nhóm để Agent tra cứu nhanh khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
+Tài liệu này tóm tắt 31 mã quy tắc thuộc 6 nhóm để Agent tra cứu nhanh khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
 
 ## Nhóm 1: Rào đón và dàn dựng kiểu chatbot (`AI_META_AND_STAGING`)
 
@@ -61,3 +61,4 @@ Tài liệu này tóm tắt 30 mã quy tắc thuộc 6 nhóm để Agent tra c�
 | `VIS-TONE-001` | `warning` | Chào sồn sã (`Anh X ơi,`), dùng từ kịch tính hóa hoặc cảm thán hiện trường (`rủi ro sát sườn`, `cố bấm nút`, `tê liệt`, `sập toàn tuyến`, `khủng hoảng hệ thống`, `trực chiến 24/7`, `tử huyệt`), tự khoe xếp loại hoặc khen xã giao. | Giữ giọng điềm tĩnh, lễ độ chừng mực và bỏ hẳn câu tự khen hoặc khen xã giao. |
 | `VIS-STRUCT-001` | `warning` | Tự thuyết minh bố cục hoặc tài liệu (`Để tránh trùng lặp...`, `Bảng dưới đây trình bày...`, `Tài liệu X mô tả chi tiết...`, `ghi lại lý do chọn`), lộ nhãn dàn ý (`Điểm nghẽn:`, `Bước ngoặt tư duy:`) hoặc đếm tuần tự né máy quét. | Xóa câu giải thích bố cục và nhãn dàn ý, nối thẳng mạch nội dung hoặc gộp liên kết vào danh sách. |
 | `VIS-STRUCT-002` | `warning` | Ký tự ẩn, chồng dấu `****`, lỗi `#REF!`, viết `Thiếu -10%`, mũi tên `->`, emoji trang trí, phần trăm dấu chấm `59.9%`, tiêu đề Title Case kiểu Anh, mục con đơn độc, thuộc tính `alt` ảnh nhồi từ khóa (`> 12` từ hoặc kèm khẩu hiệu quảng cáo), hộp HTML `01`–`04` lặp lại bảng, chú thích `#` trong cây thư mục dài quá `10` từ, bọc dấu nháy ngược quanh từ tiếng Việt thường, cộng sai dòng `Tổng cộng`, gộp hạng mục còn lỗi vào tỷ lệ hoàn thành, đánh đồng hướng dẫn trung gian với đã đóng lỗi, dùng bù trừ ròng kết luận không sai lệch, chốt tỷ lệ hoàn thành thiếu `Tử số/Mẫu số` hoặc lệch thuộc tính `Title` kỳ cũ của tệp `.docx`. | Chuẩn hóa dấu phẩy thập phân tiếng Việt, giữ `alt` ảnh và chú thích cây thư mục ngắn gọn, tách riêng tỷ lệ không lỗi và còn lỗi, kèm đủ `Tử số/Mẫu số (%)`, đối soát theo giá trị tuyệt đối và cộng khớp dòng tổng. |
+| `VIS-LEN-001` | `error` | Câu văn xuôi dài quá `45` từ (`55` từ với văn bản pháp lý), câu từ `36` từ trở lên nối đuôi từ `6` mệnh đề bằng dấu phẩy, mở câu bằng cụm danh từ hóa `Việc ...` kéo dài hoặc dẫn dắt vòng vo (`Thông qua việc...`, `Liên quan đến vấn đề...`, `Đối với việc thực hiện...`, `Không thể phủ nhận rằng...`, `với mục đích nhằm`). Trọng số phạt lũy tiến từ `1,0` lên tới `2,5` theo số từ vượt trần. | Cắt bỏ cụm rào đón đầu câu và tách thành `2` đến `3` câu ngắn độc lập (`15` đến `25` từ mỗi câu), mỗi câu một chủ thể và một động từ chính. |

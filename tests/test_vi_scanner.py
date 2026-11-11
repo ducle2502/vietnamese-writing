@@ -127,7 +127,7 @@ class TestViScannerRulesAndProfiles(unittest.TestCase):
         self.assertEqual(len_hits[0].severity, "error")
         self.assertGreaterEqual(len_hits[0].weight, 1.8)
         self.assertGreaterEqual(rep_run_on.error_count, 1)
-        self.assertTrue(any("> 45 từ" in w for w in rep_run_on.stylometry.get("canh_bao", [])))
+        self.assertTrue(any("> 35 từ" in w for w in rep_run_on.stylometry.get("canh_bao", [])))
 
         comma_chain = (
             "Đơn vị tiếp nhận hồ sơ vay vốn của khách hàng cá nhân, kiểm tra lịch sử trả nợ trên hệ thống, "
@@ -149,14 +149,95 @@ class TestViScannerRulesAndProfiles(unittest.TestCase):
             rep_rb = self.scanner.scan_text(roundabout_sample, profile="general")
             self.assertIn("VIS-LEN-001", {f.rule_id for f in rep_rb.findings}, roundabout_sample)
 
+        legal_44w = (
+            "Căn cứ Điều 301 Luật Thương mại năm 2005, mức phạt đối với vi phạm nghĩa vụ hợp đồng "
+            "hoặc tổng mức phạt đối với nhiều vi phạm do các bên thỏa thuận, nhưng không quá 8% giá trị "
+            "nghĩa vụ bị vi phạm."
+        )
+        self.assertEqual(self.scanner.scan_text(legal_44w, profile="legal").findings_count, 0)
+        self.assertEqual(self.scanner.scan_text(legal_44w, profile="general").error_count, 1)
+        rep_legal_all = self.scanner.scan_text(legal_44w, profile="all")
+        self.assertIn("legal", rep_legal_all.findings[0].exempt_profiles)
+
         legal_50w = (
             "Căn cứ Điều 301 Luật Thương mại năm 2005, mức phạt đối với vi phạm nghĩa vụ hợp đồng hoặc tổng mức "
             "phạt đối với nhiều vi phạm do các bên thỏa thuận trong hợp đồng, nhưng không quá 8% giá trị phần "
             "nghĩa vụ hợp đồng bị vi phạm trong kỳ thanh toán."
         )
-        self.assertEqual(self.scanner.scan_text(legal_50w, profile="legal").findings_count, 0)
-        rep_legal_all = self.scanner.scan_text(legal_50w, profile="all")
-        self.assertIn("legal", rep_legal_all.findings[0].exempt_profiles)
+        self.assertEqual(self.scanner.scan_text(legal_50w, profile="legal").error_count, 1)
+
+    def test_table_cell_length_and_cli_hard_fail(self) -> None:
+        """Câu vượt 35 từ trong văn xuôi hoặc ô bảng phải làm cả `scan` lẫn `profile` trả mã lỗi 1 ngay."""
+        prose_38w = (
+            "Đoàn kiểm toán nội bộ rà soát hồ sơ tín dụng tại sáu chi nhánh khu vực miền Trung trong quý hai "
+            "để đối chiếu chứng từ giải ngân thực tế với báo cáo sao kê tài khoản thanh toán."
+        )
+        self.assertEqual(self.scanner.scan_text(prose_38w, profile="audit_report").error_count, 1)
+
+        bad_table = (
+            f"Số liệu đã khóa.\n\n| Hạng mục | Nhận định chi tiết |\n| :--- | :--- |\n| Tín dụng | {prose_38w} |\n"
+        )
+        rep_tbl = self.scanner.scan_text(bad_table, profile="audit_report")
+        self.assertIn("VIS-LEN-001", {f.rule_id for f in rep_tbl.findings})
+        self.assertTrue(any("> 35 từ" in w for w in profile_text(bad_table)["stylometry"]["canh_bao"]))
+
+        clean_table = (
+            "Đã khóa sổ.\n\n"
+            "| Cột 1 | Cột 2 | Cột 3 | Cột 4 |\n| :--- | :--- | :--- | :--- |\n"
+            "| Chi nhánh Hà Nội khớp đủ 120 hồ sơ gốc. | Đà Nẵng khớp đủ 85 chứng từ kho quỹ. "
+            "| Cần Thơ hoàn tất đối chiếu 64 tài khoản. "
+            "| • Đã thu đủ 12 hồ sơ gốc<br>• Đã ký biên bản bàn giao kho quỹ<br>"
+            "• Đã lưu trữ bản quét trên hệ thống |\n"
+        )
+        docx_bullet_row = (
+            "| 1 | • Đã thu đủ 12 hồ sơ gốc; • Đã ký biên bản kho quỹ; • Đã lưu trữ bản quét trên hệ thống |\n"
+        )
+        self.assertEqual(self.scanner.scan_text(clean_table, profile="all").findings_count, 0)
+        self.assertEqual(self.scanner.scan_text(docx_bullet_row, profile="audit_report").findings_count, 0)
+        self.assertFalse(any("> 35 từ" in w for w in profile_text(clean_table)["stylometry"]["canh_bao"]))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            bad_md = Path(tmp) / "overlong.md"
+            bad_md.write_text(bad_table, encoding="utf-8")
+            ok_md = Path(tmp) / "clean.md"
+            ok_md.write_text(clean_table, encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(["scan", str(bad_md), "--fail-on", "error"]), 1)
+                self.assertEqual(main(["profile", str(bad_md), "--json"]), 1)
+                self.assertEqual(main(["scan", str(ok_md)]), 0)
+                self.assertEqual(main(["profile", str(ok_md), "--json"]), 0)
+
+    def test_generalized_tone002_lex001_and_unblocked_metaphors(self) -> None:
+        """Kiểm tra họ quy tắc tổng quát `VIS-TONE-002`, `VIS-LEX-001` và ẩn dụ bắt ngay `1/doc`."""
+        pos_cases = (
+            ("VIS-TONE-002", "audit_report", "### 4. Lỗi tồn đọng: phát lộ thêm lỗ hổng chốt chặn số dư", "phát lộ"),
+            ("VIS-TONE-002", "general", "Hai đợt diễn tập hé lộ thêm sai lệch phân quyền.", "cho thấy"),
+            ("VIS-TONE-002", "audit_report", "Đợt kiểm thử liên tục sập kết nối API và sập RestAPI.", "sập"),
+            ("VIS-TONE-002", "general", "Tỷ lệ đạt giậm chân tại chỗ với vỏn vẹn 04/30 chỉ tiêu.", "giậm chân"),
+            ("VIS-LEX-001", "audit_report", "Tiến độ cập nhập báo cáo sát nhập vẫn dậm chân ở mức 15%.", "cập nhật"),
+            ("VIS-LEX-001", "general", "Nhóm hiện thực giao thức theo hợp đồng API và cọ sát thực tiễn.", "implement"),
+            ("VIS-RHET-003", "audit_report", "Quy trình này là kim chỉ nam và viên đá tảng của đơn vị.", "ẩn dụ"),
+            ("VIS-CLICHE-004", "general", "Giải pháp không màu mè cho đội vận hành kho.", ""),
+        )
+        for rid, prof, text, hint_sub in pos_cases:
+            hits = [f for f in self.scanner.scan_text(text, profile=prof).findings if f.rule_id == rid]
+            self.assertTrue(hits, f"Bỏ sót {rid} trên: {text}")
+            if hint_sub:
+                self.assertIn(hint_sub, hits[0].suggestion_vi.casefold())
+
+        neg_cases = (
+            ("marketing", "Hãng xe vừa hé lộ mẫu sedan điện mới cho mùa lễ hội."),
+            ("social_media", "Phiên bản thử nghiệm mới lộ diện sáng nay trên diễn đàn."),
+            ("audit_report", "Đợt diễn tập làm bộc lộ rõ rủi ro lộ mã tài sản liên đơn vị."),
+            ("audit_report", "Tài khoản thanh toán đang bị đóng băng theo yêu cầu phong tỏa."),
+            ("academic", "Nghiên cứu phân tích cuộc khủng hoảng tài chính năm 2008."),
+            ("general", "Tảng đá ngầm trồi lên mặt nước sau đợt sập giàn giáo bến cảng."),
+            ("legal", "Các bên ký hợp đồng dịch vụ dựa trên khung pháp lý hiện hành."),
+            ("audit_report", "Quản trị viên mở khóa tài khoản sau khi xác minh nguyên nhân cốt lõi."),
+        )
+        for prof, text in neg_cases:
+            rep = self.scanner.scan_text(text, profile=prof)
+            self.assertEqual(rep.findings_count, 0, f"Bắt nhầm ({prof}): {text} -> {rep.findings}")
 
 
 class TestViScannerSupersetAndDocx(unittest.TestCase):

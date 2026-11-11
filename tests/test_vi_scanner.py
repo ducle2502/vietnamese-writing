@@ -330,18 +330,73 @@ class TestViScannerSupersetAndDocx(unittest.TestCase):
             0,
         )
         clustered_adj = "Phương án mới linh hoạt, bền vững và tối ưu cho dây chuyền đóng gói."
-        self.assertIn(
-            "VIS-FMT-004",
-            {f.rule_id for f in self.scanner.scan_text(clustered_adj, profile="general").findings},
-        )
+        fmt_hits = [
+            f for f in self.scanner.scan_text(clustered_adj, profile="general").findings if f.rule_id == "VIS-FMT-004"
+        ]
+        self.assertEqual(len(fmt_hits), 1)
+        self.assertEqual(fmt_hits[0].matched_text, "linh hoạt, bền vững và tối ưu")
         convert_sample = "Bất quá nhân gia chỉ là một cái kế toán mới vào doanh nghiệp làm việc."
-        rev_findings = [
+        conv_findings = [
             f
             for f in self.scanner.scan_text(convert_sample, profile="translation").findings
-            if f.rule_id == "VIS-LEX-002"
+            if f.rule_id == "VIS-LEX-001"
         ]
-        self.assertGreaterEqual(len(rev_findings), 1)
-        self.assertNotRegex(rev_findings[0].suggestion_vi, r"\d+\)")
+        self.assertGreaterEqual(len(conv_findings), 1)
+        self.assertNotRegex(conv_findings[0].suggestion_vi, r"\d+\)")
+
+    def test_match_description_suggestion_coherence(self) -> None:
+        """Đảm bảo `matched_text`, `description_vi` và `suggestion_vi` khớp nhau trên mọi nhánh quy tắc."""
+        f_semi = self.scanner.scan_text("Chi nhánh đã khóa sổ; chứng từ gốc đã lưu kho.", profile="general").findings[0]
+        self.assertIn("chấm phẩy", f_semi.suggestion_vi)
+        f_dash = self.scanner.scan_text("Dự án này — vốn kéo dài hai quý — đã hoàn tất.", profile="general").findings[0]
+        self.assertIn("gạch ngang", f_dash.suggestion_vi)
+
+        f_rb = self.scanner.scan_text(
+            "Liên quan đến vấn đề đối chiếu công nợ, chi nhánh khóa sổ lúc 17 giờ.", profile="general"
+        ).findings[0]
+        self.assertNotIn("tách thành 2–3 câu", f_rb.suggestion_vi)
+        long_plain = (
+            "Đoàn kiểm toán rà soát hồ sơ vay vốn của khách hàng doanh nghiệp tại sáu chi nhánh miền Trung "
+            "trong quý hai để đối chiếu chứng từ giải ngân thực tế với báo cáo sao kê ngân hàng thương mại "
+            "và biên bản nghiệm thu kho bãi của đơn vị."
+        )
+        f_long = next(
+            f for f in self.scanner.scan_text(long_plain, profile="general").findings if f.rule_id == "VIS-LEN-001"
+        )
+        self.assertIn("tách thành 2–3 câu", f_long.suggestion_vi)
+        self.assertNotIn("rào đón", f_long.suggestion_vi)
+
+        rep_fmt2 = self.scanner.scan_text(self.scanner.rules["VIS-FMT-002"].bad_example, profile="general")
+        hit_fmt2 = next(f for f in rep_fmt2.findings if f.rule_id == "VIS-FMT-002")
+        self.assertIn(" ... ", hit_fmt2.matched_text)
+        self.assertFalse(hit_fmt2.matched_text.startswith("."))
+
+        checks = (
+            ("Nguồn https://example.com?utm_source=chatgpt.com nhé.", "VIS-AI-002", "utm_source"),
+            ("Bảng tính vô tình bỏ quên 3 giao dịch cuối ngày.", "VIS-TRANS-005", "vô tri"),
+            ("Đơn vị thực hiện kiểm tra 20 hồ sơ giải ngân.", "VIS-CLICHE-002", "tiến hành/thực hiện"),
+            ("Nhóm vận hành booking lịch họp với đối tác.", "VIS-LEX-002", "chêm từ ngoại lai"),
+            ("Tác giả chắp bút bản thảo đầu tiên năm 2024.", "VIS-LEX-001", "chấp bút"),
+        )
+        for sample, rid, expected_sub in checks:
+            hits = [f for f in self.scanner.scan_text(sample, profile="all").findings if f.rule_id == rid]
+            self.assertTrue(hits, f"Thiếu {rid} trên mẫu: {sample}")
+            self.assertIn(expected_sub, hits[0].suggestion_vi)
+
+    def test_zero_false_positives_on_curated_vocab_edge_cases(self) -> None:
+        """Không bắt nhầm cụm tiếng Việt tự nhiên sau khi chuẩn hóa toàn bộ 2.011 dòng `vocab.csv`."""
+        clean_samples = (
+            "Đoàn kiểm tra đọc kỹ hồ sơ từ đầu đến cuối trước khi ký biên bản.",
+            "Các đơn vị xác nhận sẵn sàng vận hành hệ thống thanh toán mới.",
+            "Bộ phận tiếp nhận 15 đơn từ khiếu nại và chạy một vòng đối soát trên bản nguyên bản.",
+            "Đây là yếu điểm chiến lược trên tuyến giao thông huyết mạch phía Bắc.",
+            "Số liệu phải tuyệt đối khớp. Đây là khâu trọng yếu của kỳ khóa sổ. Kế toán rà kỹ lưỡng từng dòng.",
+        )
+        for text in clean_samples:
+            rep = self.scanner.scan_text(text, profile="all")
+            self.assertEqual(rep.findings_count, 0, f"Bắt nhầm trên câu sạch: {text} -> {rep.findings}")
+        bad_yd = self.scanner.scan_text("Đơn vị cần khắc phục yếu điểm lớn nhất trong khâu lưu trữ.", profile="all")
+        self.assertIn("VIS-LEX-001", {f.rule_id for f in bad_yd.findings})
 
 
 if __name__ == "__main__":

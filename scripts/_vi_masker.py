@@ -8,7 +8,7 @@ import hashlib
 import re as stdlib_re
 from typing import TYPE_CHECKING, ClassVar
 
-from _vi_regex_anchors import _extract_regex_anchors, safe_lower_preserve_len
+from _vi_regex_anchors import _extract_regex_anchors, resolve_regex_suggestion, safe_lower_preserve_len
 from _vi_types import (
     ALL_PROFILES,
     VERSION,
@@ -119,9 +119,8 @@ def make_finding(
 ) -> Finding:
     line, col = offset_to_line_col(buf.raw_text, offset, buf.nl_offsets)
     end = min(len(buf.raw_text), offset + max(1, len(matched_text)))
-    suggestion = custom_suggestion or (
-        f"Viết gọn và trực tiếp hơn (ví dụ: '{rule.better_example}')" if rule.better_example else rule.description_vi
-    )
+    default_fb = f"Viết gọn hơn (ví dụ: '{rule.better_example}')" if rule.better_example else rule.description_vi
+    suggestion = custom_suggestion or resolve_regex_suggestion(rule.rule_id, matched_text) or default_fb
     app_profs = (
         list(override_profiles)
         if override_profiles is not None

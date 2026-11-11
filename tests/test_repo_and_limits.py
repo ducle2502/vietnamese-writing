@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import contextlib
+import csv
 import dataclasses
 import datetime as dt
 import hashlib
@@ -253,6 +254,8 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
                 self.assertNotIn(hashlib.sha256(tok.lower().encode("utf-8")).hexdigest(), forbidden_sha256, fpath.name)
             self.assertNotRegex(content, r"\b212\s+đơn vị kinh doanh\b|\b226\s+đơn vị\b")
 
+
+class TestCsvCrudAndRowInvariants(unittest.TestCase):
     def test_excel_csv_crud_vocab_and_grammar(self) -> None:
         """Kiểm tra thêm/sửa/tắt/xóa quy tắc trên CSV kiểu Excel (BOM, dấu `;`, số thập phân `,`)."""
         with tempfile.TemporaryDirectory() as tmp:
@@ -298,6 +301,34 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "VIS-MISSING"):
                 ViScanner(vocab_path=bad_vocab, grammar_path=grammar_csv)
+
+    def test_vocab_and_grammar_csv_row_count_and_hint_coherence(self) -> None:
+        """Bảo toàn nguyên vẹn 2.011 dòng `vocab.csv`, 41 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
+        vocab_raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
+        self.assertEqual(len(vocab_raw.splitlines()), 2012)
+        vocab_rows = list(csv.DictReader(io.StringIO(vocab_raw)))
+        self.assertEqual(len(vocab_rows), 2011)
+
+        grammar_raw = DEFAULT_GRAMMAR_CSV.read_text(encoding="utf-8-sig")
+        self.assertEqual(len(grammar_raw.splitlines()), 52)
+        grammar_rows = list(csv.DictReader(io.StringIO(grammar_raw)))
+        self.assertEqual(len(grammar_rows), 41)
+        self.assertTrue(all(r["status"] == "active" for r in grammar_rows))
+
+        seen_terms: set[str] = set()
+        bad_meta_re = re.compile(r":\s|[()+]|[\u4e00-\u9fff]|[\u0400-\u04ff]")
+        trailing_fn_re = re.compile(r"[A-Za-zÀ-ỹĐđ.!?]\s*\d{1,3}$")
+        for row in vocab_rows:
+            self.assertEqual(row["status"], "active")
+            t_key = " ".join(row["term"].split()).casefold()
+            self.assertNotIn(t_key, seen_terms, f"Trùng term_key: {t_key}")
+            seen_terms.add(t_key)
+            self.assertIsNone(bad_meta_re.search(row["term"]), f"Term lẫn chú thích: {row['term']}")
+            if row["kind"] in ("banned_phrase", "reverse_calque"):
+                hint = row["replacement_hint"].strip()
+                self.assertTrue(hint, f"Thiếu replacement_hint cho: {row['term']}")
+                self.assertNotEqual(t_key, hint.casefold(), f"Hint trùng term: {row['term']}")
+                self.assertIsNone(trailing_fn_re.search(hint), f"Dính số chân trang PDF: {hint}")
 
 
 if __name__ == "__main__":

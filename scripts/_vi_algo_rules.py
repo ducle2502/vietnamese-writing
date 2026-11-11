@@ -99,7 +99,7 @@ _NON_LEGAL_PROFILES: tuple[str, ...] = (
     "translation",
 )
 _ROUNDABOUT_PHRASE_RE = stdlib_re.compile(
-    r"(?i)(?:(?:^|[,;]\s*)thông\s+qua\s+việc\s+[a-zà-ỹđ]"
+    r"(?i)(?:(?:^|[,;]\s*)thông\s+qua\s+việc\s+[a-zà-ỹđ]+"
     r"|\b(?:liên\s+quan\s+đến|xoay\s+quanh|đối\s+với)\s+(?:vấn\s+đề|câu\s+chuyện|nội\s+dung\s+về)\b"
     r"|(?:^|[,;]\s*)đối\s+với\s+việc\s+(?:thực\s+hiện|triển\s+khai|áp\s+dụng|xử\s+lý|kiểm\s+tra|rà\s+soát|quản\s+lý|vận\s+hành|sử\s+dụng|xây\s+dựng|tổ\s+chức)\b"
     r"|(?:^|[,;]\s*)trên\s+cơ\s+sở\s+(?:việc|những\s+kết\s+quả\s+đã|các\s+nội\s+dung\s+đã)\b"
@@ -335,11 +335,14 @@ def run_loanword_and_jargon_rule(
     if m_rev is not None:
         raw_hit = buf.raw_text[m_rev.start() : m_rev.end()]
         hint = m_rev.entry.hint
-        advice = (
-            f"Giữ nguyên từ thông dụng đã quen dùng ({hint}) thay vì dịch từng chữ."
-            if hint
-            else "Giữ nguyên từ thông dụng đã quen dùng (email, pull request, repo, web) thay vì dịch từng chữ."
-        )
+        if m_rev.entry.is_code_mixing:
+            advice = f"Tránh chêm từ ngoại lai lửng lơ; nên diễn đạt bằng tiếng Việt: '{hint}'."
+        else:
+            advice = (
+                f"Giữ nguyên từ thông dụng đã quen dùng ({hint}) thay vì dịch từng chữ."
+                if hint
+                else "Giữ nguyên từ thông dụng đã quen dùng (email, pull request, repo, web) thay vì dịch từng chữ."
+            )
         findings.append(make_finding(rule, buf, m_rev.start(), raw_hit, custom_suggestion=advice))
     if prof in (None, Profile.AUDIT_REPORT, Profile.SOCIAL_MEDIA):
         m_tech = _RAW_TECH_ID_RE.search(buf.masked_prose)
@@ -418,6 +421,19 @@ def _find_roundabout_hit(sent_text: str, wc: int, prof: Profile | None) -> tuple
     return None
 
 
+def _format_bloat_suggestion(reasons: Sequence[str], *, has_len: bool, has_rb: bool) -> str:
+    if has_len and has_rb:
+        act = "Hãy cắt bỏ cụm mở đầu vòng vo và tách thành 2–3 câu ngắn độc lập (15–25 từ/câu), mỗi câu một chủ thể."
+    elif has_len:
+        act = (
+            "Hãy tách thành 2–3 câu ngắn độc lập (15–25 từ/câu) hoặc chuyển danh sách dài sang gạch đầu dòng, "
+            "mỗi câu một chủ thể và một động từ chính."
+        )
+    else:
+        act = "Hãy cắt bỏ cụm mở đầu vòng vo, đưa thẳng chủ thể và động từ chính lên đầu câu."
+    return f"Phát hiện {'; '.join(reasons)}. {act}"
+
+
 def _evaluate_sentence_bloat(
     rule: RuleDefinition,
     buf: _ScanBuffer,
@@ -432,41 +448,37 @@ def _evaluate_sentence_bloat(
     over_length = wc > word_limit
     clause_commas = len(_CLAUSE_COMMA_RE.findall(sent_text))
     comma_sprawl = prof != Profile.LEGAL and wc >= 36 and clause_commas >= 5 and (wc / (clause_commas + 1)) >= 5.0
+    has_len = over_length or comma_sprawl
     rb_hit = _find_roundabout_hit(sent_text, wc, prof)
-    if not (over_length or comma_sprawl or rb_hit):
+    if not (has_len or rb_hit):
         return None
 
     base_w = max(
         min(2.5, round(1.0 + 0.04 * (wc - word_limit), 2)) if over_length else 1.0,
         min(2.0, round(1.0 + 0.12 * (clause_commas - 4), 2)) if comma_sprawl else 1.0,
     )
-    if rb_hit and (over_length or comma_sprawl):
+    if rb_hit and has_len:
         weight = min(2.5, round(base_w + 0.25, 2))
-    elif rb_hit:
-        weight = 1.15 if wc >= 30 else 1.0
     else:
-        weight = base_w
+        weight = (1.15 if wc >= 30 else 1.0) if rb_hit else base_w
 
     reasons: list[str] = []
     if over_length:
         reasons.append(f"câu dài {wc} từ (vượt ngưỡng {word_limit} từ)")
     elif comma_sprawl:
-        reasons.append(f"câu {wc} từ nối {clause_commas + 1} mệnh đề bằng dấu phẩy")
+        reasons.append(f"câu {wc} từ nối {clause_commas + 1} vế bằng dấu phẩy")
     if rb_hit:
         reasons.append(rb_hit[1])
 
-    hit_off = sent_start + (rb_hit[0] if rb_hit and not (over_length or comma_sprawl) else 0)
+    hit_off = sent_start + (rb_hit[0] if rb_hit and not has_len else 0)
     raw_snippet = " ".join(buf.raw_text[hit_off : sent_start + len(sent_text)].split())[:100]
     exempt_legal = prof is None and wc <= 55 and (rb_hit is None or rb_hit[2])
     finding = make_finding(
         rule,
         buf,
         hit_off,
-        f"[{wc} từ] {raw_snippet}" if (over_length or comma_sprawl) else raw_snippet,
-        custom_suggestion=(
-            f"Phát hiện {'; '.join(reasons)}. Hãy cắt bỏ cụm rào đón và tách thành 2–3 câu ngắn độc lập "
-            "(15–25 từ/câu), mỗi câu một chủ thể và một động từ chính."
-        ),
+        f"[{wc} từ] {raw_snippet}" if has_len else raw_snippet,
+        custom_suggestion=_format_bloat_suggestion(reasons, has_len=has_len, has_rb=rb_hit is not None),
         override_profiles=_NON_LEGAL_PROFILES if exempt_legal else None,
     )
     finding.weight = weight

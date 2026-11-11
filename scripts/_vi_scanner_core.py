@@ -26,9 +26,11 @@ from _vi_masker import (
     offset_to_line_col,
 )
 from _vi_phrase_matcher import (
+    GroupedSpanMatch,
     PhraseHit,
     filter_non_overlapping_hits,
     filter_statistical_cluster_hits,
+    is_valid_phrase_hit,
     run_bold_colon_list_rule,
     run_staccato_fragment_rule,
     tokenize_prose,
@@ -68,6 +70,7 @@ _BRIDGE_NEGATION_RE = stdlib_re.compile(
     r"không\s+có\s+nghĩa\s+là|không\s+phải\s+là\s+hai\s+cực\s+đối\s+lập)\b"
 )
 _DECIMAL_COMMA_RE = stdlib_re.compile(r"(?<=\d),(?=\d)")
+_LEAD_SENT_PUNCT_RE = stdlib_re.compile(r"^[.!?…]+\s+")
 _SENT_SEP_CHARS = frozenset(".!?…\n")
 _AI007_ROLE_LIST_RE = compile_rule_regex(
     r"(?i)\b(?:dù|cho\s+dù|bất\s+kể)\s+bạn\s+là\s+[^.;:!?\n]{2,90},\s*(?:bạn|nội\s+dung|bài\s+viết|hướng\s+dẫn)\b"
@@ -82,11 +85,36 @@ _ALGO_RUNNERS: dict[str, Callable[[RuleDefinition, _ScanBuffer, Profile | None],
 }
 
 
+def _clean_match_slice(m: _RegexMatch, raw_text: str) -> tuple[int, str]:
+    if isinstance(m, GroupedSpanMatch):
+        return m.start(), m.display_text
+    raw_chunk = raw_text[m.start() : m.end()]
+    if len(raw_chunk) == 3 and raw_chunk[1] == "—":
+        return m.start() + 1, "—"
+    m_lead = _LEAD_SENT_PUNCT_RE.match(raw_chunk)
+    if m_lead is not None:
+        return m.start() + m_lead.end(), " ".join(raw_chunk[m_lead.end() :].split())
+    return m.start(), " ".join(raw_chunk.split())
+
+
+def _group_repeated_matches(
+    matches: Sequence[_RegexMatch],
+    raw_text: str,
+    custom_hint: str | None = None,
+) -> GroupedSpanMatch:
+    top = matches[:3]
+    first_off, _ = _clean_match_slice(top[0], raw_text)
+    parts = [_clean_match_slice(m, raw_text)[1] for m in top]
+    disp = " ... ".join(p for p in parts if p)
+    return GroupedSpanMatch(first_off, top[-1].end(), disp, custom_hint)
+
+
 def _select_para_threshold_matches(
     valid_matches: Sequence[_RegexMatch],
     para_spans: Sequence[tuple[int, int, str]],
     word_count: int,
     thresh: ThresholdSpec,
+    raw_text: str = "",
 ) -> list[_RegexMatch]:
     assert thresh.per_para is not None  # noqa: S101
     triggered: list[_RegexMatch] = []
@@ -99,14 +127,19 @@ def _select_para_threshold_matches(
         while m_idx < n_matches and valid_matches[m_idx].start() < p_end:
             m_idx += 1
         if (m_idx - start_idx) >= thresh.per_para:
-            triggered.extend(valid_matches[start_idx:m_idx] if thresh.per_para == 1 else [valid_matches[start_idx]])
+            para_slice = valid_matches[start_idx:m_idx]
+            triggered.extend(
+                para_slice
+                if thresh.per_para == 1
+                else [_group_repeated_matches(para_slice, raw_text) if raw_text else para_slice[0]]
+            )
     if (
         not triggered
         and thresh.per_1000_words is not None
         and word_count >= 250
         and (len(valid_matches) * 1000.0 / word_count) >= thresh.per_1000_words
     ):
-        triggered.append(valid_matches[0])
+        triggered.append(_group_repeated_matches(valid_matches, raw_text) if raw_text else valid_matches[0])
     return triggered
 
 
@@ -114,7 +147,7 @@ def _has_same_sentence_pair(valid_matches: Sequence[_RegexMatch], raw_text: str)
     for idx in range(len(valid_matches) - 1):
         gap = raw_text[valid_matches[idx].end() : valid_matches[idx + 1].start()]
         if not any(ch in _SENT_SEP_CHARS for ch in gap):
-            return valid_matches[idx]
+            return _group_repeated_matches(valid_matches[idx : idx + 2], raw_text) if raw_text else valid_matches[idx]
     return None
 
 
@@ -129,7 +162,7 @@ def _select_triggered_matches(
 ) -> list[_RegexMatch]:
     """Lọc kết quả vượt ngưỡng bằng thuật toán hai con trỏ tuyến tính O(P + M)."""
     if thresh.per_para is not None:
-        triggered = _select_para_threshold_matches(valid_matches, para_spans, word_count, thresh)
+        triggered = _select_para_threshold_matches(valid_matches, para_spans, word_count, thresh, raw_text)
         if not triggered and rule_id == "VIS-TRANS-010" and len(valid_matches) >= 2:
             pair_hit = _has_same_sentence_pair(valid_matches, raw_text)
             return [pair_hit] if pair_hit is not None else []
@@ -155,6 +188,20 @@ def _prepare_rule_target_text(rid: str, buf: _ScanBuffer) -> str:
     return target_text
 
 
+def _merge_non_overlapping_matches(
+    primary: Sequence[_RegexMatch],
+    secondary: Sequence[_RegexMatch],
+) -> list[_RegexMatch]:
+    merged = sorted([*primary, *secondary], key=lambda m: (m.start(), -m.end()))
+    out: list[_RegexMatch] = []
+    last_end = -1
+    for m in merged:
+        if m.start() >= last_end:
+            out.append(m)
+            last_end = m.end()
+    return out
+
+
 def _build_regex_findings(
     rule: RuleDefinition,
     buf: _ScanBuffer,
@@ -166,22 +213,27 @@ def _build_regex_findings(
     seen_lines: set[int] = set()
     last_line_end = -1
     for tm in triggered:
-        if tm.start() <= last_line_end:
+        hit_start, raw_slice = _clean_match_slice(tm, buf.raw_text)
+        if hit_start <= last_line_end:
             continue
-        last_line_end = line_end_offset(buf.raw_text, tm.start(), buf.nl_offsets)
-        ln_no, _ = offset_to_line_col(buf.raw_text, tm.start(), buf.nl_offsets)
+        last_line_end = line_end_offset(buf.raw_text, hit_start, buf.nl_offsets)
+        ln_no, _ = offset_to_line_col(buf.raw_text, hit_start, buf.nl_offsets)
         if ln_no in seen_lines:
             continue
         seen_lines.add(ln_no)
-        raw_slice = buf.raw_text[tm.start() : tm.end()].strip()
         override_profs: Sequence[str] | None = (
             ("general", "marketing", "social_media", "translation")
             if rid == "VIS-FMT-003" and raw_slice == ";"
             else None
         )
-        hint = phrase_hints.get((rid, " ".join(raw_slice.split()).casefold()))
+        if isinstance(tm, GroupedSpanMatch):
+            hint = tm.custom_hint
+        elif isinstance(tm, PhraseHit):
+            hint = tm.entry.hint or phrase_hints.get((rid, " ".join(raw_slice.split()).casefold()))
+        else:
+            hint = phrase_hints.get((rid, " ".join(raw_slice.split()).casefold()))
         findings.append(
-            make_finding(rule, buf, tm.start(), raw_slice, custom_suggestion=hint, override_profiles=override_profs)
+            make_finding(rule, buf, hit_start, raw_slice, custom_suggestion=hint, override_profiles=override_profs)
         )
     return findings
 
@@ -297,7 +349,7 @@ class ViScanner:
         rid: str,
         raw_hits: Sequence[PhraseHit],
         target_text: str,
-        para_spans: Sequence[tuple[int, int, str]],
+        buf: _ScanBuffer,
         prof: Profile | None,
     ) -> list[_RegexMatch]:
         if not raw_hits:
@@ -305,13 +357,14 @@ class ViScanner:
         filtered = [
             h
             for h in raw_hits
-            if not is_linguistically_exempt(rid, target_text, h.pos, h.end_pos)
+            if is_valid_phrase_hit(h.entry, target_text, h.pos, h.end_pos, prof)
+            and not is_linguistically_exempt(rid, target_text, h.pos, h.end_pos)
             and not is_profile_exempt(rid, target_text, h.pos, h.end_pos, prof)
         ]
         if not filtered:
             return []
         non_overlapping = filter_non_overlapping_hits(filtered)
-        return filter_statistical_cluster_hits(non_overlapping, para_spans)
+        return filter_statistical_cluster_hits(non_overlapping, buf.para_spans, raw_text=buf.raw_text, rid=rid)
 
     def _scan_regex_rule(
         self,
@@ -329,26 +382,20 @@ class ViScanner:
             if not anchors or any(sub in lower_haystack for sub in anchors):
                 valid_matches = self._collect_valid_regex_matches(rule, target_text, buf.nl_offsets, prof)
         if vocab_hits:
-            v_matches = self._collect_valid_vocab_matches(rid, vocab_hits, target_text, buf.para_spans, prof)
+            v_matches = self._collect_valid_vocab_matches(rid, vocab_hits, target_text, buf, prof)
             if v_matches:
-                valid_matches = sorted([*valid_matches, *v_matches], key=lambda m: (m.start(), -m.end()))
+                valid_matches = _merge_non_overlapping_matches(valid_matches, v_matches)
 
         if rid == "VIS-RHET-001" and not valid_matches:
             bridge_hits = list(_BRIDGE_NEGATION_RE.finditer(target_text))
             if len(bridge_hits) >= 3:
-                first_b = bridge_hits[0]
-                return [
-                    make_finding(
-                        rule,
-                        buf,
-                        first_b.start(),
-                        buf.raw_text[first_b.start() : first_b.end()].strip(),
-                        custom_suggestion=(
-                            "Lặp quá nhiều cụm phủ định bắc cầu ('chưa đồng nghĩa với', 'không có nghĩa là'); "
-                            "hãy đổi sang câu khẳng định trực tiếp."
-                        ),
-                    )
-                ]
+                grp = _group_repeated_matches(
+                    bridge_hits,
+                    buf.raw_text,
+                    "Lặp quá nhiều cụm phủ định bắc cầu ('chưa đồng nghĩa với', 'không có nghĩa là'); "
+                    "hãy đổi sang câu khẳng định trực tiếp.",
+                )
+                return [make_finding(rule, buf, grp.start(), grp.display_text, custom_suggestion=grp.custom_hint)]
             return []
         if not valid_matches:
             return []

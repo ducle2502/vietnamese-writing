@@ -48,6 +48,37 @@ _NUMERIC_SLANG_LEAD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
 _BAN_CHI_EXEMPT_TAIL_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)^\s*(?:đạo|huy)\b")
 _BANG_QUANG_LEAD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)(?:thái\s+độ|vẻ|đứng|sống)\s+$")
 _BANG_QUANG_TAIL_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)^\s*(?:trước|với)\b")
+_NHAN_PREFIX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)(?:xác|ghi|chấp|công|thừa)\s+$")
+_YEU_DIEM_BAD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
+    r"(?i)\b(?:khắc\s+phục|sửa\s+chữa|nhược\s+điểm|hạn\s+chế|bộc\s+lộ|che\s+giấu|chí\s+mạng|chết\s+người)\b"
+)
+_SENT_START_PREFIX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?:^|[.!?…\n])(?:\s*(?:[-*•◦–>]|\d+[.)]))*\s*$")
+_DIRECT_HOMOGRAPH_TERMS: frozenset[str] = frozenset(
+    {"bộ vệ sinh", "sở vệ sinh", "tổ hạng mục", "phân tử sinh học", "ý vị trứ", "lợi dụng nguyên liệu"}
+)
+_POLYSEMOUS_CONVERT_TERMS: frozenset[str] = frozenset(
+    {
+        "cua đồng",
+        "điềm tâm",
+        "đại gia",
+        "đơn từ",
+        "khả năng di truyền",
+        "làm sao vậy",
+        "lão tử",
+        "một khắc",
+        "một vòng",
+        "nam nhân",
+        "nguyên bản",
+        "người gia",
+        "nhãn lực",
+        "phúc tướng",
+        "quân cơ",
+        "rượu đỏ",
+        "tẩu tử",
+        "thoát đơn",
+        "từ mở rộng",
+    }
+)
 
 _PAREN_MASK_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"\([^()\n]{1,260}\)")
 _STACCATO_SPLIT_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?<=[.!?…])\s+")
@@ -71,9 +102,11 @@ class PhraseEntry:
     term_key: str
     hint: str
     is_reverse_calque: bool = False
+    is_code_mixing: bool = False
     requires_cluster: bool = False
     requires_convert_ctx: bool = False
     is_numeric_slang: bool = False
+    sentence_initial_only: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,6 +114,20 @@ class PhraseHit:
     pos: int
     end_pos: int
     entry: PhraseEntry
+
+    def start(self) -> int:
+        return self.pos
+
+    def end(self) -> int:
+        return self.end_pos
+
+
+@dataclass(frozen=True, slots=True)
+class GroupedSpanMatch:
+    pos: int
+    end_pos: int
+    display_text: str
+    custom_hint: str | None = None
 
     def start(self) -> int:
         return self.pos
@@ -117,6 +164,18 @@ def tokenize_prose(lower_text: str) -> TokenizedProse:
     return TokenizedProse(words, starts, ends, has_space, same_para)
 
 
+def _needs_convert_context(term_key: str, word_count: int, note: str, *, is_bulk_ai: bool) -> bool:
+    if is_bulk_ai:
+        return False
+    if term_key in _POLYSEMOUS_CONVERT_TERMS:
+        return True
+    if ("đồng hình dị nghĩa" in note or "nhóm 08" in note) and term_key not in _DIRECT_HOMOGRAPH_TERMS:
+        return True
+    if "Từ lậm convert" in note and term_key not in _CONVERT_UNAMBIGUOUS:
+        return True
+    return word_count == 1 and not term_key.isdigit() and bool(_VI_CHAR_RE.search(term_key) or "!" in term_key)
+
+
 def build_vocab_entry(
     *,
     term: str,
@@ -128,29 +187,31 @@ def build_vocab_entry(
     term_key = " ".join(term.split()).casefold()
     hint = sanitize_hint(raw_hint)
     words = term_key.split(" ")
-    if kind == "banned_phrase":
-        is_bulk_ai = note.startswith(("Cụm văn mẫu AI", "Khuôn câu AI cố định"))
+    is_bulk_ai = note.startswith(("Cụm văn mẫu AI", "Khuôn câu AI cố định"))
+    needs_conv = _needs_convert_context(term_key, len(words), note, is_bulk_ai=is_bulk_ai)
+    if kind == "reverse_calque":
         return PhraseEntry(
-            rule_id=rule_id,
+            rule_id="VIS-LEX-002",
             term_key=term_key,
             hint=hint,
-            requires_cluster=is_bulk_ai and len(words) <= 3,
+            is_reverse_calque=True,
+            is_code_mixing="nhóm 14" in note,
+            requires_convert_ctx=needs_conv,
+            is_numeric_slang=term_key.isdigit(),
         )
-    is_num_slang = term_key.isdigit()
-    one_word_vi = len(words) == 1 and not is_num_slang and bool(_VI_CHAR_RE.search(term_key) or "!" in term_key)
-    needs_convert = (
-        "đồng hình dị nghĩa" in note
-        or "nhóm 08" in note
-        or ("Từ lậm convert" in note and term_key not in _CONVERT_UNAMBIGUOUS)
-        or one_word_vi
-    )
+    sent_init = is_bulk_ai and rule_id == "VIS-FMT-002"
+    buzz_group = rule_id == "VIS-CLICHE-001" and any(g in note for g in ("nhóm 04", "nhóm 11", "nhóm 12"))
+    max_cl_words = 5 if buzz_group else 3
+    has_conj = "," in term_key or " và " in term_key
+    req_cluster = is_bulk_ai and not sent_init and not has_conj and len(words) <= max_cl_words
     return PhraseEntry(
-        rule_id="VIS-LEX-002",
+        rule_id=rule_id,
         term_key=term_key,
         hint=hint,
-        is_reverse_calque=True,
-        requires_convert_ctx=needs_convert,
-        is_numeric_slang=is_num_slang,
+        requires_cluster=req_cluster,
+        requires_convert_ctx=needs_conv,
+        is_numeric_slang=term_key.isdigit(),
+        sentence_initial_only=sent_init,
     )
 
 
@@ -169,10 +230,14 @@ def _check_special_rev_term(key: str, prose_text: str, start: int, end: int, pro
             _BANG_QUANG_LEAD_RE.search(prose_text[max(0, start - 15) : start])
             or _BANG_QUANG_TAIL_RE.match(prose_text[end : end + 12])
         )
+    elif key == "nhận sẵn sàng":
+        res = not bool(_NHAN_PREFIX_RE.search(prose_text[max(0, start - 8) : start]))
+    elif key == "yếu điểm":
+        res = bool(_YEU_DIEM_BAD_RE.search(sentence_around(prose_text, start, end)))
     return res
 
 
-def _is_valid_reverse_calque_hit(
+def is_valid_phrase_hit(
     entry: PhraseEntry,
     prose_text: str,
     start: int,
@@ -182,6 +247,10 @@ def _is_valid_reverse_calque_hit(
     special = _check_special_rev_term(entry.term_key, prose_text, start, end, prof)
     if special is not None:
         return special
+    if entry.sentence_initial_only:
+        at_start = start == 0 or bool(_SENT_START_PREFIX_RE.search(prose_text[max(0, start - 10) : start]))
+        has_comma = len(entry.term_key.split()) > 3 or prose_text[end : end + 2].startswith(",")
+        return at_start and has_comma
     if entry.is_numeric_slang:
         lead = prose_text[max(0, start - 18) : start]
         return bool(_NUMERIC_SLANG_LEAD_RE.search(lead) or prose_text[end : end + 3].startswith("!"))
@@ -272,7 +341,7 @@ def select_first_reverse_calque(
     prof: Profile | None,
 ) -> PhraseHit | None:
     for hit in rev_hits:
-        if _is_valid_reverse_calque_hit(hit.entry, prose_text, hit.pos, hit.end_pos, prof):
+        if is_valid_phrase_hit(hit.entry, prose_text, hit.pos, hit.end_pos, prof):
             return hit
     return None
 
@@ -287,9 +356,42 @@ def filter_non_overlapping_hits(hits: Sequence[PhraseHit]) -> list[PhraseHit]:
     return out
 
 
+def _build_cluster_group_match(
+    para_hits: Sequence[PhraseHit],
+    raw_text: str,
+    rid: str,
+) -> _RegexMatch | None:
+    if rid == "VIS-FMT-004":
+        for i in range(len(para_hits) - 2):
+            h1, h3 = para_hits[i], para_hits[i + 2]
+            span = raw_text[h1.pos : h3.end_pos] if raw_text else ""
+            if (h3.end_pos - h1.pos) <= 85 and not any(ch in ".!?…\n" for ch in span):
+                disp = " ".join(span.split()) if span else h1.entry.term_key
+                return GroupedSpanMatch(
+                    h1.pos,
+                    h3.end_pos,
+                    disp,
+                    "Tránh ghép bộ 3 tính từ khen ngợi theo nhịp văn mẫu; hãy thay bằng chỉ tiêu định lượng cụ thể.",
+                )
+        return None
+    if not raw_text:
+        return para_hits[0]
+    top = para_hits[:3]
+    disp = " ... ".join(" ".join(raw_text[h.pos : h.end_pos].split()) for h in top)
+    return GroupedSpanMatch(
+        top[0].pos,
+        top[-1].end_pos,
+        disp,
+        f"Tránh dồn nhiều từ ngữ khuôn mẫu trong cùng một đoạn ({disp}); hãy thay bằng hành động và số liệu cụ thể.",
+    )
+
+
 def filter_statistical_cluster_hits(
     hits: Sequence[PhraseHit],
     para_spans: Sequence[tuple[int, int, str]],
+    *,
+    raw_text: str = "",
+    rid: str = "",
     min_cluster: int = 3,
 ) -> list[_RegexMatch]:
     """Giữ trực tiếp cụm dài cố định; cụm ngắn `requires_cluster` chỉ kích hoạt khi lặp `>= min_cluster` trong đoạn."""
@@ -306,7 +408,9 @@ def filter_statistical_cluster_hits(
         while idx < n_short and short_hits[idx].pos < p_end:
             idx += 1
         if (idx - s_idx) >= min_cluster:
-            strong.append(short_hits[s_idx])
+            grp = _build_cluster_group_match(short_hits[s_idx:idx], raw_text, rid)
+            if grp is not None:
+                strong.append(grp)
     strong.sort(key=lambda m: m.start())
     return strong
 

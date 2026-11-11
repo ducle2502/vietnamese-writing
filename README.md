@@ -54,7 +54,7 @@ python -B scripts/vi_scanner.py scan SKILL.md
 
 Chi tiết toàn bộ 42 mã quy tắc cùng ví dụ câu lỗi và câu viết lại nằm tại [references/rule-catalog.md](references/rule-catalog.md):
 
-| Nhóm mã | Tên nhóm quy tắc | Số quy tắc | Các lỗi trọng tâm được chỉ ra |
+| Nhóm mã | Tên nhóm quy tắc | Số quy tắc | Lỗi câu chữ trọng tâm |
 |---|---|---|---|
 | `VIS-AI-001..007` | Tín hiệu sinh văn của AI | `7` | Câu rào đón/kết thúc kiểu chatbot, mở bài vĩ mô (*"Trong bối cảnh..."*), ép tưởng tượng giả định (*"Hãy thử tưởng tượng..."*), câu điều kiện bao sân (*"Dù bạn là..."*) và chỗ trống nhắc điền chưa xóa. |
 | `VIS-RHET-001..007` | Tu từ phóng đại và dàn ý lộ liễu | `7` | Cặp đòn bẩy (*"không chỉ... mà còn"*, *"hơn cả X, đây là Y"*), đối lập giả kịch tính (*"tưởng chừng... nhưng"*), tự khen tầm vóc (*"đóng vai trò then chốt"*), ẩn dụ dịch sát và dẫn nguồn không tên. |

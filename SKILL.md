@@ -2,10 +2,9 @@
 name: vietnamese-writing
 description: >-
   Viết, biên tập và kiểm tra tiếng Việt tự nhiên theo người đọc và mục đích sử dụng.
-  Dùng khi soạn thảo hoặc rà soát câu trả lời, email, báo cáo quản trị, bài báo
-  học thuật, văn bản pháp lý, bài đăng mạng xã hội và bản dịch Anh - Việt. Đi kèm
-  công cụ scripts/vi_scanner.py rà câu chữ máy móc, dịch thô, sáo rỗng và đối soát
-  bảo toàn dữ kiện.
+  Áp dụng cho email, báo cáo quản trị, bài nghiên cứu, văn bản pháp lý, mạng xã hội và
+  bản dịch Anh - Việt. Đi kèm công cụ scripts/vi_scanner.py rà câu chữ máy móc, dịch thô,
+  sáo rỗng và đối soát bảo toàn dữ kiện.
 license: MIT
 compatibility: Python 3.11+ (chỉ cần khi chạy công cụ scripts/vi_scanner.py)
 metadata:

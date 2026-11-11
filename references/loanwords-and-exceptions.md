@@ -14,7 +14,7 @@ python scripts/vi_scanner.py check-maintenance
 ```
 
 Khi cập nhật hai danh sách trên, áp dụng ba tiêu chí chọn từ:
-1. Chỉ đưa vào `UNIVERSAL_NATURALIZED_LOANWORDS` khi người đọc ngoài ngành kỹ thuật đều hiểu ngay không cần giải thích. Đồng thời, việc dịch từ đó sang tiếng Việt sẽ tạo ra cụm từ xa lạ như dịch `email` thành *"thư điện tử"* hay `pull request` thành *"yêu cầu kéo"*.
+1. Chỉ đưa vào `UNIVERSAL_NATURALIZED_LOANWORDS` khi người đọc ngoài ngành kỹ thuật đều hiểu ngay không cần giải thích. Đồng thời, dịch từ đó sang tiếng Việt lại sinh ra cụm xa lạ như dịch `email` thành *"thư điện tử"* hay `pull request` thành *"yêu cầu kéo"*.
 2. Không đưa tên sản phẩm nội bộ, tên dự án riêng hoặc từ lóng chỉ dùng trong một nhóm hẹp vào danh sách chung. Nếu một dự án cần kiểm tra bảng thuật ngữ riêng, hãy truyền qua tham số `--custom-rules <tep.json>`.
 3. Sau khi sửa danh sách và cập nhật ngày `last_reviewed` trong `LOANWORDS_REVIEW_META`, bắt buộc chạy lại `python -m unittest discover -s tests -v` để đảm bảo không ảnh hưởng tới bộ 100 mẫu chuẩn.
 

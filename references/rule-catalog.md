@@ -1,6 +1,6 @@
-# Danh mục 31 quy tắc trong `scripts/vi_scanner.py`
+# Danh mục 41 quy tắc trong `scripts/vi_scanner.py`
 
-Tài liệu này tóm tắt 31 mã quy tắc thuộc 6 nhóm để Agent tra cứu nhanh khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
+Tài liệu này tóm tắt 41 mã quy tắc thuộc 6 nhóm để Agent tra cứu nhanh khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
 
 ## Nhóm 1: Rào đón và dàn dựng kiểu chatbot (`AI_META_AND_STAGING`)
 
@@ -11,6 +11,8 @@ Tài liệu này tóm tắt 31 mã quy tắc thuộc 6 nhóm để Agent tra c�
 | `VIS-AI-003` | `warning` | Mở bài vĩ mô sáo rỗng (`Trong bối cảnh... ngày càng phát triển`). | Mở trực tiếp bằng sự kiện, con số hoặc vấn đề thực tế của chủ thể. |
 | `VIS-AI-004` | `info` | Câu dẫn dắt vòng vo (`Hãy cùng khám phá...`, `Câu hỏi đặt ra là... Câu trả lời là`, `Đó mới là điều quan trọng`). | Nêu thẳng luận điểm hoặc số liệu ngay từ câu đầu. |
 | `VIS-AI-005` | `warning` | Đoạn kết hứa hẹn tương lai chung chung (`Tóm lại... hứa hẹn mở ra kỷ nguyên mới`, `Dù đối mặt thách thức... vẫn vươn lên`). | Kết bằng kết luận giới hạn trong bằng chứng hoặc bước hành động cụ thể. |
+| `VIS-AI-006` | `info` | Mở bài ép người đọc tưởng tượng tình huống giả định (`Hãy thử tưởng tượng...`, `Hãy hình dung...`) thay vì đi thẳng vào dữ kiện. | Mở thẳng bằng cơ chế vận hành, số liệu hoặc kết quả thực tế. |
+| `VIS-AI-007` | `info` | Câu điều kiện bao sân nhiều nhóm người đọc (`Dù bạn là A, B hay C, bạn đều...`) không bổ sung thông tin thực chất. | Nêu thẳng chức năng cụ thể theo từng vai trò hoặc phạm vi sử dụng. |
 
 ## Nhóm 2: Phóng đại và ẩn dụ văn mẫu (`AI_RHETORICAL_INFLATION`)
 
@@ -21,6 +23,8 @@ Tài liệu này tóm tắt 31 mã quy tắc thuộc 6 nhóm để Agent tra c�
 | `VIS-RHET-003` | `warning` | Ẩn dụ dịch sát từ tiếng Anh của AI (`tấm thảm đa sắc`, `bức tranh toàn cảnh`, `ngọn hải đăng dẫn đường`, `đi sâu vào khám phá bản chất`, `tảng băng chìm`). | Gọi đúng tên sự vật, rủi ro hoặc phạm vi công việc thực tế. |
 | `VIS-RHET-004` | `info` | Ghép gượng hai vế không cùng trục đo (`Từ những A cho đến các B, tất cả đều...`). | Liệt kê cụ thể các bộ phận thực sự liên quan. |
 | `VIS-RHET-005` | `warning` | Mượn uy tín không tên (`Các chuyên gia cho rằng`, `Nhiều nghiên cứu chỉ ra rằng`) mà không kèm trích dẫn ngay sau. | Ghi rõ tên tác giả, năm xuất bản hoặc bỏ vế mượn lời nếu câu sau đã có dữ kiện. |
+| `VIS-RHET-006` | `warning` | Khung nâng tầm nhận định thiếu bằng chứng (`Hơn cả một X, đây là Y`, `Không phải X, mà chính là Y`). | Mô tả trực tiếp đầu ra hoặc tác nghiệp thực tế của công cụ. |
+| `VIS-RHET-007` | `info` | Khung đối lập giả kịch tính (`Tưởng chừng..., nhưng...`, `Thoạt nhìn..., song...`) lặp dày trong văn bản. | Ghi thẳng quy mô lỗi, số bản ghi ảnh hưởng và bước xử lý cần làm. |
 
 ## Nhóm 3: Định dạng và nhịp đoạn máy móc (`AI_STRUCTURAL_AND_FORMATTING`)
 
@@ -31,6 +35,7 @@ Tài liệu này tóm tắt 31 mã quy tắc thuộc 6 nhóm để Agent tra c�
 | `VIS-FMT-003` | `info` | Dùng dấu gạch ngang dài (`—`, `--`) hoặc dấu chấm phẩy (`;`) nối mệnh đề kiểu tiếng Anh. | Thay bằng dấu phẩy, dấu hai chấm, ngoặc đơn hoặc tách câu ngắn. |
 | `VIS-FMT-004` | `info` | Xếp chồng 3 tính từ khen ngợi theo nhịp văn mẫu (`nhanh chóng, chính xác và hiệu quả`, `chạy mượt mà trên cả`). | Thay bằng chỉ tiêu định lượng cụ thể (thời gian, số lượng, tỷ lệ lỗi). |
 | `VIS-FMT-005` | `info` | Từ 4 đoạn liên tiếp có độ dài quá đều (`CV < 0,15`), 3 câu liền nhau mở đầu cùng một từ (trừ dòng bảng và mục `Bước/Phần/Điều`) hoặc xoay vòng động từ đồng nghĩa đầu cột bảng để lách máy quét. | Chia đoạn theo ý thực tế, đổi chủ ngữ mở câu tự nhiên và bỏ động từ dẫn đầu trong ô bảng kỹ thuật. |
+| `VIS-FMT-006` | `info` | Chuỗi từ 3 câu cực ngắn liên tiếp dưới `6` từ mỗi câu dùng như khẩu hiệu (`Không ngoại lệ. Không trì hoãn. Không thỏa hiệp.`). | Gộp thành một câu hoàn chỉnh có chủ thể, hành động và thời hạn rõ ràng. |
 
 ## Nhóm 4: Dịch từng chữ từ tiếng Anh (`TRANSLATIONESE_EN_VI`)
 
@@ -41,6 +46,11 @@ Tài liệu này tóm tắt 31 mã quy tắc thuộc 6 nhóm để Agent tra c�
 | `VIS-TRANS-003` | `warning` | Danh từ hóa nặng nề (`sự/việc + động từ + của + chủ thể`) lặp từ 2 lần trong đoạn. | Chuyển danh từ hóa trở lại thành động từ của chủ thể. |
 | `VIS-TRANS-004` | `info` | Lặp cụm `một cách + tính từ` dịch từ trạng từ đuôi `-ly` tiếng Anh từ 2 lần trong đoạn. | Dùng trạng từ ngắn trực tiếp (`tăng mạnh` thay cho `tăng một cách đáng kể`). |
 | `VIS-TRANS-005` | `warning` | Chủ ngữ giả (`Nó là cần thiết để`, `Có một sự... trong việc`), đại từ quan hệ dịch thô (`nơi mà`, `điều mà`), lặp `vẫn... vẫn`, đuôi khoe phủ định (`và không cần cài thêm thư viện ngoài`), cấu trúc `hỗ trợ + động từ` (`hỗ trợ lọc/hủy`) hoặc đảo ngược bổ ngữ (`báo mất kết nối nhầm`, `giới hạn thời gian chờ rõ ràng`). | Nêu chủ ngữ thật chỉ người hoặc đơn vị, dùng động từ trực tiếp, tách câu dài và đặt bổ ngữ đúng trật tự tiếng Việt. |
+| `VIS-TRANS-006` | `warning` | Chuỗi ba quan hệ sở hữu nối tiếp (`của... của... của...`) làm câu nặng và khó tách thành phần. | Đưa đơn vị sở hữu lên làm chủ ngữ hoặc bỏ bớt chữ `của` trung gian. |
+| `VIS-TRANS-007` | `info` | Lặp dày cặp liên từ sóng đôi (`mặc dù... nhưng`, `bởi vì... nên`) làm nhịp câu nặng nề. | Giữ lại vế đối lập hoặc nhân quả bằng một liên từ gọn ở mệnh đề sau. |
+| `VIS-TRANS-008` | `info` | Dùng `đến từ` để chỉ nguồn gốc trừu tượng theo cú pháp tiếng Anh (`giải pháp đến từ nhóm vận hành`). | Đổi sang `của`, `do` hoặc đặt nhóm thực hiện làm chủ ngữ trực tiếp. |
+| `VIS-TRANS-009` | `warning` | Lặp hai từ chỉ vị trí trong cùng một cụm (`nằm trong... bên trong`, `bên trong... ở trong`). | Thay một vế bằng quan hệ thuộc tính (`của`, `thuộc`) hoặc ghi thẳng đường dẫn. |
+| `VIS-TRANS-010` | `info` | Lặp dày cụm `mang tính + danh/tính từ` (`mang tính chiến lược`, `mang tính định hướng`) làm câu trừu tượng. | Đổi sang động từ hoặc tính từ cụ thể gắn với số lượng và mốc thời gian. |
 
 ## Nhóm 5: Sáo ngữ hành chính và câu khách (`BUREAUCRATIC_AND_SEO_CLICHE`)
 

@@ -24,5 +24,6 @@ lesson_from_*.md
 !.vscode/settings.json
 !.vscode/extensions.json
 .idea/
+.kilo/
 .DS_Store
 Thumbs.db

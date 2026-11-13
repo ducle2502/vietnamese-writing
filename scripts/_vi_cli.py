@@ -141,7 +141,13 @@ def selftest() -> int:
 
 
 def _add_scan_and_profile_parsers(sub: Any, profile_choices: Sequence[str]) -> None:
-    scan_p = sub.add_parser("scan", help="Quét tệp UTF-8 hoặc .docx (mặc định xuất đủ 100%% các nhóm văn bản)")
+    scan_p = sub.add_parser(
+        "scan",
+        help=(
+            "Quét Markdown thô hoặc tệp UTF-8; .docx được bóc tách tất định trước "
+            "(mặc định xuất đủ 100%% các nhóm văn bản)"
+        ),
+    )
     scan_p.add_argument("files", metavar="file", nargs="*", default=["-"], help="Một hoặc nhiều tệp hoặc '-' (stdin)")
     scan_p.add_argument("--profile", choices=profile_choices, default="all")
     scan_p.add_argument("--ignore-table-cols", default="", help="Các cột bảng (từ 1, ví dụ '2,3') cần bỏ qua")

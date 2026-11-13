@@ -9,14 +9,20 @@
 3. Bảo toàn nguyên vẹn số liệu, ngày tháng, từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn.
 4. Tránh 5 lỗi sửa quá tay: đếm tuần tự, hạ giọng suồng sã, tự bịa từ, rơi mức chắc chắn và xoay vòng động từ đầu ô bảng.
 
+## Chuyển tệp nguồn sang Markdown thô
+
+Khi người dùng đưa tệp, Agent tự chuyển sang `TEN_GOC.raw.md` trước khi quét. Dùng `extract_docx_text_and_meta` cho `.docx`, rồi `markitdown`, `liteparse`, `docling` hoặc `pandoc` cho định dạng khác. Chỉ dùng `vision` khi các công cụ trên thất bại hoặc làm mất bảng, và ghi `converter=vision`, `deterministic=false` cùng `needs_review=true` vào `TEN_GOC.raw.meta.json`. Báo người dùng khi bản chép không tất định.
+
+Riêng `.docx`, lệnh `scan` và `profile` tự bóc tách tất định trước khi quét.
+
 ## Tự quét và kiểm tra trong repo
 
 Sau khi viết mới hoặc biên tập (trừ hội thoại ngắn 1 đến 2 câu), luôn tự quét lại đầu ra từ thư mục gốc trước khi bàn giao:
 
 ```bash
-python -B scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
-python -B scripts/vi_scanner.py profile TEP_VUA_VIET.md --json
-python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
+python -B scripts/vi_scanner.py scan TEN_GOC.raw.md --json
+python -B scripts/vi_scanner.py profile TEN_GOC.raw.md --json
+python -B scripts/vi_scanner.py verify TEN_GOC.raw.md BAN_SUA.md
 python -B scripts/vi_scanner.py check-maintenance
 ruff check scripts tests
 ruff format --check scripts tests

@@ -52,27 +52,52 @@ Chọn đúng từ theo thực tế công việc và khớp vai người viết.
 4. Giữ nguyên dữ kiện và mức độ chắc chắn khi rút gọn câu. Không đổi *có thể giảm* thành *giảm*, không đổi *sau khi* thành *nhờ* và không xóa điều kiện *nếu / trừ khi*. Tuyệt đối không coi việc chưa tìm thấy hồ sơ là bằng chứng đơn vị không thực hiện.
 5. Cấm xoay vòng động từ đồng nghĩa gượng gạo (`Khóa hợp đồng / Thiết kế / Xây dựng / Hiện thực / Lập trình / Phát triển / Tính toán / Lập bộ / Soạn / Thiết lập`) ở đầu các ô bảng hoặc danh sách chỉ để lách cờ lặp từ `VIS-FMT-005`. Trong bảng phân công hoặc bảng liệt kê thành phần kỹ thuật, bỏ hẳn động từ dẫn đầu và ghi thẳng tên tệp, lớp hoặc đầu việc.
 
+## Chuyển tệp đầu vào sang Markdown có cấu trúc
+
+Người dùng chỉ đưa tệp gốc. Agent tự chuyển tệp đó sang `TEN_GOC.raw.md` rồi mới quét, người dùng không phải đổi định dạng.
+
+Thứ tự ưu tiên, dừng ở bước đầu tiên chạy được:
+
+1. Dùng công cụ tất định có sẵn: `extract_docx_text_and_meta` cho `.docx` (thư viện chuẩn, không cần cài gói), rồi `markitdown`, `liteparse`, `docling` hoặc `pandoc` cho `.pdf`, `.xlsx`, `.pptx`, `.html`.
+2. Nếu bước 1 thất bại hoặc làm mất bảng: dùng `vision` đọc ảnh hay bản render trang, chép lại thành Markdown có cấu trúc.
+3. Nếu `vision` cũng không đọc được: dừng, báo rõ tệp và lý do. Không bịa nội dung.
+
+Bước 1 là đường mặc định. Không gọi mô hình ngôn ngữ cho định dạng đã có công cụ tất định. Chuyển một lần, lưu theo `sha256` của tệp gốc, không chuyển lại.
+
+Bản `.raw.md` giữ nguyên thứ tự đoạn, bảng, tiêu đề, số liệu và đường dẫn. Không thêm chú thích, không tóm tắt, không sửa câu chữ.
+
+Mỗi bản `.raw.md` đi kèm `TEN_GOC.raw.meta.json`:
+
+```json
+{"source": "BAO_CAO.pdf", "sha256": "...", "converter": "docling",
+ "deterministic": true, "needs_review": false}
+```
+
+Nhánh `vision` ghi `converter=vision`, `deterministic=false` và `needs_review=true`. Khi đó Agent phải nói rõ với người dùng: bản chép bằng `vision` có thể sai số liệu, cần đối chiếu trước khi kết luận. Lệnh `verify` chỉ có giá trị khi tệp gốc đã chuyển tất định.
+
+Riêng `.docx`, lệnh `scan` và `profile` tự bóc tách tất định trước khi quét, nên có thể truyền thẳng tệp Word.
+
 ## Tự quét bài viết, lập hồ sơ giọng văn và đối soát bằng `scripts/vi_scanner.py`
 
-Sau khi viết mới hoặc biên tập xong tệp `.md`, `.txt`, `.docx` hay bài viết bất kỳ, bắt buộc tự quét lại đầu ra bằng [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi bàn giao. Chỉ miễn bước này với câu trả lời hội thoại ngắn 1 đến 2 câu:
+Sau khi viết mới hoặc nhận bản `TEN_GOC.raw.md`, bắt buộc tự quét lại bằng [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi bàn giao. Chỉ miễn bước này với câu trả lời hội thoại ngắn 1 đến 2 câu:
 
 ```bash
-# Quét tệp vừa viết hoặc vừa sửa (.md, .txt, .docx; mặc định xuất đủ 100% tín hiệu mọi nhóm)
-python scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
+# Quét bản Markdown thô vừa nhận (mặc định xuất đủ 100% tín hiệu mọi nhóm)
+python scripts/vi_scanner.py scan TEN_GOC.raw.md --json
 
-# Quét tệp báo cáo .docx và bỏ qua các cột bảng chứa văn bản trích lục của bên thứ ba
-python scripts/vi_scanner.py scan BAO_CAO.docx --profile audit_report --ignore-table-cols 2,3
+# Quét báo cáo và bỏ qua các cột bảng chứa văn bản trích lục của bên thứ ba
+python scripts/vi_scanner.py scan TEN_GOC.raw.md --profile audit_report --ignore-table-cols 2,3
 
 # Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 14 chỉ số kỷ luật lập luận DHDNA
-python scripts/vi_scanner.py profile BAO_CAO.docx --ignore-table-cols 2,3 --json
+python scripts/vi_scanner.py profile TEN_GOC.raw.md --ignore-table-cols 2,3 --json
 
 # Nếu sửa trên văn bản có sẵn của người dùng, chạy thêm bước đối soát dữ kiện
-python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
+python scripts/vi_scanner.py verify TEN_GOC.raw.md BAN_SUA.md
 ```
 
 Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của cả 7 nhóm văn bản. Mỗi kết quả đều ghi rõ `applicable_profiles` (nhóm áp dụng), `exempt_profiles` (nhóm không áp dụng) và gợi ý `suggestion_vi` khớp trực tiếp với cụm từ bị đánh dấu. Riêng lỗi câu quá dài (`VIS-LEN-001`, vượt `35` từ hoặc `45` từ với văn bản pháp lý, kể cả trong ô bảng) làm cả `scan` lẫn `profile` trả mã lỗi `1` ngay lập tức. Khi gặp lỗi độ dài câu, Agent bắt buộc tách câu hoặc rút gọn cho đến khi đạt `0` lỗi mà không có ngoại lệ. Với các tín hiệu khác, hãy đối chiếu `applicable_profiles` cùng loại tài liệu thực tế để quyết định sửa hay giữ lại câu gốc. Chỉ truyền `--profile <tên_nhóm>` khi cần lọc riêng cho một thể loại cố định. Tra cứu đủ 51 mã quy tắc tại [references/rule-catalog.md](references/rule-catalog.md). Mẫu giọng văn, sổ tay và quy trình biên tập nằm tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md). Bảng ngoại lệ nằm tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md). Ngân hàng khuôn câu tổng hợp nằm tại [references/pattern-bank.md](references/pattern-bank.md).
 
-Ở bước hậu kiểm, luôn lưu bản gốc trước khi sửa để chạy lệnh `verify`. Lệnh này đối soát 6 nhóm dữ kiện gốc: con số (kể cả ngày tháng, phần trăm), phủ định, điều kiện, mức chắc chắn, đường dẫn/code và nguồn trích dẫn. Nếu bản sửa làm lệch nhóm nào ngoài chủ đích (trừ trường hợp gọt cụm rào đón chồng chéo như `dường như có vẻ như`), phải khôi phục đúng nghĩa gốc trước khi bàn giao.
+Ở bước hậu kiểm, luôn giữ `TEN_GOC.raw.md` trước khi sửa để chạy lệnh `verify`. Lệnh này đối soát 6 nhóm dữ kiện gốc: con số (kể cả ngày tháng, phần trăm), phủ định, điều kiện, mức chắc chắn, đường dẫn/code và nguồn trích dẫn. Nếu bản sửa làm lệch nhóm nào ngoài chủ đích (trừ trường hợp gọt cụm rào đón chồng chéo như `dường như có vẻ như`), phải khôi phục đúng nghĩa gốc trước khi bàn giao.
 
 Khi trả kết quả cho người dùng, gửi thẳng văn bản đã hoàn thiện. Không đính kèm bảng điểm máy quét hay kể lại quy trình biên tập trừ khi người dùng yêu cầu nhận xét câu chữ.
 

@@ -2,6 +2,12 @@
 
 Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Chưa phát hành]
+
+### Thay đổi (Changed)
+
+- Chuẩn hóa đầu vào: Agent chuyển mọi tệp nguồn sang `TEN_GOC.raw.md` kèm `TEN_GOC.raw.meta.json` trước khi quét. Bộ chuyển đổi tất định chạy trước, `vision` chỉ dùng khi công cụ thất bại và phải ghi `deterministic=false` cùng `needs_review=true`.
+
 ## [2.3.0] - 2026-11-13
 
 ### Thêm mới (Added)

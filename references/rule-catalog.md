@@ -1,6 +1,6 @@
-# Danh mục 42 quy tắc trong `scripts/vi_scanner.py`
+# Danh mục 51 quy tắc trong `scripts/vi_scanner.py`
 
-Bảng tra cứu nhanh 42 mã quy tắc thuộc 6 nhóm khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
+Bảng tra cứu nhanh 51 mã quy tắc thuộc 6 nhóm khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
 
 ## Nhóm 1: Rào đón và dàn dựng kiểu chatbot (`AI_META_AND_STAGING`)
 
@@ -25,6 +25,8 @@ Bảng tra cứu nhanh 42 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 | `VIS-RHET-005` | `warning` | Mượn uy tín không tên (`Các chuyên gia cho rằng`, `Nhiều nghiên cứu chỉ ra rằng`) mà không kèm trích dẫn ngay sau. | Ghi rõ tên tác giả, năm xuất bản hoặc bỏ vế mượn lời nếu câu sau đã có dữ kiện. |
 | `VIS-RHET-006` | `warning` | Khung nâng tầm nhận định thiếu bằng chứng (`Hơn cả một X, đây là Y`, `Không phải X, mà chính là Y`). | Mô tả trực tiếp đầu ra hoặc tác nghiệp thực tế của công cụ. |
 | `VIS-RHET-007` | `info` | Cấu trúc tạo kịch tính giả (`Tưởng chừng..., nhưng...`, `Thoạt nhìn..., song...`) lặp lại dày đặc trong văn bản. | Ghi thẳng quy mô lỗi, số bản ghi ảnh hưởng và bước xử lý cần làm. |
+| `VIS-RHET-008` | `warning` | Khung đính chính (`Thay vì chỉ dựa vào X...`, `Điều này quan trọng vì...`) không kèm số liệu đối chiếu. | Bỏ vế đính chính hiển nhiên, giữ số liệu so sánh hai phương án. |
+| `VIS-RHET-009` | `info` | Lập luận ba phải, khen nịnh người đọc hoặc khoe phủ sóng truyền thông thay cho bằng chứng. | Chọn một kết luận, nêu tiêu chí phân ranh và dẫn nguồn báo chí cụ thể. |
 
 ## Nhóm 3: Định dạng và nhịp đoạn máy móc (`AI_STRUCTURAL_AND_FORMATTING`)
 
@@ -36,6 +38,8 @@ Bảng tra cứu nhanh 42 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 | `VIS-FMT-004` | `info` | Xếp chồng 3 tính từ khen ngợi theo nhịp văn mẫu (`nhanh chóng, chính xác và hiệu quả`, `chạy mượt mà trên cả`). | Thay bằng chỉ tiêu định lượng cụ thể (thời gian, số lượng, tỷ lệ lỗi). |
 | `VIS-FMT-005` | `info` | Từ 4 đoạn liên tiếp có độ dài quá đều (`CV < 0,15`) hoặc 3 câu liền nhau mở đầu cùng một từ (trừ dòng bảng và mục `Bước/Phần/Điều`). Nhận diện cả lỗi xoay vòng động từ đồng nghĩa đầu cột bảng để lách máy quét. | Chia đoạn theo ý thực tế, đổi chủ ngữ mở câu tự nhiên và bỏ động từ dẫn đầu trong ô bảng kỹ thuật. |
 | `VIS-FMT-006` | `info` | Chuỗi từ 3 câu cực ngắn liên tiếp dưới `6` từ mỗi câu dùng như khẩu hiệu (`Không ngoại lệ. Không trì hoãn. Không thỏa hiệp.`). | Gộp thành một câu hoàn chỉnh có chủ thể, hành động và thời hạn rõ ràng. |
+| `VIS-FMT-007` | `info` | Đuôi phân từ bình luận sau dấu phẩy (`..., từ đó khẳng định`, `..., góp phần thúc đẩy`) không bổ sung dữ kiện mới. | Chấm câu ngay sau dữ kiện hoặc thay vế đuôi bằng số liệu mới. |
+| `VIS-FMT-008` | `info` | Câu hỏi mồi một chữ tự biên tự diễn (`Và phần tuyệt vời nhất?`, `Kết quả?`) đi cùng chuỗi câu cụt. | Bỏ câu hỏi mồi và nối thẳng hai mệnh đề thành câu đủ chủ ngữ, vị ngữ. |
 
 ## Nhóm 4: Dịch từng chữ từ tiếng Anh (`TRANSLATIONESE_EN_VI`)
 
@@ -51,6 +55,10 @@ Bảng tra cứu nhanh 42 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 | `VIS-TRANS-008` | `info` | Dùng `đến từ` để chỉ nguồn gốc trừu tượng theo cú pháp tiếng Anh (`giải pháp đến từ nhóm vận hành`). | Đổi sang `của`, `do` hoặc đặt nhóm thực hiện làm chủ ngữ trực tiếp. |
 | `VIS-TRANS-009` | `warning` | Lặp hai từ chỉ vị trí trong cùng một cụm (`nằm trong... bên trong`, `bên trong... ở trong`). | Thay một vế bằng quan hệ thuộc tính (`của`, `thuộc`) hoặc ghi thẳng đường dẫn. |
 | `VIS-TRANS-010` | `info` | Lặp lại dày đặc cụm `mang tính + danh/tính từ` (`mang tính chiến lược`, `mang tính định hướng`) làm câu trừu tượng. | Đổi sang động từ hoặc tính từ cụ thể gắn với số lượng và mốc thời gian. |
+| `VIS-TRANS-011` | `warning` | Gán `bị/được` cho động từ trung tính (`bị đặt xong`, `bị đóng lại`) hoặc bị động truyền tin (`được tin là`, `được công nhận rằng`). | Bỏ `bị/được` với động từ trung tính và dùng chủ thể khái quát cho câu truyền tin. |
+| `VIS-TRANS-012` | `warning` | Cụm cú pháp Trung Hoa dịch cứng (`đem... giao cho`, `cho ai + V`, `đối với... mà nói`, `bị do...`). | Đảo động từ lên trước, bỏ mẫu rào đón và dùng cấu trúc phân công chủ động. |
+| `VIS-TRANS-013` | `info` | Trợ từ `đích/địa/đắc`, đảo định ngữ và bổ ngữ xu hướng còn sót từ bản `convert` Trung–Việt. | Xóa trợ từ, đưa danh từ chính lên trước và viết lại bổ ngữ theo tiếng Việt. |
+| `VIS-TRANS-014` | `info` | Câu dài dồn động từ xuống cuối theo trật tự SOV Nhật–Hàn, chỉ hướng dẫn rà thủ công. | Tách câu hoặc đưa động từ chính lên đầu vế. |
 
 ## Nhóm 5: Sáo ngữ hành chính và câu khách (`BUREAUCRATIC_AND_SEO_CLICHE`)
 
@@ -72,4 +80,57 @@ Bảng tra cứu nhanh 42 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 | `VIS-TONE-002` | `warning` | Bê động từ điều tra hình sự, cổ văn hoặc báo chí (`phát lộ`, `phát giác`, `bại lộ`, `vạch trần`, `phơi bày`, `hé lộ`) vào báo cáo, dữ liệu kỹ thuật. Chặn cả cụm kịch tính hóa sự cố hoặc con số (`sập API`, `gây tê liệt`, `khủng hoảng hệ thống`, `vỏn vẹn`, `giậm chân tại chỗ`). | Dùng động từ trung tính (`phát hiện`, `ghi nhận`, `bộc lộ`), mô tả đúng hiện tượng kỹ thuật (`mất kết nối`, `giữ nguyên ở mức`) và bỏ từ bình phẩm số liệu. |
 | `VIS-STRUCT-001` | `warning` | Tự thuyết minh bố cục hoặc tài liệu (`Để tránh trùng lặp...`, `Bảng dưới đây trình bày...`, `Tài liệu X mô tả chi tiết...`, `ghi lại lý do chọn`), lộ nhãn dàn ý (`Điểm nghẽn:`, `Bước ngoặt tư duy:`) hoặc đếm tuần tự né máy quét. | Xóa câu giải thích bố cục và nhãn dàn ý, nối thẳng mạch nội dung hoặc gộp liên kết vào danh sách. |
 | `VIS-STRUCT-002` | `warning` | Ký tự ẩn, chồng dấu `****`, lỗi `#REF!`, viết `Thiếu -10%`, mũi tên `->`, emoji trang trí và phần trăm dấu chấm `59.9%`. Bao gồm tiêu đề Title Case kiểu Anh, tiêu đề dịch thô (`Cách sử dụng dòng lệnh`, `Bảng nội dung`), mục con đơn độc, lặp từ gần nhau, `alt` ảnh nhồi từ khóa và hộp HTML `01` đến `04` lặp bảng. Kiểm tra cả chú thích `#` cây thư mục quá `10` từ, nháy ngược bọc từ Việt thường, dòng `Tổng cộng` cộng sai và kỷ luật số liệu `.docx`. | Chuẩn hóa dấu phẩy thập phân tiếng Việt, đặt tiêu đề động từ trực tiếp và khử từ lặp sát nhau. Giữ `alt` ảnh cùng chú thích cây thư mục ngắn gọn, đồng thời cộng khớp dòng tổng. Trong báo cáo giám sát, tách riêng tỷ lệ không lỗi và còn lỗi, ghi đủ `Tử số/Mẫu số (%)` và đối soát theo giá trị tuyệt đối. |
+| `VIS-STRUCT-003` | `info` | Lộ trình giả `G1–G4`, bảng giải thích điều hiển nhiên hoặc kịch bản hù dọa rủi ro, chỉ gắn cờ để rà thủ công. | Xóa bảng sáo rỗng, thay bằng mốc kiểm chứng hoặc điều kiện cụ thể. |
 | `VIS-LEN-001` | `error` | Câu văn xuôi hoặc câu trong ô bảng dài quá `35` từ (`45` từ với văn bản pháp lý), báo lỗi ngay trên `scan` và `profile`. Bắt cả câu từ `28` từ nối từ `6` vế dấu phẩy hoặc mở đầu vòng vo (`Việc ...`, `Thông qua việc...`, `Liên quan đến vấn đề...`, `với mục đích nhằm`). Trọng số phạt lũy tiến từ `1,0` lên tới `2,5` theo số từ vượt trần. | Cắt bỏ cụm mở đầu vòng vo và chuyển danh sách dài sang gạch đầu dòng. Tách câu dài thành `2` đến `3` câu ngắn độc lập (`15` đến `25` từ mỗi câu), mỗi câu một chủ thể và một động từ chính. |
+## Nguồn, độ mạnh và ngoại lệ
+
+Bảng dưới đây ghi rõ trạng thái nguồn cho 19 rule từng thiếu nguồn hoặc mới bổ sung. `source_status=verified` nghĩa là có nguồn công khai. `source_status=missing` nghĩa là chưa xác định được nguồn và không tự gán `internal`.
+
+| STT | Mã quy tắc | `source_status` | `evidence_strength` | Ngoại lệ chính |
+| :---: | :--- | :---: | :---: | :--- |
+| 1 | `VIS-AI-006` | `verified` | `medium` | profile:marketing, profile:social_media, literal_guided_visualization |
+| 2 | `VIS-AI-007` | `verified` | `medium` | profile:marketing, profile:social_media, quoted_speech |
+| 3 | `VIS-RHET-006` | `verified` | `medium` | literal_comparison, quoted_speech |
+| 4 | `VIS-RHET-007` | `verified` | `medium` | genuine_contrast, quoted_speech |
+| 5 | `VIS-RHET-008` | `verified` | `strong` | so_lieu_doi_chieu, profile:legal |
+| 6 | `VIS-RHET-009` | `verified` | `medium` | profile:marketing |
+| 7 | `VIS-FMT-006` | `verified` | `medium` | headings, dialogue, poetry, code_block |
+| 8 | `VIS-FMT-007` | `verified` | `medium` | so_lieu_moi_sau_phay, profile:marketing |
+| 9 | `VIS-FMT-008` | `verified` | `medium` | direct_quotes, code_block |
+| 10 | `VIS-STRUCT-003` | `verified` | `medium` | profile:legal, profile:audit_report, code_block |
+| 11 | `VIS-TRANS-006` | `verified` | `medium` | legal_chain_of_title, formal_organization_name |
+| 12 | `VIS-TRANS-007` | `verified` | `medium` | emphatic_spoken_style, quoted_speech |
+| 13 | `VIS-TRANS-008` | `verified` | `medium` | literal_arrival_or_delivery |
+| 14 | `VIS-TRANS-009` | `missing` | `medium` | nested_physical_location_required |
+| 15 | `VIS-TRANS-010` | `missing` | `medium` | legal_term_of_art, academic_classification |
+| 16 | `VIS-TRANS-011` | `verified` | `strong` | profile:legal, profile:audit_report, legal_standard |
+| 17 | `VIS-TRANS-012` | `verified` | `medium` | profile:marketing, direct_quotes |
+| 18 | `VIS-TRANS-013` | `missing` | `medium` | profile:legal, profile:audit_report, direct_quotes |
+| 19 | `VIS-TRANS-014` | `missing` | `medium` | profile:legal, profile:audit_report, code_block |
+
+Toàn bộ 51 rule hiện có 47 rule `verified` và 4 rule `missing`. Không rule nào được gán `internal` khi chưa có xác nhận nguồn nội bộ thật.
+
+## Bảng dương tính giả cho người đọc
+
+| Nhóm rule | Ngữ cảnh không nên gắn cờ | Cách giảm thiểu |
+| :--- | :--- | :--- |
+| `VIS-AI-001..005` | Trích dẫn nguyên văn trong ngoặc kép hoặc khối mã. | Che vùng trích dẫn trước khi quét. |
+| `VIS-RHET-002..005` | Câu mô tả sự kiện lịch sử có số liệu và nguồn cụ thể. | Kiểm tra số liệu và tên nguồn trong cùng câu. |
+| `VIS-FMT-002..003` | Dòng hội thoại văn học hoặc bảng so sánh nhiều cột. | Bỏ qua dòng hội thoại và dòng bảng. |
+| `VIS-TRANS-002..003` | Văn bản pháp lý, kiểm toán hoặc khoa học dùng bị động quy ước. | Áp dụng ngoại lệ cho `profile:legal` và `profile:audit_report`. |
+| `VIS-CLICHE-001` | Chỉ thị hành chính hợp pháp có chủ thể và thời hạn. | Bỏ qua cờ khi `profile:legal`. |
+| `VIS-TONE-001..002` | Trích dẫn phát ngôn trực tiếp của người khác. | Che ngoặc kép trước khi quét. |
+| `VIS-LEX-001` | Từ Hán – Việt dùng đúng nghĩa trong ngữ cảnh chuyên môn. | Dùng danh sách ngoại lệ ngữ cảnh. |
+| `VIS-STRUCT-002` | `alt` mô tả đúng tên hình, tối đa `8` chữ. | Chỉ gắn cờ khi vượt ngưỡng hoặc có khẩu hiệu. |
+
+## Nguồn tham chiếu
+
+- Wikipedia: Signs of AI writing.
+- Humanizer, quy tắc biên tập văn AI.
+- Kobak và cộng sự, nghiên cứu từ vựng dư thừa.
+- ViDetect, bộ dữ liệu văn bản tiếng Việt.
+- Cao Xuân Hạo, công trình về cấu trúc Đề–Thuyết và dịch thuật.
+- Nghị định 30/2020/NĐ-CP về thể thức văn bản hành chính.
+- Vale và write-good, triết lý kiểm lỗi văn xuôi.
+
+Nhật ký 19 truy vấn và danh mục tài liệu tham khảo đầy đủ nằm trong `raw/`, không thuộc phạm vi skill. Kết quả so sánh ban đầu và đề xuất trong tài liệu khảo sát là dữ liệu lịch sử, không phải cam kết chất lượng hiện tại.

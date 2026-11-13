@@ -31,3 +31,31 @@ Lệnh `scripts/vi_scanner.py scan` mặc định xuất đủ tín hiệu của
 | Đoạn văn có độ dài đồng đều (`VIS-FMT-005`) | Bài luận hoặc bài chia sẻ chia thành 4 đến 5 đoạn có số câu và số chữ y hệt nhau như đúc khuôn. | Văn bản pháp luật chia theo từng Điều hoặc thuyết minh báo cáo kiểm toán trình bày song song từng khoản mục. |
 | Câu mời gọi `Hãy cùng khám phá`, `Bí quyết không thể bỏ qua` (`VIS-AI-004`, `VIS-CLICHE-004`) | Lọt vào báo cáo quản trị, tài liệu học thuật, pháp lý hoặc bản dịch kỹ thuật. | Bài quảng cáo thương mại (`marketing`) hoặc bài đăng tương tác ngắn trên mạng xã hội (`social_media`) khi đúng giọng thương hiệu. |
 | Động từ gợi sự `hé lộ`, `lộ diện` (`VIS-TONE-002`) | Gắn với báo cáo, kiểm thử, dữ liệu hoặc lỗi kỹ thuật trong văn bản quản trị, học thuật, pháp lý (`"diễn tập hé lộ lỗ hổng"`). | Bài giới thiệu sản phẩm (`marketing`), bài đăng mạng xã hội (`social_media`) hoặc miêu tả vật lý ngoài ngữ cảnh phân tích. |
+
+## 3. Ma trận bảy hồ sơ thể loại
+
+| Hồ sơ | Quy tắc siết chặt | Quy tắc bỏ qua hoặc nâng ngưỡng |
+| :--- | :--- | :--- |
+| `general` | Kích hoạt toàn bộ nhóm AI, tu từ và dịch thô. | Cho phép một cụm `một cách` và 1 đến 2 từ nối đầu câu mỗi đoạn. |
+| `audit_report` | Siết nhóm phóng đại, dẫn nguồn không tên, khẩu hiệu rỗng và rào đón chồng lớp. | Bỏ qua bị động quy ước và độ đều đoạn trong thuyết minh báo cáo. |
+| `academic` | Siết nhóm AI, tu từ và mở bài kiểu SEO. | Bỏ qua danh từ hóa thuật ngữ và bị động khách quan. |
+| `legal` | Siết lỗi chatbot, phóng đại, bị động dịch từng chữ và rào đón chồng lớp. | Bỏ qua khẩu hiệu chỉ đạo, danh từ hóa quyền nghĩa vụ và bảng giải thích từ ngữ. |
+| `marketing` | Chặn lỗi chatbot, ẩn dụ sáo rỗng và toàn bộ nhóm dịch thô. | Cho phép lời mời khám phá, bộ ba tính từ và mở bài câu khách. |
+| `social_media` | Chặn lỗi chatbot, đối lập giả, danh sách in đậm và dịch thô. | Cho phép giọng cá nhân, bộ ba tính từ và kết bài ngắn. |
+| `translation` | Kích hoạt tối đa nhóm dịch thô và nhóm AI. | Bỏ qua gạch ngang hội thoại văn học và nghĩa đen của ẩn dụ địa lý. |
+
+## 4. Ghi chú ngữ cảnh, không cấm từ đơn
+
+Các mục dưới đây là lưu ý biên tập. Chúng không phải lệnh cấm từ và không thay thế ngữ cảnh thật.
+
+| Mục | Ghi chú sử dụng |
+| :--- | :--- |
+| tính thời sự | Chỉ dùng cho mức độ được bàn luận. Khi nói về hạn xử lý, dùng tính kịp thời. |
+| lần xác nhận | Khi nói về lịch sử thay đổi mã nguồn, dùng lần commit hoặc lịch sử commit. |
+| đẩy lên | Khi nói về công bố thông tin, dùng đưa lên hoặc công bố. |
+| tính thực nghiệm | Khi nói về khả năng kiểm chứng, dùng có thể kiểm chứng hoặc bác bỏ. |
+| một số thay đổi | Giữ nguyên. Tránh ghép thành một số các thay đổi. |
+| phát hành và ban hành | Phát hành dùng cho ấn phẩm hoặc bản cập nhật. Ban hành dùng cho văn bản quy phạm. |
+| soát xét | Dùng rà soát cho hành động kiểm tra lại. Dùng xem lại, phản biện hoặc tham vấn chuyên gia theo đúng sắc thái. |
+
+soát xét từng bị dùng như động từ mặc định cho mọi hoạt động review. Cách dùng này đúng khi nói về vai trò hoặc hồ sơ rà soát chính thức, nhưng lặp ở mọi câu sẽ thành giọng dịch và nặng. Hãy chọn động từ theo hành động thật.

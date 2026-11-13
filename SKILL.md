@@ -9,7 +9,7 @@ license: MIT
 compatibility: Python 3.11+ (chỉ cần khi chạy công cụ scripts/vi_scanner.py)
 metadata:
   author: ducle2502
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 # vietnamese-writing
@@ -38,7 +38,9 @@ Mở thẳng vào vấn đề, sự kiện hoặc số liệu. Bỏ các câu r�
 
 Giữ nhịp đoạn cô đọng và áp dụng kỷ luật bằng chứng theo chuẩn [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md). Trong văn bản kiểm toán, giám sát và quản trị rủi ro, giữ độ dài câu trung bình từ `15` đến `24` chữ (`CV >= 0,40`), mỗi đoạn dưới `2` câu. Mở đầu mục bằng kết luận trực diện hoặc đặt tiêu đề hai vế đối lập (*Chủ đề: Điểm tiến bộ, nhưng điểm nghẽn cốt lõi vẫn hạn chế kết quả*). Dùng nhãn phân đoạn ngắn kết thúc bằng dấu chấm (*Thực trạng và bằng chứng.*, *Nguyên nhân kiểm soát.*, *Rủi ro và ảnh hưởng.*, *Kiến nghị.*) thay cho danh sách hai chấm. Luôn ghép cặp `Tử số/Mẫu số (Tỷ lệ %)` khi chốt kết luận và tách bạch hoạt động trung gian (*đang trình, đã họp, đã hướng dẫn lại*) khỏi đầu ra kiểm chứng được. Không cộng gộp hạng mục còn lỗi vào tỷ lệ hoàn thành và không dùng tổng bù trừ ròng bằng `0` để kết luận khớp đúng từng dòng. Chỉ dùng đúng một từ tình thái *có thể* khi nêu hệ quả rủi ro tương lai.
 
-Giữ nhịp trình bày sạch, không lặp hai tầng. Không vẽ hộp tóm tắt 4 ô (`01` đến `04`) ngay trước bảng chức năng chi tiết và không mở thẻ `<details>` lặp lại bảng phân công đã có. Trong tài liệu đồ án nhỏ, không tự bịa bảng so sánh với công cụ lớn hay phương án bù nhìn. Giữ văn bản thay thế ảnh (`alt="..."`) ngắn gọn từ `2` đến `6` chữ nêu đúng tên hình mà không kèm khẩu hiệu quảng cáo. Chú thích sau dấu `#` trong cây thư mục không vượt quá `10` chữ, và chỉ bọc dấu nháy ngược quanh tên tệp, lệnh hoặc mã nguồn.
+Lệnh `profile` trả bốn kiểu giọng chính và một nhãn dự phòng `CLEAN_GENERAL_VIETNAMESE`. Kiểu `MULTI_READER_ASSURANCE` chỉ xuất hiện khi có ít nhất `2` nhãn bằng chứng hoặc cấu trúc phân luồng người đọc. Nhịp câu đều hoặc câu quá dài trả về nhãn dự phòng kèm cảnh báo `BUREAUCRATIC_OR_MONOTONE_DRAFT`.
+
+Giữ nhịp trình bày sạch, không lặp hai tầng. Không vẽ hộp tóm tắt 4 ô (`01` đến `04`) ngay trước bảng chức năng chi tiết và không mở thẻ `<details>` lặp lại bảng phân công đã có. Trong tài liệu đồ án nhỏ, không tự bịa bảng so sánh với công cụ lớn hay phương án bù nhìn. Không dựng bảng lộ trình `G1` đến `G4` khi chưa có mốc kiểm chứng thật. Không thêm bảng giải thích lại điều người đọc đã thấy trên hình hoặc trong bảng chính. Không dựng kịch bản hù dọa kiểu "nếu không có X thì sẽ gặp rủi ro Y" khi thiếu điều kiện và hệ quả cụ thể. Giữ văn bản thay thế ảnh (`alt="..."`) tối đa `8` chữ nêu đúng tên hình, khuyến nghị từ `2` đến `8` chữ và không kèm khẩu hiệu quảng cáo. Nhãn cạnh Mermaid cũng giữ tối đa `8` chữ. Chú thích sau dấu `#` trong cây thư mục không vượt quá `10` chữ, và chỉ bọc dấu nháy ngược quanh tên tệp, lệnh hoặc mã nguồn.
 
 Chọn đúng từ theo thực tế công việc và khớp vai người viết. Tránh dùng sai nghĩa từ Hán - Việt (như lấy chữ *"thực chứng"* để dịch *evidence-based*, hoặc viết *"khắc phục yếu điểm"* thay cho *điểm yếu*). Rà kỹ các lỗi sai chính tả vỏ ngữ âm công sở (`sồn sã`, `chỉnh chu`, `chuẩn đoán`, `chắp bút`, `cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`, `xuất sứ`). Không dịch từng chữ thuật ngữ phần mềm sang các cụm xa lạ (*"khung hợp đồng"*, *"khung vận hành"*, *"khóa hợp đồng"*, *"giao kèo dữ liệu"*, *"khung chạy sẵn"*, *"hiện thực lớp"*, *"túi chứa dữ liệu"*). Không tự phong chức danh tập đoàn (*"Kỹ sư giao thức mạng"*, *"20 tác vụ vòng đời phần mềm"*, *"tác vụ/thành viên"*) cho bài tập nhóm sinh viên. Không dịch ngược từ tiếng Anh đã quen dùng (`email` thành *"thư điện tử"*, `pull request` thành *"yêu cầu kéo"*) và không chêm tiếng Anh tùy tiện (`booking lịch`).
 
@@ -61,14 +63,14 @@ python scripts/vi_scanner.py scan TEP_VUA_VIET.md --json
 # Quét tệp báo cáo .docx và bỏ qua các cột bảng chứa văn bản trích lục của bên thứ ba
 python scripts/vi_scanner.py scan BAO_CAO.docx --profile audit_report --ignore-table-cols 2,3
 
-# Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 12 chỉ số kỷ luật lập luận DHDNA
+# Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 14 chỉ số kỷ luật lập luận DHDNA
 python scripts/vi_scanner.py profile BAO_CAO.docx --ignore-table-cols 2,3 --json
 
 # Nếu sửa trên văn bản có sẵn của người dùng, chạy thêm bước đối soát dữ kiện
 python scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 ```
 
-Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của cả 7 nhóm văn bản. Mỗi kết quả đều ghi rõ `applicable_profiles` (nhóm áp dụng), `exempt_profiles` (nhóm không áp dụng) và gợi ý `suggestion_vi` khớp trực tiếp với cụm từ bị đánh dấu. Riêng lỗi câu quá dài (`VIS-LEN-001`, vượt `35` từ hoặc `45` từ với văn bản pháp lý, kể cả trong ô bảng) làm cả `scan` lẫn `profile` trả mã lỗi `1` ngay lập tức. Khi gặp lỗi độ dài câu, Agent bắt buộc tách câu hoặc rút gọn cho đến khi đạt `0` lỗi mà không có ngoại lệ. Với các tín hiệu khác, hãy đối chiếu `applicable_profiles` cùng loại tài liệu thực tế để quyết định sửa hay giữ lại câu gốc. Chỉ truyền `--profile <tên_nhóm>` khi cần lọc riêng cho một thể loại cố định. Tra cứu đủ 42 mã quy tắc tại [references/rule-catalog.md](references/rule-catalog.md), mẫu giọng văn chức năng tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) và bảng ngoại lệ tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).
+Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của cả 7 nhóm văn bản. Mỗi kết quả đều ghi rõ `applicable_profiles` (nhóm áp dụng), `exempt_profiles` (nhóm không áp dụng) và gợi ý `suggestion_vi` khớp trực tiếp với cụm từ bị đánh dấu. Riêng lỗi câu quá dài (`VIS-LEN-001`, vượt `35` từ hoặc `45` từ với văn bản pháp lý, kể cả trong ô bảng) làm cả `scan` lẫn `profile` trả mã lỗi `1` ngay lập tức. Khi gặp lỗi độ dài câu, Agent bắt buộc tách câu hoặc rút gọn cho đến khi đạt `0` lỗi mà không có ngoại lệ. Với các tín hiệu khác, hãy đối chiếu `applicable_profiles` cùng loại tài liệu thực tế để quyết định sửa hay giữ lại câu gốc. Chỉ truyền `--profile <tên_nhóm>` khi cần lọc riêng cho một thể loại cố định. Tra cứu đủ 51 mã quy tắc tại [references/rule-catalog.md](references/rule-catalog.md). Mẫu giọng văn, sổ tay và quy trình biên tập nằm tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md). Bảng ngoại lệ nằm tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md). Ngân hàng khuôn câu tổng hợp nằm tại [references/pattern-bank.md](references/pattern-bank.md).
 
 Ở bước hậu kiểm, luôn lưu bản gốc trước khi sửa để chạy lệnh `verify`. Lệnh này đối soát 6 nhóm dữ kiện gốc: con số (kể cả ngày tháng, phần trăm), phủ định, điều kiện, mức chắc chắn, đường dẫn/code và nguồn trích dẫn. Nếu bản sửa làm lệch nhóm nào ngoài chủ đích (trừ trường hợp gọt cụm rào đón chồng chéo như `dường như có vẻ như`), phải khôi phục đúng nghĩa gốc trước khi bàn giao.
 
@@ -76,4 +78,4 @@ Khi trả kết quả cho người dùng, gửi thẳng văn bản đã hoàn th
 
 ## Bảo trì bảng quy tắc và từ vựng trên CSV
 
-Toàn bộ quy tắc và từ vựng nằm tại hai tệp CSV chuẩn `UTF-8 BOM` mở trực tiếp bằng Excel. Tệp [data/vocab.csv](data/vocab.csv) quản lý từ mượn quen dùng, cụm dịch ngược, tiếng Anh chêm tùy tiện và văn mẫu cần tránh. Tệp [data/grammar.csv](data/grammar.csv) khai báo 42 quy tắc cấu trúc cùng trọng số tương ứng. Định kỳ hàng quý hoặc hàng năm, chạy lệnh `python scripts/vi_scanner.py check-maintenance` và rà soát theo hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).
+Toàn bộ quy tắc và từ vựng nằm tại hai tệp CSV chuẩn `UTF-8 BOM` mở trực tiếp bằng Excel. Tệp [data/vocab.csv](data/vocab.csv) quản lý từ mượn quen dùng, cụm dịch ngược, tiếng Anh chêm tùy tiện và văn mẫu cần tránh. Tệp [data/grammar.csv](data/grammar.csv) khai báo 51 quy tắc cấu trúc cùng trọng số tương ứng. Định kỳ hàng quý hoặc hàng năm, chạy lệnh `python scripts/vi_scanner.py check-maintenance` và rà soát theo hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).

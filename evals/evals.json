@@ -45,6 +45,29 @@
         "Trả lời đúng Bên B nhận quyền sở hữu theo Điều 12 Khoản 3",
         "Không tự ý biên tập lại câu hợp đồng khi người dùng chỉ hỏi nội dung"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Biên tập lại phần mở đầu README của một công cụ dòng lệnh nhỏ. Bản nháp có bảng tiến độ G1 đến G4 sáo rỗng, hộp tóm tắt 4 ô 01 đến 04 lặp lại bảng chức năng và câu 'Trong bối cảnh chuyển đổi số ngày càng phát triển mạnh mẽ'. Hãy giữ nguyên tên công cụ và các lệnh cài đặt, bỏ phần sáo rỗng.",
+      "expected_output": "Mở bằng mục đích và lệnh chạy thử thực tế. Bỏ bảng G1 đến G4, bỏ hộp 4 ô lặp và bỏ câu mở bài bối cảnh chung. Giữ nguyên tên công cụ, lệnh cài đặt và số liệu có thật.",
+      "files": [],
+      "assertions": [
+        "Không còn bảng tiến độ G1 đến G4",
+        "Không còn hộp tóm tắt 01 đến 04 lặp bảng chức năng",
+        "Giữ nguyên tên công cụ và lệnh cài đặt",
+        "Quét bằng lệnh `scripts/vi_scanner.py scan` đạt 0 lỗi"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Rút gọn tiêu đề và thuộc tính alt trong README cũ: 'Tổng quan', 'Cài đặt nhanh', 'Trạng thái kết nối và phím điều khiển', và alt='Giao diện terminal của ứng dụng hiển thị kết quả quét dải mạng nội bộ, trạng thái cổng TCP và nhật ký cảnh báo trên 5 thiết bị'. Giữ đúng nội dung hình.",
+      "expected_output": "Đổi tiêu đề thành 'Chức năng chính', 'Cài đặt và chạy thử', 'Phím tắt'. Rút alt còn 2 đến 8 chữ, ví dụ 'Giao diện Network Monitor'. Không thêm khẩu hiệu quảng cáo.",
+      "files": [],
+      "assertions": [
+        "Ba tiêu đề mới ngắn và đúng chức năng mục",
+        "Thuộc tính alt còn từ 2 đến 8 chữ",
+        "Không thêm khẩu hiệu quảng cáo vào alt"
+      ]
     }
   ]
 }

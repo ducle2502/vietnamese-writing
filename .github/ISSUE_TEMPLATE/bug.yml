@@ -11,7 +11,7 @@ body:
         - Bắt nhầm câu tự nhiên (False Positive)
         - Bỏ sót lỗi câu chữ (False Negative)
         - Lỗi đối soát dữ kiện (verify)
-        - Lỗi lập hồ sơ giọng văn hoặc đọc tệp .docx (profile)
+        - Lỗi chuyển tệp sang Markdown thô, lập hồ sơ giọng văn hoặc bóc tách .docx (profile)
         - Lỗi hướng dẫn trong SKILL.md
     validations:
       required: true

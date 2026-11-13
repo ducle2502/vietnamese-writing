@@ -26,7 +26,7 @@ Lệnh `scan` mặc định chạy ở chế độ `all` và xuất toàn bộ t
 
 Lớp `SemanticMasker` bỏ qua khối code, mã nội dòng, đường dẫn URL và lời trích dẫn trong ngoặc kép khi quét mà vẫn giữ nguyên số dòng, số cột. Sau khi biên tập, lệnh `verify` đối chiếu bản gốc với bản sửa để chặn lỗi làm rơi con số, từ phủ định, điều kiện hoặc mức độ chắc chắn. Bộ lọc âm vị cũng bắt từ tiếng Anh chêm tùy tiện giữa câu nhưng tự cho qua nhóm từ đã quen dùng (`email`, `web`, `file`, `video`, `team`, `deadline`, `server`, `kpi`), kèm lệnh `check-maintenance` nhắc lịch rà soát định kỳ theo quý.
 
-Hai lệnh `scan` và `profile` đọc thẳng tệp Word `.docx` bằng thư viện chuẩn, cho phép dùng `--ignore-table-cols` để bỏ qua cột bảng trích lục của bên thứ ba. Máy quét còn phát hiện lỗi sót tiêu đề kỳ trước trong thuộc tính tệp (`template_title_mismatch`) và cảnh báo lệch mẫu số giữa các trang. Lệnh `profile` xếp loại giọng văn theo bốn kiểu chính và một nhãn dự phòng tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md).
+Agent chuyển tệp nguồn sang `TEN_GOC.raw.md` kèm `TEN_GOC.raw.meta.json` trước khi quét. Lệnh `scan` và `profile` nhận Markdown thô cùng tệp UTF-8. Riêng `.docx`, công cụ tự bóc tách tất định trước khi quét. Bộ chuyển đổi dùng `markitdown`, `liteparse`, `docling` hoặc `pandoc` cho định dạng khác. `vision` chỉ là phương án dự phòng và phải ghi `deterministic=false` cùng `needs_review=true`. Máy quét phát hiện lỗi sót tiêu đề kỳ trước trong thuộc tính tệp (`template_title_mismatch`) và cảnh báo lệch mẫu số giữa các trang. Lệnh `profile` xếp loại giọng văn theo bốn kiểu chính và một nhãn dự phòng tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md).
 
 ## Cài đặt nhanh
 
@@ -67,18 +67,20 @@ Chi tiết toàn bộ 51 mã quy tắc cùng ví dụ câu lỗi và câu viết
 
 ## Chạy từ dòng lệnh
 
-```bash
-# 1. Quét mặc định (chế độ 'all' xuất đủ 100% tín hiệu của cả 7 nhóm văn bản)
-python -B scripts/vi_scanner.py scan BAI_VIET.md
+Agent chuyển tệp nguồn sang `TEN_GOC.raw.md` trước khi quét. Với `.docx`, lệnh `scan` và `profile` tự bóc tách tất định nên vẫn truyền thẳng tệp Word được.
 
-# 2. Quét trực tiếp tệp Word .docx và bỏ qua cột bảng trích lục bên thứ ba
-python -B scripts/vi_scanner.py scan BAO_CAO.docx --profile audit_report --ignore-table-cols 2,3
+```bash
+# 1. Quét bản Markdown thô vừa nhận (chế độ 'all' xuất đủ 100% tín hiệu của cả 7 nhóm văn bản)
+python -B scripts/vi_scanner.py scan TEN_GOC.raw.md
+
+# 2. Quét báo cáo và bỏ qua cột bảng trích lục bên thứ ba
+python -B scripts/vi_scanner.py scan TEN_GOC.raw.md --profile audit_report --ignore-table-cols 2,3
 
 # 3. Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 14 chỉ số kỷ luật lập luận DHDNA
-python -B scripts/vi_scanner.py profile BAO_CAO.docx --ignore-table-cols 2,3 --json
+python -B scripts/vi_scanner.py profile TEN_GOC.raw.md --ignore-table-cols 2,3 --json
 
 # 4. Đối chiếu số liệu, phủ định, điều kiện và trích dẫn trước - sau khi sửa
-python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
+python -B scripts/vi_scanner.py verify TEN_GOC.raw.md BAN_SUA.md
 
 # 5. Kiểm tra hạn rà soát định kỳ danh sách từ tiếng Anh quen dùng
 python -B scripts/vi_scanner.py check-maintenance
@@ -94,7 +96,7 @@ python -B -m pytest -v
 | [SKILL.md](SKILL.md) | Hướng dẫn chính cho AI Agent (kèm phần khai báo đầu tệp chuẩn `YAML frontmatter`). |
 | [AGENTS.md](AGENTS.md) | Quy tắc rút gọn khi mở trực tiếp thư mục dự án. |
 | [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.089` mục từ vựng và `51` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở và chỉnh sửa trực tiếp bằng Excel. |
-| [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ dòng lệnh quét văn bản, lập hồ sơ giọng văn DHDNA, đọc `.docx` và đối soát dữ kiện. |
+| [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ dòng lệnh quét Markdown thô, bóc tách `.docx` tất định, lập hồ sơ giọng văn DHDNA và đối soát dữ kiện. |
 | [references/rule-catalog.md](references/rule-catalog.md) | Bảng tra cứu chi tiết 51 quy tắc kèm dấu hiệu nhận diện và cách viết lại. |
 | [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) | Bốn kiểu giọng chính, nhãn dự phòng, 12 chiều DHDNA, quy trình biên tập và sổ tay bảy phần. |
 | [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) | Quy trình cập nhật danh sách từ tiếng Anh quen dùng và ngoại lệ của 7 nhóm văn bản. |

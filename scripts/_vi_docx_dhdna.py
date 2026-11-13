@@ -105,6 +105,12 @@ _SINGLE_CO_THE_RE = stdlib_re.compile(r"(?i)\bcó\s+thể\b")
 _STACKED_HEDGING_RE = stdlib_re.compile(
     r"(?i)\b(?:có\s+thể\s+có\s+khả\s+năng|dường\s+như\s+có\s+vẻ|khả\s+năng\s+có\s+thể)\b"
 )
+_EVIDENCE_LABEL_RE = stdlib_re.compile(r"(?i)\[\s*(?:FACT|CLAIM|INFERENCE|GAP|RISK|DECISION|MÂU\s+THUẪN)\s*\]")
+_READER_ROUTING_RE = stdlib_re.compile(
+    r"(?i)\b(?:phân\s+luồng\s+người\s+đọc|kết\s+luận\s+cấp\s+[abc]|"
+    r"bản\s+(?:hội\s+đồng|ban\s+chỉ\s+đạo|quản\s+trị|kỹ\s+thuật)|"
+    r"cấp\s+(?:phê\s+duyệt|điều\s+hành|kỹ\s+thuật))\b"
+)
 _DENOM_RATIO_RE = stdlib_re.compile(
     r"(?i)\b(\d+(?:[.,]\d+)*)\s*/\s*(\d+(?:[.,]\d+)*)\s+([a-zà-ỹđ]+(?:\s+[a-zà-ỹđ]+)?)\b"
 )
@@ -385,6 +391,8 @@ def _compute_dhdna_metrics(
         "tu_tinh_thai_don_co_the": len(_SINGLE_CO_THE_RE.findall(masked_all_text)),
         "chong_tu_rao_don": len(_STACKED_HEDGING_RE.findall(masked_all_text)),
         "ung_vien_lech_mau_so": _detect_denominator_drift(masked_all_text),
+        "nhan_bang_chung": len(_EVIDENCE_LABEL_RE.findall(masked_all_text)),
+        "cau_truc_phan_luong_nguoi_doc": len(_READER_ROUTING_RE.findall(masked_all_text)),
     }
 
 
@@ -399,6 +407,16 @@ def _classify_voice_archetype(stylo: StylometryReport, dm: DhdnaVoiceMetrics) ->
                 "Giọng Kiểm toán / Quản trị Trực diện: câu ngắn cô đọng, biên độ nhịp câu rộng, "
                 "mở đoạn bằng kết luận, khóa chặt ranh giới bằng chứng (D12) và cổng điều kiện (D6)."
             ),
+            "warnings": [],
+        }
+    if dm["nhan_bang_chung"] + dm["cau_truc_phan_luong_nguoi_doc"] >= 2:
+        return {
+            "code": "MULTI_READER_ASSURANCE",
+            "description_vi": (
+                "Giọng Bảo đảm Đa người đọc: có nhãn bằng chứng hoặc cấu trúc phân luồng người đọc, "
+                "bảng truy vết và kết luận riêng cho từng cấp phê duyệt."
+            ),
+            "warnings": [],
         }
     if dm["tieu_de_hai_ve_doi_sanh"] >= 2 or dm["tam_giac_doi_chung_da_nguon"] >= 3:
         return {
@@ -407,6 +425,7 @@ def _classify_voice_archetype(stylo: StylometryReport, dm: DhdnaVoiceMetrics) ->
                 "Giọng Giám sát Đối sánh Hai chiều: tiêu đề hai vế đối lập "
                 "(điểm đạt được vs điểm nghẽn), tam giác đối chứng đa nguồn và cặp Tử số/Mẫu số (%)."
             ),
+            "warnings": [],
         }
     if dm["mat_do_so_tren_1000_tu"] >= 35.0 and mean_sent <= 20.0:
         return {
@@ -415,18 +434,15 @@ def _classify_voice_archetype(stylo: StylometryReport, dm: DhdnaVoiceMetrics) ->
                 "Giọng Bảo đảm Kỹ thuật & Truy vết Nguyên nhân gốc: "
                 "câu ngắn giàu thông số kỹ thuật, khung giờ và phân rã cơ chế."
             ),
+            "warnings": [],
         }
-    if mean_sent > 28.0 or (sent_cv < 0.30 and stylo["so_cau"] >= 6):
-        return {
-            "code": "BUREAUCRATIC_OR_MONOTONE_DRAFT",
-            "description_vi": (
-                "Bản nháp hành chính câu dài hoặc nhịp đều: cần tách câu mở đầu nêu kết luận ngắn (6-14 từ) "
-                "và gọt bỏ cụm danh từ hóa/rào đón."
-            ),
-        }
+    warnings = (
+        ["BUREAUCRATIC_OR_MONOTONE_DRAFT"] if mean_sent > 28.0 or (sent_cv < 0.30 and stylo["so_cau"] >= 6) else []
+    )
     return {
         "code": "CLEAN_GENERAL_VIETNAMESE",
         "description_vi": "Văn xuôi tiếng Việt mạch lạc, nhịp câu cân đối.",
+        "warnings": warnings,
     }
 
 
@@ -436,7 +452,7 @@ def profile_text(
     docx_meta: DocxMetadata | dict[str, Any] | None = None,
     ignore_cols: set[int] | None = None,
 ) -> ProfileReport:
-    """Đo tất định 18 chỉ số nhịp câu (`stylometry`) và 12 chỉ số kỷ luật lập luận / bằng chứng `DHDNA`."""
+    """Đo tất định 18 chỉ số nhịp câu (`stylometry`) và 14 chỉ số kỷ luật lập luận / bằng chứng `DHDNA`."""
     masked_full = SemanticMasker.mask_preserve_offsets(text, mask_quotes=True)
     prose_only_text = "\n".join(
         ln for ln in masked_full.splitlines() if not (ln.strip().startswith("|") and ln.strip().endswith("|"))

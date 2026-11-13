@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""vi_scanner.py (v2.2.0) - Điểm vào công khai cho công cụ quét câu chữ, câu dài vòng vo và đo giọng văn tiếng Việt."""
+"""vi_scanner.py (v2.3.0) - Điểm vào công khai cho công cụ quét câu chữ, câu dài vòng vo và đo giọng văn tiếng Việt."""
 
 from __future__ import annotations
 

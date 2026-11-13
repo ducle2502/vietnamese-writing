@@ -190,6 +190,21 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
     "VIS-RHET-005": "Nêu rõ tên tổ chức, tác giả và năm công bố, hoặc bỏ cụm 'Các chuyên gia/Nhiều nghiên cứu'.",
     "VIS-RHET-006": "Bỏ khung nâng tầm 'Hơn cả X, đây là Y' / 'Không phải X, mà chính là Y'; mô tả thẳng chức năng.",
     "VIS-RHET-007": "Giảm lặp khung 'Tưởng chừng/Thoạt nhìn..., nhưng...'; trình bày thẳng sự việc và số liệu.",
+    "VIS-RHET-008": (
+        "Bỏ khung đính chính 'Thay vì chỉ dựa vào X...' hoặc 'Điều này quan trọng vì...'; nêu thẳng số liệu đối chiếu."
+    ),
+    "VIS-RHET-009": ("Bỏ câu ba phải, khen nịnh hoặc khoe phủ sóng truyền thông; nêu kết luận và bằng chứng cụ thể."),
+    "VIS-FMT-007": (
+        "Chấm câu ngay sau dữ kiện và bỏ đuôi phân từ 'từ đó khẳng định/góp phần...' nếu không thêm số liệu mới."
+    ),
+    "VIS-FMT-008": "Bỏ câu hỏi mồi một chữ và nối thẳng hai mệnh đề thành câu đủ chủ ngữ, vị ngữ.",
+    "VIS-TRANS-011": (
+        "Bỏ 'bị/được' trước động từ trung tính; dùng câu trung tính hoặc chủ động theo cách nói tiếng Việt."
+    ),
+    "VIS-TRANS-012": (
+        "Bỏ khung 'đem... giao cho', 'cho ai + V', 'đối với... mà nói', 'bị do...'; đảo về trật tự tiếng Việt."
+    ),
+    "VIS-TRANS-013": ("Bỏ trợ từ 'đích/địa/đắc' và đảo định ngữ; viết lại theo trật tự danh từ chính trước, phụ sau."),
     "VIS-FMT-002": "Lược bớt từ nối đầu câu lặp lại liên tiếp hoặc gộp các ý cùng chiều thành một câu gọn.",
     "VIS-FMT-006": "Gộp chuỗi câu cụt kiểu khẩu hiệu thành câu hoàn chỉnh có đủ chủ ngữ, vị ngữ và điều kiện.",
     "VIS-TRANS-002": "Giảm mật độ bị động 'được + động từ' trong đoạn; chuyển sang câu chủ động nêu rõ ai làm gì.",

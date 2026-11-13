@@ -16,6 +16,7 @@ from _vi_algo_rules import (
     run_monotony_rule,
 )
 from _vi_docx_dhdna import compute_sliding_mattr, compute_stylometry, max_table_sentence_words
+from _vi_extra_rules import run_fake_roadmap_rule, run_sov_review_rule
 from _vi_hygiene_rules import run_document_and_table_hygiene
 from _vi_masker import (
     SemanticMasker,
@@ -82,6 +83,8 @@ _ALGO_RUNNERS: dict[str, Callable[[RuleDefinition, _ScanBuffer, Profile | None],
     "ALGO:DOCUMENT_AND_TABLE_HYGIENE": run_document_and_table_hygiene,
     "ALGO:LENGTHY_AND_ROUNDABOUT_SENTENCE": run_lengthy_and_roundabout_rule,
     "ALGO:STACCATO_FRAGMENT_STREAK_MIN_3": run_staccato_fragment_rule,
+    "ALGO:FAKE_ROADMAP_AND_OBVIOUS_EXPLAINER": run_fake_roadmap_rule,
+    "ALGO:SOV_CLAUSE_ORDER_REVIEW": run_sov_review_rule,
 }
 
 
@@ -240,7 +243,7 @@ def _build_regex_findings(
 
 
 class ViScanner:
-    """Máy quét câu chữ tiếng Việt v2.2.0 (mặc định `profile="all"` xuất đủ 100% tín hiệu của 7 nhóm)."""
+    """Máy quét câu chữ tiếng Việt v2.3.0 (mặc định `profile="all"` xuất đủ 100% tín hiệu của 7 nhóm)."""
 
     VERSION: ClassVar[str] = VERSION
     SCHEMA_VERSION: ClassVar[str] = SCHEMA_VERSION

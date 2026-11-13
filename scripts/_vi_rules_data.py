@@ -52,6 +52,7 @@ _GRAMMAR_REQUIRED_COLS: tuple[str, ...] = (
 )
 _ACTIVE_TOKENS: frozenset[str] = frozenset({"", "active", "1", "true", "yes", "on"})
 _DISABLED_TOKENS: frozenset[str] = frozenset({"disabled", "inactive", "0", "false", "no", "off"})
+_VALID_SOURCE_STATUSES: frozenset[str] = frozenset({"verified", "missing", "internal"})
 _VALID_VOCAB_KINDS: frozenset[str] = frozenset(
     {"loanword_universal", "loanword_workplace", "reverse_calque", "banned_phrase"}
 )
@@ -63,6 +64,8 @@ _KNOWN_ALGO_TOKENS: frozenset[str] = frozenset(
         "ALGO:DOCUMENT_AND_TABLE_HYGIENE",
         "ALGO:LENGTHY_AND_ROUNDABOUT_SENTENCE",
         "ALGO:STACCATO_FRAGMENT_STREAK_MIN_3",
+        "ALGO:FAKE_ROADMAP_AND_OBVIOUS_EXPLAINER",
+        "ALGO:SOV_CLAUSE_ORDER_REVIEW",
     }
 )
 _META_ESCAPE_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"([.^$*+?{}\[\]\\|()])")
@@ -242,6 +245,9 @@ def _parse_grammar_row(row: dict[str, str], label: str, vocab: VocabCatalog) -> 
     profs = _parse_profiles(row["profiles"], label)
     prof_ex = {Profile(e.removeprefix("profile:")) for e in exceptions if e.startswith("profile:")}
     pat_type = row["pattern_type"] or ("dictionary" if raw_expr in ("", "VOCAB") else "regex")
+    source_status = (row.get("source_status") or "missing").strip().lower()
+    if source_status not in _VALID_SOURCE_STATUSES:
+        raise ValueError(f"{label}: source_status={source_status!r} không hợp lệ ({sorted(_VALID_SOURCE_STATUSES)}).")
     return RuleDefinition(
         rule_id=rid,
         category=row["category"] or "CUSTOM",
@@ -255,8 +261,9 @@ def _parse_grammar_row(row: dict[str, str], label: str, vocab: VocabCatalog) -> 
         exceptions=exceptions,
         bad_example=row["bad_example"],
         better_example=row["better_example"],
-        source_url=row["source_url"] or "custom",
+        source_url=row["source_url"],
         evidence_strength=row["evidence_strength"] or "custom",
+        source_status=source_status,
         status=status,
     )
 

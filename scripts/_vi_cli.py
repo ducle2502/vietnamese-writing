@@ -150,7 +150,7 @@ def _add_scan_and_profile_parsers(sub: Any, profile_choices: Sequence[str]) -> N
     scan_p.add_argument("--output", type=Path, help="Ghi kết quả JSON ra tệp")
     scan_p.add_argument("--fail-on", choices=["any", "warning", "error", "never"], default="any")
 
-    prof_p = sub.add_parser("profile", help="Đo 18 chỉ số nhịp câu (stylometry) và 12 chỉ số giọng văn DHDNA")
+    prof_p = sub.add_parser("profile", help="Đo 18 chỉ số nhịp câu (stylometry) và 14 chỉ số giọng văn DHDNA")
     prof_p.add_argument("file", nargs="?", default="-")
     prof_p.add_argument("--ignore-table-cols", default="")
     prof_p.add_argument("--json", action="store_true")
@@ -173,7 +173,7 @@ def build_parser() -> argparse.ArgumentParser:
     ver_p.add_argument("--json", action="store_true")
     ver_p.add_argument("--output", type=Path)
 
-    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 42 quy tắc hiện có")
+    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 51 quy tắc hiện có")
     list_p.add_argument("--profile", choices=profile_choices, default="all")
     list_p.add_argument("--json", action="store_true")
 

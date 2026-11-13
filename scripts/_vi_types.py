@@ -21,8 +21,8 @@ except ImportError:
     _re2_engine = None
     USING_RE2 = False
 
-VERSION = "2.2.0"
-SCHEMA_VERSION = "2.2.0"
+VERSION = "2.3.0"
+SCHEMA_VERSION = "2.3.0"
 
 
 class _RegexMatch(Protocol):
@@ -120,11 +120,14 @@ class DhdnaVoiceMetrics(TypedDict):
     tu_tinh_thai_don_co_the: int
     chong_tu_rao_don: int
     ung_vien_lech_mau_so: dict[str, list[str]]
+    nhan_bang_chung: int
+    cau_truc_phan_luong_nguoi_doc: int
 
 
 class VoiceArchetype(TypedDict):
     code: str
     description_vi: str
+    warnings: list[str]
 
 
 class ProfileReport(TypedDict):
@@ -247,6 +250,7 @@ class RuleDefinition:
     better_example: str
     source_url: str
     evidence_strength: str
+    source_status: str = "missing"
     status: str = "active"
 
     @property

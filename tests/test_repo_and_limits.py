@@ -51,6 +51,7 @@ _MD_DOCS: tuple[Path, ...] = (
     ROOT / "references" / "rule-catalog.md",
     ROOT / "references" / "voice-and-argument-patterns.md",
     ROOT / "references" / "loanwords-and-exceptions.md",
+    ROOT / "references" / "pattern-bank.md",
 )
 
 
@@ -62,8 +63,8 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
         cls.scanner = ViScanner()
 
     def test_semantic_invariants_and_verify_safety(self) -> None:
-        """Mọi ví dụ sửa mẫu trong 42 quy tắc phải giữ nguyên dữ kiện gốc và bắt đúng lỗi mục tiêu."""
-        self.assertEqual(len(self.scanner.rules), 42)
+        """Mọi ví dụ sửa mẫu trong 51 quy tắc phải giữ nguyên dữ kiện gốc và bắt đúng lỗi mục tiêu."""
+        self.assertEqual(len(self.scanner.rules), 51)
         for rule in self.scanner.rules.values():
             if rule.rule_id == "VIS-FMT-005":
                 continue
@@ -176,6 +177,7 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
             "tests/test_code_limits.py",
             "references/rule-catalog.md",
             "references/loanwords-and-exceptions.md",
+            "references/pattern-bank.md",
             "assets/banner-dark.svg",
             "assets/banner-light.svg",
             ".github/workflows/ci.yml",
@@ -258,12 +260,13 @@ class TestCsvCrudAndRowInvariants(unittest.TestCase):
             )
             grammar_csv.write_text(
                 "rule_id;status;category;pattern_type;regex_or_algo;severity;weight;profiles;"
-                "threshold;exceptions;description_vi;bad_example;better_example;source_url;evidence_strength\n"
+                "threshold;exceptions;description_vi;bad_example;better_example;source_url;"
+                "evidence_strength;source_status\n"
                 "VIS-LEX-002;active;VOICE_AND_STRUCTURE;morphological_lexical;"
-                "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK;info;0,45;all;1/doc;none;Từ mượn;;;;medium\n"
+                "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK;info;0,45;all;1/doc;none;Từ mượn;;;;medium;missing\n"
                 "VIS-CUSTOM-001;active;CUSTOM;dictionary;VOCAB;warning;0,85;audit_report|general;"
-                "1/doc;none;Cấm từ phóng đại nội bộ;;;;custom\n"
-                "VIS-DISABLED-001;0;CUSTOM;regex;(?i)\\bcấm\\b;error;1,0;all;1/doc;none;Đã tắt;;;;custom\n",
+                "1/doc;none;Cấm từ phóng đại nội bộ;;;;custom;missing\n"
+                "VIS-DISABLED-001;0;CUSTOM;regex;(?i)\\bcấm\\b;error;1,0;all;1/doc;none;Đã tắt;;;;custom;missing\n",
                 encoding="utf-8-sig",
             )
             custom_scanner = ViScanner(vocab_path=vocab_csv, grammar_path=grammar_csv)
@@ -289,17 +292,17 @@ class TestCsvCrudAndRowInvariants(unittest.TestCase):
                 ViScanner(vocab_path=bad_vocab, grammar_path=grammar_csv)
 
     def test_vocab_and_grammar_csv_row_count_and_hint_coherence(self) -> None:
-        """Giữ nguyên vẹn 2.057 dòng `vocab.csv`, 42 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
+        """Giữ nguyên vẹn 2.089 dòng `vocab.csv`, 51 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
         vocab_raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
-        self.assertEqual(len(vocab_raw.splitlines()), 2058)
+        self.assertEqual(len(vocab_raw.splitlines()), 2090)
         vocab_rows = list(csv.DictReader(io.StringIO(vocab_raw)))
-        self.assertEqual(len(vocab_rows), 2057)
+        self.assertEqual(len(vocab_rows), 2089)
 
         grammar_raw = DEFAULT_GRAMMAR_CSV.read_text(encoding="utf-8-sig")
-        self.assertEqual(len(grammar_raw.splitlines()), 53)
         grammar_rows = list(csv.DictReader(io.StringIO(grammar_raw)))
-        self.assertEqual(len(grammar_rows), 42)
+        self.assertEqual(len(grammar_rows), 51)
         self.assertTrue(all(r["status"] == "active" for r in grammar_rows))
+        self.assertTrue(all(r["source_status"] in {"verified", "missing", "internal"} for r in grammar_rows))
 
         seen_terms: set[str] = set()
         bad_meta_re = re.compile(r":\s|[()+]|[\u4e00-\u9fff]|[\u0400-\u04ff]")

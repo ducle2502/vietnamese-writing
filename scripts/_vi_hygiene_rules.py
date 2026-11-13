@@ -120,7 +120,11 @@ _NUMBERED_SUBHEADING_RE = stdlib_re.compile(r"^\d+(?:\.\d+)+")
 _TABLE_SEP_CHARS_RE = stdlib_re.compile(r"^[\s|:\-+]+$")
 _TABLE_PRONOUN_RE = stdlib_re.compile(r"(?i)\b(?:bạn|mình|tôi|chúng ta)\b")
 _ALT_ATTR_RE = stdlib_re.compile(r'\balt=["\']([^"\'\n]+)["\']')
-_ALT_DASH_TAGLINE_RE = stdlib_re.compile(r"\s+[-–—]\s+")
+_ALT_TAGLINE_RE = stdlib_re.compile(
+    r"(?i)\b(?:nhanh chóng|hiệu quả|đột phá|tối ưu|mạnh mẽ|tuyệt vời|hàng đầu|số một)\b"
+)
+_MERMAID_BLOCK_RE = stdlib_re.compile(r"```mermaid\s*\n(.*?)```", stdlib_re.DOTALL)
+_MERMAID_EDGE_LABEL_RE = stdlib_re.compile(r'\|"?([^"|\n]{1,160})"?\|')
 _PROMO_GRID_HTML_RE = stdlib_re.compile(
     r"(?is)<table\b[\s\S]{0,1200}(?:<b>|`|\*\*)0?1(?:</b>|`|\*\*)"
     r"[\s\S]{0,800}(?:<b>|`|\*\*)0?2(?:</b>|`|\*\*)"
@@ -417,6 +421,25 @@ def _check_tree_comments_and_backticks(
     return findings
 
 
+def _check_mermaid_labels(rule: RuleDefinition, buf: _ScanBuffer, no_en_text: str) -> list[Finding]:
+    """Gắn cờ nhãn cạnh Mermaid dài như văn xuôi, dùng chung ngưỡng `2–8` chữ (`VIS-STRUCT-002`)."""
+    findings: list[Finding] = []
+    for block in _MERMAID_BLOCK_RE.finditer(no_en_text):
+        for m_label in _MERMAID_EDGE_LABEL_RE.finditer(block.group(1)):
+            label = m_label.group(1).strip()
+            if len(label.split()) > 8:
+                findings.append(
+                    make_finding(
+                        rule,
+                        buf,
+                        block.start(1) + m_label.start(1),
+                        label[:100],
+                        custom_suggestion="Nhãn cạnh Mermaid nên gọn trong 2–8 từ, nêu đúng luồng dữ liệu.",
+                    )
+                )
+    return findings
+
+
 def _check_markup_trees_and_backticks(rule: RuleDefinition, buf: _ScanBuffer, *, has_vi: bool) -> list[Finding]:
     if not any(tok in buf.raw_text for tok in ("alt=", "<table", "<TABLE", "├", "└", "`")):
         return []
@@ -428,7 +451,7 @@ def _check_markup_trees_and_backticks(rule: RuleDefinition, buf: _ScanBuffer, *,
         for m_alt in _ALT_ATTR_RE.finditer(pre_html_masked):
             alt_val = m_alt.group(1).strip()
             w_count = len(alt_val.split())
-            if w_count > 12 or (w_count >= 7 and _ALT_DASH_TAGLINE_RE.search(alt_val)):
+            if w_count > 8 or (w_count >= 5 and _ALT_TAGLINE_RE.search(alt_val)):
                 findings.append(
                     make_finding(
                         rule,
@@ -437,10 +460,11 @@ def _check_markup_trees_and_backticks(rule: RuleDefinition, buf: _ScanBuffer, *,
                         buf.raw_text[m_alt.start() : m_alt.end()][:100],
                         custom_suggestion=(
                             "Thuộc tính alt của ảnh quá dài hoặc kèm khẩu hiệu quảng cáo; "
-                            "chỉ nên ghi ngắn gọn 2–6 từ nêu tên hình."
+                            "chỉ nên ghi ngắn gọn 2–8 từ nêu tên hình."
                         ),
                     )
                 )
+    findings.extend(_check_mermaid_labels(rule, buf, no_en_text))
     if "<table" in pre_html_masked.lower():
         m_promo_grid = _PROMO_GRID_HTML_RE.search(pre_html_masked)
         if m_promo_grid:

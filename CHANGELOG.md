@@ -2,6 +2,27 @@
 
 Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-11-13
+
+### Thêm mới (Added)
+
+- Thêm chín quy tắc: `VIS-RHET-008`, `VIS-RHET-009`, `VIS-FMT-007`, `VIS-FMT-008`, `VIS-STRUCT-003`, `VIS-TRANS-011`, `VIS-TRANS-012`, `VIS-TRANS-013` và `VIS-TRANS-014`.
+- Thêm cột `source_status` cho `grammar.csv` với ba giá trị `verified`, `missing`, `internal`, không tự gán `internal`.
+- Bổ sung `references/pattern-bank.md` tổng hợp khuôn câu AI và dịch thô, mở rộng `references/voice-and-argument-patterns.md` với quy trình biên tập và sổ tay giọng văn.
+- Phân loại giọng văn sinh thêm `MULTI_READER_ASSURANCE` khi có ít nhất `2` nhãn bằng chứng hoặc cấu trúc phân luồng người đọc.
+- Thêm metric đếm nhãn bằng chứng và cấu trúc phân luồng người đọc vào hồ sơ DHDNA.
+
+### Thay đổi (Changed)
+
+- `BUREAUCRATIC_OR_MONOTONE_DRAFT` không còn là mã riêng, nhánh `CLEAN_GENERAL_VIETNAMESE` trả mã này trong `warnings`.
+- Đặt trần `8` chữ cho `alt` và nhãn Mermaid, khuyến nghị `2–8` chữ.
+- Bổ sung từ vựng AI, `convert` và ngữ cảnh kiểm toán, `vocab.csv` tăng lên `2.089` mục.
+
+### Sửa lỗi (Fixed)
+
+- Tách kiểm tra tiêu đề, `alt` và nhãn Mermaid khỏi các quy tắc văn xuôi để tránh dương tính giả.
+- Bổ sung nguồn công khai cho tám rule từng thiếu `source_url`, giữ `missing` cho bốn rule chưa xác định được nguồn.
+
 ## [2.2.0] - 2026-11-10
 
 ### Thêm mới (Added)

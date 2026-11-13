@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 176" width="960" height="176" role="img" aria-labelledby="bn-title bn-desc">
   <title id="bn-title">vietnamese-writing — Agent Skill &amp; Deterministic Vietnamese Style Scanner</title>
-  <desc id="bn-desc">vietnamese-writing header banner showing Vietnamese typography editorial mark, SKILL.md and Python 3.11+ badges, 42 rules across 7 profiles, and semantic invariant verifier.</desc>
+  <desc id="bn-desc">vietnamese-writing header banner showing Vietnamese typography editorial mark, SKILL.md and Python 3.11+ badges, 51 rules across 7 profiles, and semantic invariant verifier.</desc>
   <defs>
     <pattern id="grid-light" width="24" height="24" patternUnits="userSpaceOnUse">
       <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#EEF2F6" stroke-width="1"/>
@@ -31,7 +31,7 @@
   <rect x="600" y="51" width="104" height="24" rx="6" fill="#DDF4FF" stroke="#80CCFF" stroke-width="1"/>
   <text x="652" y="67" text-anchor="middle" class="mono" font-size="12" font-weight="600" fill="#0969DA">Python 3.11+</text>
   <rect x="712" y="51" width="76" height="24" rx="6" fill="#DAFBE1" stroke="#82E596" stroke-width="1"/>
-  <text x="750" y="67" text-anchor="middle" class="mono" font-size="12" font-weight="600" fill="#1A7F37">v2.2.0</text>
+  <text x="750" y="67" text-anchor="middle" class="mono" font-size="12" font-weight="600" fill="#1A7F37">v2.3.0</text>
 
   <!-- Subtitle -->
   <text x="168" y="104" class="sans" font-size="15" fill="#475569">Kỹ năng biên tập tiếng Việt tự nhiên kèm công cụ quét lỗi dịch thô, văn máy móc và đối soát dữ kiện.</text>
@@ -39,5 +39,5 @@
   <!-- Technical Spec Strip -->
   <line x1="168" y1="122.5" x2="924" y2="122.5" stroke="#E2E8F0" stroke-width="1"/>
   <circle cx="174" cy="141" r="3.5" fill="#1A7F37"/>
-  <text x="186" y="145" class="mono" font-size="11.5" fill="#57606A">42 Rules (6 Groups)   ·   7 Context Profiles   ·   SemanticMasker &amp; Verify   ·   Zero External Dependencies</text>
+  <text x="186" y="145" class="mono" font-size="11.5" fill="#57606A">51 Rules (6 Groups)   ·   7 Context Profiles   ·   SemanticMasker &amp; Verify   ·   Zero External Dependencies</text>
 </svg>

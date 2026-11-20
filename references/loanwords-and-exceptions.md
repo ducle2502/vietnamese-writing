@@ -34,6 +34,8 @@ Lệnh `scripts/vi_scanner.py scan` mặc định xuất đủ tín hiệu của
 
 ## 3. Ma trận bảy hồ sơ thể loại
 
+Mặc định lệnh `scan` chạy ở chế độ `all` để giữ chuẩn nền tối thiểu trên mọi văn bản. Bảy hồ sơ dưới đây đóng vai trò gợi ý áp dụng và chỉ lọc riêng khi người dùng chỉ định `--profile`.
+
 | Hồ sơ | Quy tắc siết chặt | Quy tắc bỏ qua hoặc nâng ngưỡng |
 | :--- | :--- | :--- |
 | `general` | Kích hoạt toàn bộ nhóm AI, tu từ và dịch thô. | Cho phép một cụm `một cách` và 1 đến 2 từ nối đầu câu mỗi đoạn. |

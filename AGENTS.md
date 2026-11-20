@@ -4,16 +4,16 @@
 
 ## Nguyên tắc sử dụng
 
-1. Xác định rõ người đọc, quan hệ xưng hô và nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) trước khi viết hoặc sửa. Không tự ý sửa lại khi người dùng chỉ dán văn bản để hỏi nội dung.
-2. Đưa kết luận và số liệu lên đầu câu hoặc đầu đoạn. Ưu tiên chủ thể chỉ người, đơn vị cụ thể đi với động từ trực tiếp. Giữ mỗi câu văn xuôi và ô bảng tối đa `35` từ (`45` từ với văn bản pháp lý). Hễ vượt ngưỡng, cả `scan` lẫn `profile` báo lỗi ngay và bắt buộc tách câu trước khi bàn giao.
+1. Mặc định chạy `scan` ở chế độ `all` để rà đủ chuẩn nền tối thiểu, dùng `profile` như gợi ý theo thể loại và chỉ truyền `--profile <tên_nhóm>` khi người dùng chỉ định riêng. Xác định rõ người đọc và quan hệ xưng hô trước khi viết hoặc sửa. Không tự ý sửa lại khi người dùng chỉ dán văn bản để hỏi nội dung.
+2. Đưa kết luận và số liệu lên đầu câu hoặc đầu đoạn. Ưu tiên chủ thể chỉ người hoặc đơn vị cụ thể đi với động từ trực tiếp. Giữ mỗi câu văn xuôi và ô bảng tối đa `35` từ (`45` từ với văn bản pháp lý). Hễ vượt ngưỡng, cả `scan` lẫn `profile` báo lỗi ngay và bắt buộc tách câu trước khi bàn giao.
 3. Bảo toàn nguyên vẹn số liệu, ngày tháng, từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn.
 4. Tránh 5 lỗi sửa quá tay: đếm tuần tự, hạ giọng suồng sã, tự bịa từ, rơi mức chắc chắn và xoay vòng động từ đầu ô bảng.
 
 ## Chuyển tệp nguồn sang Markdown thô
 
-Khi người dùng đưa tệp, Agent tự chuyển sang `TEN_GOC.raw.md` trước khi quét. Dùng `extract_docx_text_and_meta` cho `.docx`, rồi `markitdown`, `liteparse`, `docling` hoặc `pandoc` cho định dạng khác. Chỉ dùng `vision` khi các công cụ trên thất bại hoặc làm mất bảng, và ghi `converter=vision`, `deterministic=false` cùng `needs_review=true` vào `TEN_GOC.raw.meta.json`. Báo người dùng khi bản chép không tất định.
+Khi người dùng đưa tệp, Agent tự chuyển sang `TEN_GOC.raw.md` trước khi quét. Dùng `extract_docx_text_and_meta` cho `.docx`, rồi `markitdown`, `liteparse`, `docling` hoặc `pandoc` cho định dạng khác. Chỉ dùng `vision` khi các công cụ trên thất bại hoặc làm mất bảng, và ghi `converter=vision`, `deterministic=false` cùng `needs_review=true` vào `TEN_GOC.raw.meta.json`. Báo người dùng khi bản chép lấy qua `vision`.
 
-Riêng `.docx`, lệnh `scan` và `profile` tự bóc tách tất định trước khi quét.
+Riêng tệp `.docx`, lệnh `scan` và `profile` tự đọc trực tiếp nội dung từ tệp Word trước khi quét.
 
 ## Tự quét và kiểm tra trong repo
 
@@ -30,4 +30,4 @@ mypy scripts tests
 python -B -m pytest -v
 ```
 
-Khi cập nhật quy tắc trong [data/vocab.csv](data/vocab.csv), [data/grammar.csv](data/grammar.csv) hoặc [scripts/vi_scanner.py](scripts/vi_scanner.py), giữ đồng bộ nội dung giữa [SKILL.md](SKILL.md), [README.md](README.md) và ba tệp tham chiếu ([rule-catalog.md](references/rule-catalog.md), [voice-and-argument-patterns.md](references/voice-and-argument-patterns.md), [loanwords-and-exceptions.md](references/loanwords-and-exceptions.md)). Hai tệp [data/vocab.csv](data/vocab.csv) và [data/grammar.csv](data/grammar.csv) bắt buộc giữ nguyên 3 byte `UTF-8 BOM` ở đầu tệp. Luôn ghi hai tệp CSV này qua Python với `encoding="utf-8-sig"`, không dùng công cụ sửa văn bản thuần của IDE để tránh mất BOM lúc chốt duyệt. Sau đó, chạy lại bộ kiểm thử đơn vị và quét chính các tệp `.md` trong repo.
+Khi cập nhật quy tắc trong [data/vocab.csv](data/vocab.csv), [data/grammar.csv](data/grammar.csv) hoặc [scripts/vi_scanner.py](scripts/vi_scanner.py), giữ đồng bộ giữa [SKILL.md](SKILL.md), [README.md](README.md) và bốn tệp tham chiếu ([rule-catalog.md](references/rule-catalog.md), [voice-and-argument-patterns.md](references/voice-and-argument-patterns.md), [loanwords-and-exceptions.md](references/loanwords-and-exceptions.md), [pattern-bank.md](references/pattern-bank.md)). Hai tệp [data/vocab.csv](data/vocab.csv) và [data/grammar.csv](data/grammar.csv) bắt buộc giữ nguyên 3 byte `UTF-8 BOM` ở đầu tệp. Luôn ghi hai tệp CSV này qua Python với `encoding="utf-8-sig"`, không dùng trình sửa văn bản thuần của IDE để tránh mất BOM. Sau đó, chạy lại bộ kiểm thử đơn vị và tự quét sạch toàn bộ 10 tệp `.md` trong repo.

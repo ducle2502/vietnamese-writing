@@ -9,98 +9,94 @@ license: MIT
 compatibility: Python 3.11+ (chỉ cần khi chạy công cụ scripts/vi_scanner.py)
 metadata:
   author: ducle2502
-  version: "2.3.0"
+  version: "2.4.0"
 ---
 
 # vietnamese-writing
 
-Viết câu tiếng Việt đứng độc lập, rõ chủ thể, gọn ý và hợp người đọc. Viết tự nhiên là đặt đúng từ vào đúng ngữ cảnh công việc, không phải xuề xòa hay cực đoan xóa sạch từ Hán - Việt. Câu văn trong báo cáo kiểm toán tất nhiên phải khác câu trên mạng xã hội hoặc trong hợp đồng pháp lý.
+Viết câu tiếng Việt gọn ý, rõ chủ thể thực hiện và đúng người đọc. Viết tự nhiên nghĩa là dùng đúng từ cho đúng ngữ cảnh công việc, không suồng sã và không cực đoan xóa sạch từ Hán - Việt. Văn phong báo cáo kiểm toán phải khác văn phong mạng xã hội hoặc hợp đồng pháp lý.
 
 ## Xác định người đọc trước khi đặt bút
 
-Trước khi viết hoặc sửa, hãy xác định văn bản thuộc nhóm nào trong 7 nhóm (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) và ai sẽ đọc trực tiếp. Làm rõ luôn quy mô của chủ thể viết (cá nhân, nhóm sinh viên, dự án mã nguồn mở hay doanh nghiệp) cùng quyết định mà người đọc cần đưa ra. Chỉ hỏi lại khi thiếu thông tin có nguy cơ làm sai nội dung hoặc xưng hô.
+Trước khi viết hoặc sửa, xác định rõ người đọc trực tiếp, quy mô tổ chức (cá nhân, nhóm sinh viên hay doanh nghiệp) và quyết định họ cần đưa ra. Mặc định máy quét luôn chạy chế độ `all` để giữ chuẩn nền tối thiểu trên mọi văn bản. Dùng 7 nhóm thể loại (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) làm gợi ý cân chỉnh và chỉ truyền `--profile` khi người dùng chỉ định riêng. Chỉ hỏi lại khi thiếu thông tin dễ làm sai nội dung hoặc xưng hô.
 
-| Nhóm văn bản | Yêu cầu trọng tâm |
+| Nhóm văn bản | Trọng tâm biên tập |
 | :--- | :--- |
-| Báo cáo quản trị, kiểm toán (`audit_report`) | Đưa kết luận, hệ quả và con số lên đầu. Diễn đạt lỗi kỹ thuật thành tác động vận hành hoặc tiền bạc cho lãnh đạo bận rộn. Tách rõ phần đã có bằng chứng xác thực với phần chưa đủ căn cứ. |
-| Học thuật, nghiên cứu (`academic`) | Giữ chuẩn thuật ngữ ngành, dẫn nguồn cụ thể `(Tác giả, Năm)` hoặc `[Số]` ngay sau nhận định tổng quan, không dùng câu mở bài câu khách. |
-| Pháp lý, công vụ (`legal`) | Giữ đúng thuật ngữ luật định, chủ thể quyền và nghĩa vụ, viện dẫn Điều và Khoản chính xác, không tự ý đổi từ chuyên môn sang khẩu ngữ. |
-| Mạng xã hội, chia sẻ chuyên môn (`social_media`) | Mở thẳng vào tình huống thực tế. Dẫn dắt từ thao tác đời thường dễ hình dung trước khi nâng dần lên giải pháp tự động, tránh chèn tên hàm lập trình hoặc công thức toán khô cứng. |
-| Tiếp thị, giới thiệu (`marketing`) | Nêu rõ lợi ích gắn với đối tượng và con số cụ thể, không hứa hẹn quá mức bằng chứng. |
-| Dịch thuật Anh - Việt (`translation`) | Bóc ý gốc rồi sắp lại theo mạch Đề - Thuyết tự nhiên của tiếng Việt, dẹp bỏ câu bị động dịch từng chữ nhưng giữ nguyên toàn bộ điều kiện và sắc thái chắc chắn. |
-| Tin bài, tài liệu kỹ thuật, trao đổi chung (`general`) | Câu ngắn và vừa (`12` đến `28` chữ), một ý chính mỗi câu, xưng hô và chức danh khớp đúng quy mô thực tế. |
+| Báo cáo quản trị, kiểm toán (`audit_report`) | Đưa kết luận, hệ quả và con số lên đầu. Quy đổi lỗi kỹ thuật thành tác động tiền bạc, vận hành hoặc tuân thủ. Tách rõ phần đã kiểm chứng với phần chưa đủ căn cứ. |
+| Học thuật, nghiên cứu (`academic`) | Giữ chuẩn thuật ngữ ngành. Dẫn nguồn `(Tác giả, Năm)` hoặc `[Số]` ngay sau nhận định tổng quan, không mở bài câu khách. |
+| Pháp lý, công vụ (`legal`) | Giữ nguyên thuật ngữ luật định, chủ thể quyền nghĩa vụ và viện dẫn Điều, Khoản chính xác. Không đổi từ chuyên môn sang khẩu ngữ. |
+| Mạng xã hội, chia sẻ chuyên môn (`social_media`) | Mở thẳng vào tình huống đời thường dễ hình dung trước khi nói tới giải pháp. Tránh nhét tên hàm lập trình hay công thức khô cứng. |
+| Tiếp thị, giới thiệu (`marketing`) | Nêu lợi ích gắn với đối tượng và số liệu cụ thể, không hứa hẹn quá bằng chứng. |
+| Dịch thuật Anh - Việt (`translation`) | Bóc tách ý gốc rồi sắp lại theo mạch Đề - Thuyết tiếng Việt. Bỏ câu bị động dịch từng chữ nhưng giữ nguyên điều kiện và mức độ chắc chắn. |
+| Tin bài, tài liệu kỹ thuật, trao đổi chung (`general`) | Câu ngắn vừa (`12` đến `28` chữ), mỗi câu một ý chính, chức danh khớp đúng quy mô thật. |
 
-## Nguyên tắc câu chữ, nhịp đoạn và kỷ luật bằng chứng
+## Nguyên tắc câu chữ, nhịp đoạn và bằng chứng
 
-Mở thẳng vào vấn đề, sự kiện hoặc số liệu. Bỏ các câu rào đón kiểu chatbot (*"Chắc chắn rồi! Dưới đây là..."*, *"Hy vọng thông tin này hữu ích"*), câu mở bài chung chung (*"Trong bối cảnh... ngày càng phát triển"*), câu kết hứa hẹn sáo rỗng (*"hứa hẹn mở ra kỷ nguyên mới"*) và hộp cảnh báo đạo đức hoặc pháp lý tự phát khi người dùng không yêu cầu. Ở câu mở đầu tài liệu kỹ thuật, cắt bỏ các định ngữ độn câu, đuôi phủ định kể công (*"và không cần cài thêm..."*) cùng vế giải thích lại hệ quả hiển nhiên (*"nên không phải..."*).
+**Mở thẳng vào sự kiện hoặc số liệu.** Cắt bỏ câu xã giao kiểu chatbot (*"Chắc chắn rồi! Dưới đây là..."*, *"Hy vọng thông tin này hữu ích"*), câu mở bài sáo (*"Trong bối cảnh... ngày càng phát triển"*), câu kết hứa hẹn chung chung và hộp răn đe pháp lý tự phát. Với tài liệu kỹ thuật, bỏ định ngữ độn câu, đuôi kể công phủ định (*"và không cần cài thêm..."*) và vế giải thích lại điều hiển nhiên.
 
-Ưu tiên chủ thể chỉ người hoặc đơn vị cụ thể đi với động từ trực tiếp. Giữ mỗi câu văn xuôi hoặc câu trong ô bảng tối đa `35` chữ (`45` chữ với điều khoản pháp lý). Mọi câu vượt ngưỡng này đều bị báo lỗi ngay ở cả `scan` lẫn `profile`. Tránh câu bị động dịch từng chữ từ *by* (*"được phê duyệt bởi"*, *"được CMake tự động tải"*), cụm danh từ hóa (*"sự sụt giảm của"*, *"việc triển khai của"*) và chủ ngữ giả (*"Nó là cần thiết để"*). Cắt bỏ cụm mở câu vòng vo (*"Thông qua việc..."*, *"Liên quan đến vấn đề..."*), động từ rỗng (*"tiến hành việc kiểm tra"* thay vì *"kiểm tra"*) và tính từ quảng cáo rỗng (*"cảnh báo thông minh"*, *"giao diện mượt"*, *"bảng trực quan"*, *"đóng ứng dụng an toàn"*).
+**Câu ngắn, chủ động và rõ người làm.** Ưu tiên chủ thể cụ thể đi cùng động từ trực tiếp. Giữ mỗi câu văn xuôi và ô bảng tối đa `35` từ (`45` từ với điều khoản pháp lý), vì vượt ngưỡng này cả `scan` lẫn `profile` đều trả lỗi ngay. Tránh câu bị động dịch từng chữ từ *by* (*"được phê duyệt bởi"*, *"được CMake tự động tải"*), cụm danh từ hóa (*"sự sụt giảm của"*), chủ ngữ giả (*"Nó là cần thiết để"*), cụm mở câu vòng vo (*"Thông qua việc..."*), động từ rỗng (*"tiến hành việc kiểm tra"*) và tính từ quảng cáo sáo (*"cảnh báo thông minh"*, *"giao diện mượt"*).
 
-Giữ nhịp đoạn cô đọng và áp dụng kỷ luật bằng chứng theo chuẩn [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md). Trong văn bản kiểm toán, giám sát và quản trị rủi ro, giữ độ dài câu trung bình từ `15` đến `24` chữ (`CV >= 0,40`), mỗi đoạn dưới `2` câu. Mở đầu mục bằng kết luận trực diện hoặc đặt tiêu đề hai vế đối lập (*Chủ đề: Điểm tiến bộ, nhưng điểm nghẽn cốt lõi vẫn hạn chế kết quả*). Dùng nhãn phân đoạn ngắn kết thúc bằng dấu chấm (*Thực trạng và bằng chứng.*, *Nguyên nhân kiểm soát.*, *Rủi ro và ảnh hưởng.*, *Kiến nghị.*) thay cho danh sách hai chấm. Luôn ghép cặp `Tử số/Mẫu số (Tỷ lệ %)` khi chốt kết luận và tách bạch hoạt động trung gian (*đang trình, đã họp, đã hướng dẫn lại*) khỏi đầu ra kiểm chứng được. Không cộng gộp hạng mục còn lỗi vào tỷ lệ hoàn thành và không dùng tổng bù trừ ròng bằng `0` để kết luận khớp đúng từng dòng. Chỉ dùng đúng một từ tình thái *có thể* khi nêu hệ quả rủi ro tương lai.
+**Nhịp đoạn và nguyên tắc bằng chứng cho báo cáo quản trị.** Xem chuẩn đầy đủ tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md). Giữ câu trung bình `15` đến `24` từ (`CV >= 0,40`), mỗi đoạn dưới `2` câu. Chia báo cáo kiểm toán thành 3 lớp (Trang đầu, Thân bài, Phụ lục), trình bày phát hiện theo khung `5C` và giữ mã theo dõi nội bộ (`EV-xx`, `WP-xx`, `CL-xx`, `GAP-xx`) ở giấy tờ làm việc. Dùng nhãn đoạn ngắn kết thúc bằng dấu chấm (*Thực trạng và bằng chứng.*, *Nguyên nhân kiểm soát.*, *Rủi ro và ảnh hưởng.*, *Kiến nghị.*) thay cho danh sách hai chấm.
 
-Lệnh `profile` trả bốn kiểu giọng chính và một nhãn dự phòng `CLEAN_GENERAL_VIETNAMESE`. Kiểu `MULTI_READER_ASSURANCE` chỉ xuất hiện khi có ít nhất `2` nhãn bằng chứng hoặc cấu trúc phân luồng người đọc. Nhịp câu đều hoặc câu quá dài trả về nhãn dự phòng kèm cảnh báo `BUREAUCRATIC_OR_MONOTONE_DRAFT`.
+**Khóa số liệu và ranh giới khẳng định.** Luôn ghép đủ `Tử số/Mẫu số (Tỷ lệ %)` khi chốt kết luận. Tách hoạt động trung gian (*đang trình, đã họp, hướng dẫn lại*) khỏi đầu ra kiểm chứng và không gộp mục còn lỗi vào tỷ lệ hoàn thành. Không lấy tổng bù trừ ròng bằng `0` để kết luận khớp đúng từng dòng. Chỉ dùng đúng một từ *có thể* khi nêu rủi ro tương lai và tránh khẳng định tuyệt đối vượt quá mẫu kiểm tra.
 
-Giữ nhịp trình bày sạch, không lặp hai tầng. Không vẽ hộp tóm tắt 4 ô (`01` đến `04`) ngay trước bảng chức năng chi tiết và không mở thẻ `<details>` lặp lại bảng phân công đã có. Trong tài liệu đồ án nhỏ, không tự bịa bảng so sánh với công cụ lớn hay phương án bù nhìn. Không dựng bảng lộ trình `G1` đến `G4` khi chưa có mốc kiểm chứng thật. Không thêm bảng giải thích lại điều người đọc đã thấy trên hình hoặc trong bảng chính. Không dựng kịch bản hù dọa kiểu "nếu không có X thì sẽ gặp rủi ro Y" khi thiếu điều kiện và hệ quả cụ thể. Giữ văn bản thay thế ảnh (`alt="..."`) tối đa `8` chữ nêu đúng tên hình, khuyến nghị từ `2` đến `8` chữ và không kèm khẩu hiệu quảng cáo. Nhãn cạnh Mermaid cũng giữ tối đa `8` chữ. Chú thích sau dấu `#` trong cây thư mục không vượt quá `10` chữ, và chỉ bọc dấu nháy ngược quanh tên tệp, lệnh hoặc mã nguồn.
+**Viết ghi chú bảng kiểm đánh giá (`Có / Một phần / Chưa có`).** Mỗi ô ghi chú chỉ viết `1` câu tối đa `35` từ nêu thẳng lý do chấm. Không mở đầu bằng *"Có vì"*, *"Một phần vì"* hay *"Chưa có vì"*, và không đưa mã bằng chứng hay tên trường kỹ thuật vào cột ghi chú. Dùng *"chưa tìm thấy"* thay cho *"thiếu"* hay *"không có"* khi chưa đọc hết hồ sơ.
 
-Chọn đúng từ theo thực tế công việc và khớp vai người viết. Tránh dùng sai nghĩa từ Hán - Việt (như lấy chữ *"thực chứng"* để dịch *evidence-based*, hoặc viết *"khắc phục yếu điểm"* thay cho *điểm yếu*). Rà kỹ các lỗi sai chính tả vỏ ngữ âm công sở (`sồn sã`, `chỉnh chu`, `chuẩn đoán`, `chắp bút`, `cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`, `xuất sứ`). Không dịch từng chữ thuật ngữ phần mềm sang các cụm xa lạ (*"khung hợp đồng"*, *"khung vận hành"*, *"khóa hợp đồng"*, *"giao kèo dữ liệu"*, *"khung chạy sẵn"*, *"hiện thực lớp"*, *"túi chứa dữ liệu"*). Không tự phong chức danh tập đoàn (*"Kỹ sư giao thức mạng"*, *"20 tác vụ vòng đời phần mềm"*, *"tác vụ/thành viên"*) cho bài tập nhóm sinh viên. Không dịch ngược từ tiếng Anh đã quen dùng (`email` thành *"thư điện tử"*, `pull request` thành *"yêu cầu kéo"*) và không chêm tiếng Anh tùy tiện (`booking lịch`).
+**Trình bày sạch và tránh lặp hai tầng.** Không vẽ hộp tóm tắt 4 ô (`01` đến `04`) lặp lại bảng chi tiết ngay bên dưới, không tự bịa bảng so sánh với công cụ lớn hay bảng tiến độ `G1` đến `G4` thiếu mốc thật. Bỏ bảng giải thích lại điều đã rõ và bỏ câu hù dọa rủi ro chung chung. Giữ `alt` ảnh và nhãn cạnh Mermaid gọn trong `2` đến `8` chữ, chú thích `#` cây thư mục tối đa `10` chữ, chỉ bọc dấu nháy ngược quanh tên tệp, lệnh hoặc mã nguồn.
+
+**Dùng đúng từ theo ngữ cảnh công việc.** Tránh dùng sai nghĩa Hán - Việt (*"thực chứng"* thay cho *dựa trên bằng chứng*, *"khắc phục yếu điểm"* thay cho *điểm yếu*). Rà các lỗi chính tả hay gặp (`sồn sã`, `chỉnh chu`, `chuẩn đoán`, `chắp bút`, `cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`, `xuất sứ`). Không dịch từng chữ thuật ngữ phần mềm (*"khung hợp đồng"*, *"hiện thực lớp"*, *"túi chứa dữ liệu"*), không tự phong chức danh tập đoàn cho đồ án nhỏ. Giữ nguyên từ quen dùng như `email`, `pull request` và không chêm tiếng Anh tùy tiện (`booking lịch`).
+
+**Phân loại giọng văn qua `profile`.** Lệnh trả 4 kiểu giọng chính cùng nhãn mặc định `CLEAN_GENERAL_VIETNAMESE`. Nhãn `MULTI_READER_ASSURANCE` chỉ bật khi có từ `2` nhãn bằng chứng hoặc cấu trúc phân luồng người đọc. Đoạn quá dài hoặc nhịp câu quá đều trả kèm cảnh báo `BUREAUCRATIC_OR_MONOTONE_DRAFT`.
 
 ## Năm lỗi sửa quá tay cần tránh
 
-1. Tránh vặn câu thành lối đếm tuần tự ngô nghê (`Hồ sơ thứ nhất... Sang hồ sơ thứ hai... Ở hồ sơ thứ ba...`) chỉ để né cảnh báo lặp từ của máy quét. Khi có nhiều dòng số liệu cùng cấu trúc, hãy chuyển sang bảng.
-2. Tuyệt đối tránh biến văn bản trình lãnh đạo thành giọng suồng sã hoặc kịch tính hóa hiện trường (`Anh Minh ơi,`, `cố bấm nút`, `rủi ro sát sườn`, `trực chiến 24/7`, `tử huyệt`). Đồng thời không bê động từ điều tra hình sự, cổ văn hoặc báo chí giật gân (`phát lộ`, `phát giác`, `vạch trần`, `sập API`, `vỏn vẹn`, `giậm chân tại chỗ`) vào báo cáo kỹ thuật. Văn quản trị cần điềm tĩnh, để con số tự nói lên mức độ nghiêm trọng và bỏ hẳn câu tự khoe xếp loại (`loại giỏi`, `very good`).
-3. Cấm tự bịa từ đời thường ngô nghê trái cách gọi nơi làm việc (`in đúp` thay vì *lặp dòng*, `chép thiếu tiền` thay vì *chuyển thiếu số dư*, `cho máy tính ghép` thay vì *chạy đối soát tự động*).
-4. Giữ nguyên dữ kiện và mức độ chắc chắn khi rút gọn câu. Không đổi *có thể giảm* thành *giảm*, không đổi *sau khi* thành *nhờ* và không xóa điều kiện *nếu / trừ khi*. Tuyệt đối không coi việc chưa tìm thấy hồ sơ là bằng chứng đơn vị không thực hiện.
-5. Cấm xoay vòng động từ đồng nghĩa gượng gạo (`Khóa hợp đồng / Thiết kế / Xây dựng / Hiện thực / Lập trình / Phát triển / Tính toán / Lập bộ / Soạn / Thiết lập`) ở đầu các ô bảng hoặc danh sách chỉ để lách cờ lặp từ `VIS-FMT-005`. Trong bảng phân công hoặc bảng liệt kê thành phần kỹ thuật, bỏ hẳn động từ dẫn đầu và ghi thẳng tên tệp, lớp hoặc đầu việc.
+1. Đừng vặn câu thành lối đếm tuần tự ngô nghê (`Hồ sơ thứ nhất... Sang hồ sơ thứ hai...`) chỉ để né cờ lặp từ. Khi nhiều dòng cùng cấu trúc, chuyển sang bảng.
+2. Tránh hạ giọng xuống suồng sã hoặc kịch tính hóa hiện trường (`Anh Minh ơi,`, `rủi ro sát sườn`, `trực chiến 24/7`, `tử huyệt`, `phát lộ`, `vạch trần`, `sập API`, `vỏn vẹn`, `giậm chân tại chỗ`). Để số liệu tự nói mức độ, bỏ câu tự khen xếp loại (`loại giỏi`).
+3. Không tự bịa từ đời thường ngô nghê trái cách gọi công việc (`in đúp` thay vì *lặp dòng*, `chép thiếu tiền` thay vì *chuyển thiếu số dư*).
+4. Giữ nguyên dữ kiện gốc, ngày tháng, điều kiện và mức độ chắc chắn. Không đổi *có thể giảm* thành *giảm*, *sau khi* thành *nhờ* hay xóa *nếu / trừ khi*. Không suy diễn việc chưa tìm thấy hồ sơ thành đơn vị không làm.
+5. Không xoay vòng động từ đồng nghĩa gượng gạo (*Khóa / Thiết kế / Xây dựng / Hiện thực / Lập trình...*) ở đầu các ô bảng chỉ để né `VIS-FMT-005`. Với bảng phân công kỹ thuật, bỏ động từ dẫn đầu và ghi thẳng tên tệp, lớp hoặc đầu việc.
 
-## Chuyển tệp đầu vào sang Markdown có cấu trúc
+## Chuyển tệp nguồn sang Markdown thô
 
-Người dùng chỉ đưa tệp gốc. Agent tự chuyển tệp đó sang `TEN_GOC.raw.md` rồi mới quét, người dùng không phải đổi định dạng.
+Khi người dùng gửi tệp, Agent chuyển sang `TEN_GOC.raw.md` rồi mới quét. Thứ tự ưu tiên như sau, dừng ngay ở bước chạy được:
 
-Thứ tự ưu tiên, dừng ở bước đầu tiên chạy được:
+1. Chạy công cụ chuyển đổi trực tiếp: thư viện đọc `.docx` tích hợp sẵn (`extract_docx_text_and_meta`), hoặc `markitdown`, `liteparse`, `docling`, `pandoc` cho `.pdf`, `.xlsx`, `.pptx`, `.html`.
+2. Nếu bước 1 lỗi hoặc làm mất bảng: dùng `vision` đọc bản render trang và chép lại thành Markdown có cấu trúc.
+3. Nếu `vision` vẫn không đọc được: dừng và báo rõ tên tệp cùng lý do, tuyệt đối không tự bịa nội dung.
 
-1. Dùng công cụ tất định có sẵn: `extract_docx_text_and_meta` cho `.docx` (thư viện chuẩn, không cần cài gói), rồi `markitdown`, `liteparse`, `docling` hoặc `pandoc` cho `.pdf`, `.xlsx`, `.pptx`, `.html`.
-2. Nếu bước 1 thất bại hoặc làm mất bảng: dùng `vision` đọc ảnh hay bản render trang, chép lại thành Markdown có cấu trúc.
-3. Nếu `vision` cũng không đọc được: dừng, báo rõ tệp và lý do. Không bịa nội dung.
+Luôn ưu tiên bước 1 trước khi gọi mô hình ngôn ngữ. Chuyển một lần, lưu vết theo `sha256` của tệp gốc và giữ nguyên thứ tự đoạn, bảng, tiêu đề, số liệu cùng đường dẫn trong bản `.raw.md`.
 
-Bước 1 là đường mặc định. Không gọi mô hình ngôn ngữ cho định dạng đã có công cụ tất định. Chuyển một lần, lưu theo `sha256` của tệp gốc, không chuyển lại.
-
-Bản `.raw.md` giữ nguyên thứ tự đoạn, bảng, tiêu đề, số liệu và đường dẫn. Không thêm chú thích, không tóm tắt, không sửa câu chữ.
-
-Mỗi bản `.raw.md` đi kèm `TEN_GOC.raw.meta.json`:
+Mỗi bản chuyển đi kèm `TEN_GOC.raw.meta.json`:
 
 ```json
 {"source": "BAO_CAO.pdf", "sha256": "...", "converter": "docling",
  "deterministic": true, "needs_review": false}
 ```
 
-Nhánh `vision` ghi `converter=vision`, `deterministic=false` và `needs_review=true`. Khi đó Agent phải nói rõ với người dùng: bản chép bằng `vision` có thể sai số liệu, cần đối chiếu trước khi kết luận. Lệnh `verify` chỉ có giá trị khi tệp gốc đã chuyển tất định.
+Khi phải dùng nhánh `vision`, ghi `converter=vision`, `deterministic=false`, `needs_review=true` và báo người dùng kiểm tra lại số liệu trước khi kết luận. Lệnh `verify` chỉ dùng đáng tin cậy khi tệp gốc đã chuyển trực tiếp ở bước 1. Riêng `.docx`, hai lệnh `scan` và `profile` tự đọc trực tiếp từ tệp Word.
 
-Riêng `.docx`, lệnh `scan` và `profile` tự bóc tách tất định trước khi quét, nên có thể truyền thẳng tệp Word.
+## Tự quét, lập hồ sơ và đối soát dữ kiện
 
-## Tự quét bài viết, lập hồ sơ giọng văn và đối soát bằng `scripts/vi_scanner.py`
-
-Sau khi viết mới hoặc nhận bản `TEN_GOC.raw.md`, bắt buộc tự quét lại bằng [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi bàn giao. Chỉ miễn bước này với câu trả lời hội thoại ngắn 1 đến 2 câu:
+Sau khi viết mới hoặc nhận `TEN_GOC.raw.md`, luôn chạy [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi bàn giao (trừ câu trả lời hội thoại ngắn 1 đến 2 câu):
 
 ```bash
-# Quét bản Markdown thô vừa nhận (mặc định xuất đủ 100% tín hiệu mọi nhóm)
+# Quét chuẩn nền chung trên toàn bộ 7 nhóm (mặc định)
 python scripts/vi_scanner.py scan TEN_GOC.raw.md --json
 
-# Quét báo cáo và bỏ qua các cột bảng chứa văn bản trích lục của bên thứ ba
+# Quét báo cáo và bỏ qua cột bảng trích lục của bên thứ ba
 python scripts/vi_scanner.py scan TEN_GOC.raw.md --profile audit_report --ignore-table-cols 2,3
 
-# Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 14 chỉ số kỷ luật lập luận DHDNA
+# Lập hồ sơ 18 chỉ số nhịp câu (stylometry) và 14 chỉ số lập luận DHDNA
 python scripts/vi_scanner.py profile TEN_GOC.raw.md --ignore-table-cols 2,3 --json
 
-# Nếu sửa trên văn bản có sẵn của người dùng, chạy thêm bước đối soát dữ kiện
+# Đối chiếu 6 nhóm dữ kiện gốc trước và sau khi sửa
 python scripts/vi_scanner.py verify TEN_GOC.raw.md BAN_SUA.md
 ```
 
-Ở bước quét đầu tiên, lệnh `scan` mặc định chạy ở chế độ `all` và xuất đủ 100% tín hiệu của cả 7 nhóm văn bản. Mỗi kết quả đều ghi rõ `applicable_profiles` (nhóm áp dụng), `exempt_profiles` (nhóm không áp dụng) và gợi ý `suggestion_vi` khớp trực tiếp với cụm từ bị đánh dấu. Riêng lỗi câu quá dài (`VIS-LEN-001`, vượt `35` từ hoặc `45` từ với văn bản pháp lý, kể cả trong ô bảng) làm cả `scan` lẫn `profile` trả mã lỗi `1` ngay lập tức. Khi gặp lỗi độ dài câu, Agent bắt buộc tách câu hoặc rút gọn cho đến khi đạt `0` lỗi mà không có ngoại lệ. Với các tín hiệu khác, hãy đối chiếu `applicable_profiles` cùng loại tài liệu thực tế để quyết định sửa hay giữ lại câu gốc. Chỉ truyền `--profile <tên_nhóm>` khi cần lọc riêng cho một thể loại cố định. Tra cứu đủ 51 mã quy tắc tại [references/rule-catalog.md](references/rule-catalog.md). Mẫu giọng văn, sổ tay và quy trình biên tập nằm tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md). Bảng ngoại lệ nằm tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md). Ngân hàng khuôn câu tổng hợp nằm tại [references/pattern-bank.md](references/pattern-bank.md).
+Ở lượt quét đầu tiên, `scan` mặc định rà ở chế độ `all` để bảo đảm chuẩn tối thiểu chung, kèm sẵn `applicable_profiles`, `exempt_profiles` và gợi ý `suggestion_vi`. Lỗi vượt ngưỡng độ dài câu (`VIS-LEN-001`) bắt buộc tách câu về `0` lỗi trên mọi loại tài liệu. Với các tín hiệu khác, dựa vào ngữ cảnh thực tế của người đọc để quyết định sửa hay giữ, chỉ thêm `--profile` khi người dùng chỉ định riêng.
 
-Ở bước hậu kiểm, luôn giữ `TEN_GOC.raw.md` trước khi sửa để chạy lệnh `verify`. Lệnh này đối soát 6 nhóm dữ kiện gốc: con số (kể cả ngày tháng, phần trăm), phủ định, điều kiện, mức chắc chắn, đường dẫn/code và nguồn trích dẫn. Nếu bản sửa làm lệch nhóm nào ngoài chủ đích (trừ trường hợp gọt cụm rào đón chồng chéo như `dường như có vẻ như`), phải khôi phục đúng nghĩa gốc trước khi bàn giao.
+Tra cứu thêm tại bốn tệp tham chiếu: [references/rule-catalog.md](references/rule-catalog.md), [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md), [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) và [references/pattern-bank.md](references/pattern-bank.md). Khi sửa trên văn bản có sẵn, luôn giữ lại `TEN_GOC.raw.md` để chạy `verify` đối chiếu dữ kiện. Lệnh này kiểm tra con số, từ phủ định, điều kiện, mức chắc chắn, đường dẫn và nguồn trích dẫn. Khi bàn giao, trả thẳng bản hoàn thiện và không kèm bảng điểm hay lời kể quy trình trừ khi người dùng hỏi.
 
-Khi trả kết quả cho người dùng, gửi thẳng văn bản đã hoàn thiện. Không đính kèm bảng điểm máy quét hay kể lại quy trình biên tập trừ khi người dùng yêu cầu nhận xét câu chữ.
+## Bảo trì bảng quy tắc và từ vựng
 
-## Bảo trì bảng quy tắc và từ vựng trên CSV
-
-Toàn bộ quy tắc và từ vựng nằm tại hai tệp CSV chuẩn `UTF-8 BOM` mở trực tiếp bằng Excel. Tệp [data/vocab.csv](data/vocab.csv) quản lý từ mượn quen dùng, cụm dịch ngược, tiếng Anh chêm tùy tiện và văn mẫu cần tránh. Tệp [data/grammar.csv](data/grammar.csv) khai báo 51 quy tắc cấu trúc cùng trọng số tương ứng. Định kỳ hàng quý hoặc hàng năm, chạy lệnh `python scripts/vi_scanner.py check-maintenance` và rà soát theo hướng dẫn tại [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).
+Toàn bộ `2.155` mục từ và `55` quy tắc nằm trong hai tệp CSV chuẩn `UTF-8 BOM` ([data/vocab.csv](data/vocab.csv) và [data/grammar.csv](data/grammar.csv)) để mở chỉnh trực tiếp bằng Excel. Định kỳ hàng quý hoặc hàng năm, chạy `python scripts/vi_scanner.py check-maintenance` và rà soát danh sách từ mượn theo [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md).

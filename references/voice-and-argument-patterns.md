@@ -1,8 +1,8 @@
-# Mẫu giọng văn chức năng và kỷ luật lập luận từ thực tế (`DHDNA` & `Stylometry`)
+# Mẫu giọng văn chức năng và nguyên tắc lập luận từ thực tế (`DHDNA` & `Stylometry`)
 
 Các nguyên tắc cấu trúc câu, đặt tiêu đề, dẫn số liệu và khóa ranh giới bằng chứng dưới đây đúc rút từ phân tích nhịp câu (`stylometry`) cùng khung lập luận `DHDNA v2.0`. Bộ tiêu chuẩn này phục vụ báo cáo quản trị, kiểm toán, giám sát dự án, giải trình kỹ thuật và bài phân tích chuyên môn.
 
-## 1. Bốn kiểu giọng văn chính và một nhãn dự phòng
+## 1. 4 kiểu giọng văn chính và 1 nhãn mặc định
 
 Tùy vai trò của đơn vị phát hành và quyết định mà người đọc cần đưa ra, hãy chọn một trong bốn kiểu giọng văn dưới đây. Lệnh `python scripts/vi_scanner.py profile` trong [scripts/vi_scanner.py](../scripts/vi_scanner.py) tự động tính các chỉ số này trên từng tệp.
 
@@ -11,13 +11,13 @@ Tùy vai trò của đơn vị phát hành và quyết định mà người đ�
 | **Quản trị cổng chặn trực diện** (`DIRECT_EXECUTIVE_GATEKEEPER`) | Hội đồng quản trị, Ban kiểm soát, Chủ sở hữu hoặc cấp phê duyệt cuối cùng trước mốc vận hành. | Câu ngắn (15 đến 23 chữ/câu), biên độ nhịp câu rộng (`CV` từ 0,45 đến 0,66), đoạn ngắn dưới 2 câu (1,7 đến 1,9 câu/đoạn). | Mở đoạn bằng kết luận trực diện. Dùng nhãn phân đoạn ngắn kết thúc bằng dấu chấm (*Thực trạng và bằng chứng.*, *Nguyên nhân kiểm soát.*, *Rủi ro và ảnh hưởng.*, *Kiến nghị.*). Khóa chặt điều kiện chặn và thời hạn đếm ngược. |
 | **Giám sát đối sánh hai chiều** (`BALANCED_COMPARATIVE_SUPERVISORY`) | Ban chỉ đạo, Ủy ban điều hành hoặc báo cáo phối hợp giám sát độc lập giữa các kỳ. | Câu vừa (20 đến 25 chữ/câu), cân đối giữa vế ghi nhận tiến bộ và vế chỉ ra điểm nghẽn tồn đọng. | Đặt tiêu đề mục dạng câu ghép hai vế đối lập (*Chủ đề: Điểm tiến bộ, nhưng điểm nghẽn cốt lõi vẫn hạn chế kết quả*). Trình bày hộp đối sánh hai cột song hành và tam giác đối chứng đa nguồn. |
 | **Bảo đảm kỹ thuật và giải trình cơ chế** (`TECHNICAL_RCA_ASSURANCE`) | Hội đồng công nghệ, nhóm kỹ thuật hoặc văn bản giải trình sự cố, nghiệm thu hệ thống. | Câu ngắn (10 đến 19 chữ/câu), mật độ số liệu và thông số kỹ thuật cao (35 đến 50 con số / 1.000 chữ). | Đi theo ba bước: xác nhận hiện tượng trên nhật ký gốc và bóc tách cơ chế sinh lỗi khỏi triệu chứng. Cuối cùng, chốt rõ điều kiện kiểm tra lại trước mốc mở cổng. |
-| **Chuyên khảo thẩm định đa tầng** (`MULTI_READER_ASSURANCE`) | Hồ sơ thẩm định độc lập hoặc báo cáo tổng hợp dài phục vụ nhiều cấp lãnh đạo và chuyên gia. | Kết hợp tóm tắt điều hành cô đọng ở đầu chương với bảng truy vết mã bằng chứng ở phần thân. | Mở đầu bằng bảng phân luồng người đọc theo cấp phê duyệt chiến lược, cấp điều hành và cấp kỹ thuật. Kèm theo bảng định nghĩa nhãn bằng chứng và danh mục điều kiện dừng bắt buộc. |
+| **Chuyên khảo thẩm định đa tầng** (`MULTI_READER_ASSURANCE`) | Hồ sơ thẩm định độc lập hoặc báo cáo tổng hợp dài phục vụ nhiều cấp lãnh đạo và chuyên gia. | Kết hợp tóm tắt báo cáo cô đọng ở đầu chương với bảng truy vết mã bằng chứng ở phần thân. | Mở đầu bằng bảng phân luồng người đọc theo cấp phê duyệt chiến lược, cấp điều hành và cấp kỹ thuật. Kèm theo bảng định nghĩa nhãn bằng chứng và danh mục điều kiện dừng bắt buộc. |
 
-`CLEAN_GENERAL_VIETNAMESE` là nhãn dự phòng, không phải kiểu thứ năm. Nhãn này dùng khi văn bản mạch lạc và chưa đủ tín hiệu của bốn kiểu trên. Nếu nhịp câu đều hoặc câu quá dài, kết quả trả về nhãn dự phòng kèm cảnh báo `BUREAUCRATIC_OR_MONOTONE_DRAFT`.
+`CLEAN_GENERAL_VIETNAMESE` là nhãn mặc định, không phải kiểu thứ năm. Nhãn này dùng khi văn bản mạch lạc và chưa đủ tín hiệu của bốn kiểu trên. Nếu nhịp câu đều hoặc câu quá dài, kết quả trả về nhãn mặc định kèm cảnh báo `BUREAUCRATIC_OR_MONOTONE_DRAFT`.
 
 `MULTI_READER_ASSURANCE` chỉ được sinh khi có ít nhất `2` tín hiệu phân luồng. Tín hiệu gồm nhãn `[FACT]`, `[CLAIM]`, `[INFERENCE]`, `[GAP]`, `[RISK]`, `[DECISION]`, `[MÂU THUẪN]` hoặc cấu trúc phân cấp người đọc, bảng truy vết bằng chứng.
 
-## 2. Mười hai chiều `DHDNA` dùng khi hiệu chỉnh giọng
+## 2. 12 chiều `DHDNA` dùng khi hiệu chỉnh giọng
 
 | Mã | Chiều | Câu hỏi kiểm tra trên bản thảo |
 | :---: | :--- | :--- |
@@ -52,7 +52,7 @@ Cách đặt tiêu đề này ghi nhận kết quả bước đầu của đơn 
 
 Khi viết cột nhận xét tiến độ trong bảng lớn, hãy giữ thứ tự cố định. Mở đầu bằng trạng thái thời hạn (*quá hạn 62 ngày*, *còn 13 ngày đến hạn*, *chưa giao hạn cụ thể*), tiếp theo là độ lùi hạn (*dự kiến lùi 92 ngày*). Cuối cùng, chốt chất lượng đầu ra (*kết quả mới dừng ở hoạt động trung gian, chưa có sản phẩm kiểm chứng*).
 
-## 4. Sáu kỷ luật dẫn số liệu và khóa ranh giới bằng chứng
+## 4. 6 nguyên tắc dẫn số liệu và khóa ranh giới bằng chứng
 
 Công cụ [scripts/vi_scanner.py](../scripts/vi_scanner.py) tự động rà 6 nguyên tắc này qua quy tắc `VIS-STRUCT-002` và lệnh `profile`:
 
@@ -90,18 +90,29 @@ Ba tình huống dưới đây đối chiếu cách chuyển câu chữ từ bá
 | "Tổng số dư Nợ bằng tổng số dư Có trên bảng tổng hợp cuối ngày. Có 06 giao dịch gốc báo lệch nhưng là 03 cặp bút toán điều chỉnh thủ công bù trừ đúng nhau nên tổng chênh lệch bằng 0." | "Bảng cân đối tổng hợp cuối ngày ghi nhận tổng Nợ khớp tổng Có. Tuy nhiên, số tổng hợp cân bằng nhờ 03 cặp bút toán thủ công tự bù trừ nhau. Kết quả này chưa chứng minh dữ liệu khớp từng dòng nếu chưa đối soát theo tổng giá trị tuyệt đối." | "Rủi ro sai lệch sổ kế toán ở cấp giao dịch đơn lẻ. Quy tắc ghép cặp hiện tại cho phép các khoản lệch tự bù trừ nhau khi tổng Nợ bằng tổng Có. Cơ chế này có thể che khuất sai sót số dư từng khách hàng nếu không đối soát theo giá trị tuyệt đối." |
 | "Sự cố mất kết nối cổng tích hợp lúc 10:40 gây sập toàn tuyến trong 16 phút do thiếu cơ chế giao dịch phân tán hai pha, khiến 01 giao dịch mở sổ tiết kiệm 9 tỷ đồng bị trừ tiền nhưng chưa sinh hợp đồng." | "Từ 10:40 đến 10:56, cổng tích hợp mất kết nối làm gián đoạn giao dịch trực tuyến trong 16 phút. Do thiếu cơ chế đồng bộ hai chiều, tài khoản khách hàng đã bị trừ 9 tỷ đồng. Hệ thống lõi khi đó vẫn chưa khởi tạo hợp đồng tiền gửi." | "Lỗ hổng đồng bộ giao dịch trên kênh số có thể gây trừ tiền khống của khách hàng. Trong 16 phút ngắt kết nối, khách hàng bị trừ 9 tỷ đồng nhưng hệ thống không sinh sổ tiết kiệm và không tự hoàn tiền. Yêu cầu khóa cổng chuyển đổi cho đến khi nghiệm thu xong cơ chế tự động hoàn trả." |
 
+### Chuyển ngữ thuật ngữ kỹ thuật CNTT sang ngôn ngữ quản trị
+
+| Diễn đạt kỹ thuật | Cách viết cho cấp phê duyệt |
+| :--- | :--- |
+| `Khóa bảng dữ liệu, API timeout 502/504 ở tải 100 tps` | Khi tải giao dịch tăng cao, hệ thống bị nghẽn và gián đoạn xử lý trong `[N]` phút. |
+| `Thiếu giao dịch phân tán hai pha qua ESB` | Kênh số chưa đồng bộ hoàn trả khi mất kết nối, có thể trừ tiền khách nhưng chưa tạo hợp đồng. |
+| `Chưa mask dữ liệu PII trên môi trường thử nghiệm` | Đơn vị dùng dữ liệu khách hàng thật khi thử nghiệm, vi phạm quy định bảo vệ dữ liệu cá nhân. |
+| `Chạy khóa sổ cuối ngày chưa đạt, lỗi đối chiếu sổ cái` | Chưa kiểm chứng khóa sổ cuối ngày, số dư giữa sổ chi tiết và sổ cái đang lệch `[X]` đồng. |
+| `Kế hoạch quay lui hệ thống chưa được kiểm thử` | Đơn vị chưa diễn tập phương án quay lại hệ thống cũ khi chuyển đổi gặp sự cố. |
+| `Tỷ lệ đạt kiểm thử 89% nhưng còn lỗi mức nghiêm trọng 1 và 2` | Kiểm thử người dùng còn `[N]` lỗi nghiêm trọng chưa xử lý nên chưa đủ điều kiện vận hành an toàn. |
+
 ## 6. Quy trình biên tập đầu vào và hậu kiểm
 
-Tài liệu này gom quy trình xử lý từ vựng, quy trình dịch, khung yêu cầu đầu vào và nhịp hậu kiểm. Mục tiêu là giữ dữ kiện gốc và hạ tầng câu chữ sạch trước khi bàn giao.
+Phần này tổng hợp quy trình xử lý từ vựng, quy trình dịch, khung yêu cầu đầu vào và nhịp hậu kiểm để giữ nguyên dữ kiện gốc trước khi bàn giao.
 
-### 6.1. Bốn bước xử lý từ vựng AI
+### 6.1. 4 bước xử lý từ vựng AI
 
 1. Xóa biển báo dẫn dắt. Cắt các cụm chỉ báo thông tin sắp xuất hiện. Ví dụ: "Điều quan trọng cần lưu ý là", "Không thể phủ nhận rằng", "Hãy cùng khám phá". Mở câu ngay bằng chủ thể hoặc dữ kiện.
 2. Hạ động từ vĩ mô. Đổi động từ khẩu hiệu sang động từ kiểm chứng được. Ví dụ: "mở rộng" thành "phân tích", "xây dựng" thành "lập", "tối ưu hóa" thành "giảm 12% thời gian chờ".
 3. Khóa tính từ bằng số liệu. Chỉ giữ tính từ khi nó đi kèm kích thước, tốc độ, chi phí hoặc hiệu suất. Bỏ "đầy đủ", "liền mạch", "đột phá" nếu không có số đo.
 4. Thay ẩn dụ và từ nối cứng. Bỏ "tấm thảm đa sắc", "ngọn hải đăng", "bức tranh toàn cảnh". Thay từ nối đầu đoạn bằng mạch ý tự nhiên.
 
-### 6.2. Bốn bước phi ngôn từ hóa khi dịch
+### 6.2. 4 bước phi ngôn từ hóa khi dịch
 
 1. Đọc hiểu toàn đoạn. Nắm ngữ cảnh, giọng điệu và đơn vị ý nghĩa trước khi chuyển ngữ.
 2. Phi ngôn từ hóa. Xóa vỏ từ ngữ và trật tự cú pháp nguồn khỏi trí nhớ ngắn hạn. Giữ lại các đơn vị ý nghĩa.
@@ -118,7 +129,7 @@ Khung `VEC` khóa bốn thông tin tối thiểu trước khi viết.
 | `E` — Bằng chứng | Dữ kiện nào bắt buộc phải giữ? | Số liệu, ngày tháng, điều kiện, tên nguồn. |
 | `C` — Cấu trúc | Người đọc cần kết luận gì trước? | Kết luận trước, bằng chứng sau, kiến nghị cuối. |
 
-### 6.4. Master Prompt sáu tầng
+### 6.4. Master Prompt 6 tầng
 
 1. Role. Nêu vai trò chuyên môn cụ thể, không dùng vai trò chung.
 2. Context. Nêu sản phẩm, nhóm người đọc hẹp và lợi thế cạnh tranh.
@@ -127,7 +138,7 @@ Khung `VEC` khóa bốn thông tin tối thiểu trước khi viết.
 5. Examples. Dán 2 đến 3 đoạn mẫu do người viết tự viết để nạp nhịp điệu.
 6. Output Format. Chốt kiểu trình bày, đơn vị số liệu và nhãn trạng thái.
 
-### 6.5. Ba tầng kiểm soát
+### 6.5. 3 tầng kiểm soát
 
 1. Bước đầu vào. Khóa `VEC` và Master Prompt sáu tầng. Buộc gắn nhãn `[CHECK]` ở mọi chỗ thiếu nguồn.
 2. Bước trọng tài. Dùng một phiên độc lập đối chiếu 25 cấu trúc AI và 25 cấu trúc dịch thô. Chỉ xuất mã lỗi và hướng sửa trong một dòng.
@@ -151,7 +162,7 @@ python -B scripts/vi_scanner.py verify BAN_GOC.md BAN_SAU_SUA.md
 
 1. Kết luận trước. Câu đầu mỗi mục trả lời câu hỏi quan trọng nhất của người đọc.
 2. Câu ngắn, ý rõ. Giữ câu văn xuôi trong khoảng `15–23` từ. Câu dài hơn `35` từ phải tách.
-3. Kỷ luật bằng chứng. Chưa có bằng chứng thì chưa được xem là hoàn thành.
+3. Nguyên tắc bằng chứng. Chưa có bằng chứng thì chưa được xem là hoàn thành.
 4. Cổng điều kiện. Mọi kiến nghị phải nêu điều kiện, mốc thời gian và người chịu trách nhiệm.
 5. Nhãn trạng thái. Dùng nhãn cố định cho hoạt động trung gian và đầu ra kiểm chứng.
 6. Số liệu có mẫu số. Không nêu tỷ lệ phần trăm đứng một mình.
@@ -240,7 +251,7 @@ L6  Biến động dữ liệu trước và sau lần chạy xử lý cuối ng�
 L7  Chọn mẫu phân tầng đủ độ tin cậy thống kê.
 ```
 
-Mười tám điều kiện dừng bắt buộc `SL01–SL18`:
+18 điều kiện dừng bắt buộc `SL01–SL18`:
 
 ```text
 SL01  Lệch số dư ngoài danh mục đã được phê duyệt.
@@ -263,7 +274,7 @@ SL17  Công cụ đối soát chưa được kiểm định.
 SL18  Chưa đủ bộ hồ sơ tối thiểu trước mốc chuyển đổi.
 ```
 
-Hai mươi hai yêu cầu bằng chứng `ER01–ER22`:
+22 yêu cầu bằng chứng `ER01–ER22`:
 
 ```text
 ER01  Danh mục phạm vi và mốc khóa dữ liệu.
@@ -328,5 +339,62 @@ Một nhận định chuẩn đi theo năm bước:
 - Loại bỏ lộ trình giả, bảng giải thích điều hiển nhiên hoặc kịch bản hù dọa.
 - Tuyệt đối không ghi tên đơn vị, dự án, khách hàng hoặc mã định danh nội bộ.
 - Chạy `scan`, `profile` và `verify` trước khi bàn giao.
+
+### 7.8. Bố cục ba lớp, khung 5C và chống nói quá hoặc nói nhẹ
+
+Quy chuẩn dưới đây tổng hợp từ 15 báo cáo kiểm toán và tư vấn giám sát đã duyệt.
+
+| Lớp tài liệu | Dung lượng mục tiêu | Nội dung bắt buộc | Phần cấm đưa ra ngoài |
+| :--- | :--- | :--- | :--- |
+| Trang đầu | Tối đa 1 trang, `150–350` từ kèm bảng `3–6` dòng | Kết luận câu đầu, mốc quá hạn, giới hạn phạm vi, `3–5` quyết định cần chỉ đạo | Nhật ký theo phút, tên bảng dữ liệu, mã lỗi kỹ thuật, danh sách sự cố lẻ |
+| Thân bài | `2.000–4.000` từ, mỗi đoạn dưới `2` câu | Tác động quy đổi sang tiền, khách hàng, dịch vụ hoặc tuân thủ | Bảng lặp số liệu, chép nguyên văn báo cáo đơn vị, mô tả kỹ thuật thừa |
+| Phụ lục | Đánh số `Phụ lục 1`, `Phụ lục 2`, `Phụ lục 3` | Chi tiết đủ đối chiếu hai chiều với từng nhận định thân bài | Kết luận mới không có ở thân bài, ảnh thừa, nhật ký thô hàng nghìn dòng |
+| Giấy tờ làm việc | Lưu nội bộ, không gửi kèm báo cáo mặc định | Bằng chứng gốc kèm `SHA256`, biến thể tên đơn vị, biên bản soát xét | Mã theo dõi nội bộ (`EV-xx`, `WP-xx`, `CL-xx`, `GAP-xx`) |
+
+Phát hiện kiểm toán trình bày theo khung `5C` rút gọn theo từng cấp đọc:
+- Trang đầu chỉ giữ ba mảnh trên một dòng bảng: tiêu đề dẫn bằng Hệ quả (dưới `12` từ), Hiện trạng kèm mức xác minh và Quyết định cần chỉ đạo.
+- Thân bài nêu ba thông tin phân loại (Hạng rủi ro, sáu mức bằng chứng kèm `not_measured` khi thiếu dữ liệu và năm màu giám sát). Mỗi phát hiện đi đủ Tiêu chí, Hiện trạng, Nguyên nhân, Hệ quả, Kiến nghị và Ý kiến Đơn vị.
+- Mẫu phi thống kê nêu đủ năm thông số: quần thể, cỡ mẫu, số lỗi, tỷ lệ mẫu và câu không ngoại suy.
+- Nguyên nhân gốc truy vấn 5 Whys tới bốn nhóm kiểm soát (thiết kế kiểm soát, trống đầu mối, thiếu đào tạo hoặc quá tải), không quy kết động cơ cá nhân.
+- Bảng kiến nghị tách khắc phục ngay khỏi ngăn tái diễn với bốn cột: Kết quả cần đạt, Bằng chứng đóng, Một chức danh chủ trì và Ngày lịch `dd/mm/yyyy`.
+
+Trích dẫn văn bản phải ghi rõ chủ đề ngay trong câu (*"theo Thông báo về tổ chức đào tạo ngày..."*), giữ đủ kính ngữ `Ông` hoặc `Bà` trước tên riêng và tránh viết tắt dễ nhầm. Trước khi phát hành, khóa hai chiều số liệu, quét `audit_report` đạt `0` lỗi và soát bản PDF bằng mắt về phông chữ, tràn lề, thứ tự ưu tiên từ cao xuống thấp.
+
+| Tình huống | Nói quá hoặc tuyệt đối (Cấm) | Nói nhẹ hoặc né tránh (Cấm) | Diễn đạt chuẩn xác |
+| :--- | :--- | :--- | :--- |
+| Đối chiếu pháp luật | "Quy định hiện đã lỗi thời, hết hiệu lực hoặc trái pháp luật." | "Nội dung quy định cơ bản vẫn phù hợp thực tế vận hành." | Quy định chưa cập nhật theo văn bản hiệu lực từ `[dd/mm]`, chưa khớp Khoản, Điều liên quan. |
+| Không thấy hồ sơ | "Đơn vị bỏ sót hoàn toàn và không thực hiện kiểm thử." | "Hồ sơ đang trong quá trình hoàn thiện thủ tục ký duyệt." | Đơn vị chưa quy định nội dung này, hoặc đến `[dd/mm]` tổ kiểm toán chưa tìm thấy hồ sơ chứng minh. |
+| Phạm vi kiểm tra | "Đối chiếu và đáp ứng 100% toàn bộ tiêu chí pháp luật." | "Cơ bản bám sát các yêu cầu trọng tâm của quy định." | Đã đối chiếu `[A]/[B]` tiêu chí thuộc phạm vi kỳ kiểm toán. Tỷ lệ đạt chỉ phản ánh tập tiêu chí đã chọn. |
+| Quá hạn đóng lỗi | "Đơn vị trì trệ, thiếu trách nhiệm làm dự án thất bại." | "Nhiệm vụ đang tích cực phối hợp, dự kiến sớm hoàn tất." | Nhiệm vụ quá hạn `[N]` ngày. Cập nhật mới dừng ở bước trình duyệt, chưa có văn bản ban hành kiểm chứng. |
+| Hai nguồn lệch nhau | "Bộ phận dự án cố ý làm sai lệch số liệu báo cáo." | "Số liệu chênh nhẹ do thời điểm tổng hợp khác nhau." | Hai nguồn cùng kỳ chốt ghi `[A]` và `[B]`. Khi chưa giải trình nguyên nhân lệch, chưa đủ căn cứ kết luận. |
+| Còn lỗi chặn | "Hệ thống chắc chắn sẽ sập khi đưa vào vận hành thật." | "Tiến độ đạt 89%, cơ bản sẵn sàng, chỉ còn vài lưu ý nhỏ." | Kiểm thử đạt `[X]%` nhưng còn `[N]` lỗi nghiêm trọng và chưa đối soát sổ cái. Hệ thống chưa đủ điều kiện vận hành. |
+| Sát mốc vận hành | "Hệ thống hoàn toàn không thể đưa vào vận hành." | "Hệ thống cơ bản đáp ứng kế hoạch, tiếp tục theo dõi thêm." | Đến `[dd/mm]`, chưa đủ cơ sở xác nhận sẵn sàng. Nếu chưa xong điều kiện chặn trước `[dd/mm]`, cần dời mốc. |
+| Đơn vị tự báo cáo | "Toàn hàng đã hoàn tất 90% khối lượng chuyển đổi." | "Các đơn vị phản hồi nhìn chung đã sẵn sàng triển khai." | Theo số liệu đơn vị gửi, tỷ lệ đạt `[X]%`. Dữ liệu này chưa đối soát nhật ký hệ thống hay biên bản gốc. |
+| Tổng khớp bù trừ | "Dữ liệu chuyển đổi khớp chính xác 100% từng dòng." | "Chênh lệch nhỏ không ảnh hưởng tới tổng số dư cuối ngày." | Tổng Nợ khớp tổng Có nhờ các khoản lệch tự bù trừ nhau. Bảng tổng hợp chưa chứng minh khớp từng tài khoản. |
+
+Chuẩn định lượng thực đo trên thân bài báo cáo kiểm toán: văn xuôi `2.000–4.000` từ, dưới `2,0` câu mỗi đoạn và `dai_cau_tb` từ `15–23` từ. Giữ biên độ nhịp câu `CV` trong khoảng `0,45–0,65`, `MATTR-50` đạt `0,82–0,88`, mật độ số `40–90` trên `1.000` từ và thuật ngữ ngoại tối đa `20` từ trên `1.000` từ.
+
+### 7.9. Quy tắc viết cột ghi chú bảng kiểm đánh giá (`Có / Một phần / Chưa có`)
+
+Cột ghi chú trả lời một câu hỏi: **vì sao dòng này được chấm trạng thái đó**. Ghi chú không kể lại quy trình, không liệt kê bằng chứng và không thay thế cột trạng thái.
+
+1. Viết đúng **một câu duy nhất**, tối đa `35` từ, viết hoa chữ đầu và kết thúc bằng dấu chấm.
+2. Đi thẳng vào lý do, không mở bằng `"Có vì"`, `"Một phần vì"` hay `"Chưa có vì"`.
+3. Nêu phần đáp ứng với trạng thái Có. Nêu phần có cùng phần chưa tìm thấy với trạng thái Một phần, và nêu thành phần chưa tìm thấy với trạng thái Chưa có.
+4. Không đưa mã bằng chứng, số ô, tên trường kỹ thuật, tên tệp hay đường dẫn vào cột ghi chú.
+5. Không khẳng định tuyệt đối `"không có"` hoặc `"thiếu"` khi chưa đọc toàn bộ hồ sơ. Thay bằng `"chưa tìm thấy"`.
+6. Chỉ giữ số đếm, ngày tháng hay trạng thái chi tiết khi là căn cứ trực tiếp cho kết luận.
+7. Không gọi chênh lệch số liệu là `"mâu thuẫn"`. Chỉ nêu `"chưa tìm thấy"`, `"khác phạm vi"` hoặc `"cần xác nhận"`.
+8. Ưu tiên phạm vi theo kỳ đánh giá. Tài liệu nhắc nội dung kỳ đang xét vẫn giữ trong phạm vi dù nhãn ngày bị ghi lệch.
+9. Chỉ ghi điều đọc được trong tệp, không suy diễn ý định hay quy kết động cơ.
+10. Giữ câu tự nhiên, chủ thể rõ, động từ trực tiếp, tránh danh hóa và rào đón.
+
+| Trạng thái | Dạng ghi chú | Ví dụ chuẩn |
+| :--- | :--- | :--- |
+| `Có` | Nêu thành phần bắt buộc đã có | "Sổ rủi ro có danh sách vấn đề mở, người phụ trách và hạn." |
+| `Một phần` | Nêu phần có và phần chưa tìm thấy | "Có mốc chuẩn bị nhưng chưa tìm thấy lịch theo giờ trong ngày diễn tập." |
+| `Chưa có` | Nêu thành phần chưa tìm thấy | "Chưa tìm thấy bằng chứng kiểm tra lại hoặc đóng lỗi." |
+
+Lỗi cần tránh: viết `"Thiếu tài liệu X"` hoặc `"Không có bằng chứng"` khi chưa đọc hết hồ sơ. Không chèn mã bằng chứng hoặc tên trường vào ghi chú, không viết hai đến ba câu và không gọi lệch số liệu chưa rõ phạm vi là `"mâu thuẫn"`.
 
 Giới hạn sử dụng: sổ tay này mô tả lựa chọn văn bản, không phải thước đo phẩm chất cá nhân. Khi chuyển sang thể loại khác, cần hiệu chỉnh lại nhịp câu và mật độ thuật ngữ.

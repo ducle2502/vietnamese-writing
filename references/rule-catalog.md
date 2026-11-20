@@ -1,6 +1,6 @@
-# Danh mục 51 quy tắc trong `scripts/vi_scanner.py`
+# Danh mục 55 quy tắc trong `scripts/vi_scanner.py`
 
-Bảng tra cứu nhanh 51 mã quy tắc thuộc 6 nhóm khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
+Bảng tra cứu nhanh 55 mã quy tắc thuộc 6 nhóm khi đọc kết quả JSON từ lệnh `python scripts/vi_scanner.py scan`.
 
 ## Nhóm 1: Rào đón và dàn dựng kiểu chatbot (`AI_META_AND_STAGING`)
 
@@ -27,6 +27,7 @@ Bảng tra cứu nhanh 51 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 | `VIS-RHET-007` | `info` | Cấu trúc tạo kịch tính giả (`Tưởng chừng..., nhưng...`, `Thoạt nhìn..., song...`) lặp lại dày đặc trong văn bản. | Ghi thẳng quy mô lỗi, số bản ghi ảnh hưởng và bước xử lý cần làm. |
 | `VIS-RHET-008` | `warning` | Khung đính chính (`Thay vì chỉ dựa vào X...`, `Điều này quan trọng vì...`) không kèm số liệu đối chiếu. | Bỏ vế đính chính hiển nhiên, giữ số liệu so sánh hai phương án. |
 | `VIS-RHET-009` | `info` | Lập luận ba phải, khen nịnh người đọc hoặc khoe phủ sóng truyền thông thay cho bằng chứng. | Chọn một kết luận, nêu tiêu chí phân ranh và dẫn nguồn báo chí cụ thể. |
+| `VIS-RHET-010` | `warning` | Phản biện khống tự dựng ý kiến giả định (`Nhiều người có thể cho rằng...`, `Điều này không có nghĩa là...`) hoặc câu triết lý sáo (`là ngôn ngữ của`). | Bỏ ý kiến giả định và câu triết lý sáo. Nêu thẳng số liệu đối chiếu và điều kiện thực tế. |
 
 ## Nhóm 3: Định dạng và nhịp đoạn máy móc (`AI_STRUCTURAL_AND_FORMATTING`)
 
@@ -59,6 +60,7 @@ Bảng tra cứu nhanh 51 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 | `VIS-TRANS-012` | `warning` | Cụm cú pháp Trung Hoa dịch cứng (`đem... giao cho`, `cho ai + V`, `đối với... mà nói`, `bị do...`). | Đảo động từ lên trước, bỏ mẫu rào đón và dùng cấu trúc phân công chủ động. |
 | `VIS-TRANS-013` | `info` | Trợ từ `đích/địa/đắc`, đảo định ngữ và bổ ngữ xu hướng còn sót từ bản `convert` Trung–Việt. | Xóa trợ từ, đưa danh từ chính lên trước và viết lại bổ ngữ theo tiếng Việt. |
 | `VIS-TRANS-014` | `info` | Câu dài dồn động từ xuống cuối theo trật tự SOV Nhật–Hàn, chỉ hướng dẫn rà thủ công. | Tách câu hoặc đưa động từ chính lên đầu vế. |
+| `VIS-TRANS-015` | `warning` | Dùng danh từ trừu tượng ghép dịch từ `discipline`, `guardrails` hoặc `gate` (`kỷ luật...`, `hàng rào...`, `cổng kiểm soát/kiểm định`). | Thay bằng `nguyên tắc`, `giới hạn kiểm soát` hoặc `bước kiểm tra bắt buộc`. |
 
 ## Nhóm 5: Sáo ngữ hành chính và câu khách (`BUREAUCRATIC_AND_SEO_CLICHE`)
 
@@ -74,17 +76,19 @@ Bảng tra cứu nhanh 51 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 
 | Mã quy tắc | Mức | Dấu hiệu nhận diện | Cách viết lại tự nhiên |
 | :--- | :---: | :--- | :--- |
-| `VIS-LEX-001` | `warning` | Dùng sai nghĩa từ Hán - Việt (`thực chứng`, `yếu điểm`, `miễn trừ`, `chuẩn mực`) hoặc sai chính tả vỏ ngữ âm (`sồn sã`, `chỉnh chu`, `chuẩn đoán`, `cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`). Nhận diện luôn khung dịch từng chữ (`khung + <danh từ>`, `hiện thực + <danh từ>`, `chặn/khóa/gắn cứng`), từ cắt cụt (`sửa sát`, `lặp khuôn`, `kỳ cũ`) và từ lậm convert. | Dùng đúng từ chuẩn trong công việc (`dựa trên bằng chứng`, `điểm yếu`, `suồng sã`, `chỉn chu`, `cập nhật`, `sáp nhập`, `bám sát`, `rập khuôn`, `kỳ trước`). |
+| `VIS-LEX-001` | `warning` | Dùng sai nghĩa từ Hán - Việt (`thực chứng`, `yếu điểm`, `miễn trừ`, `chuẩn mực`) hoặc sai chính tả công sở hay gặp (`sồn sã`, `chỉnh chu`, `chuẩn đoán`, `chắp bút`, `cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`). Nhận diện cả khung dịch từng chữ (`khung + <danh từ>`, `hiện thực + <danh từ>`, `chặn/khóa/gắn cứng`), từ cắt cụt (`sửa sát`, `lặp khuôn`, `kỳ cũ`) và từ lậm convert. | Dùng đúng từ chuẩn trong công việc (`dựa trên bằng chứng`, `điểm yếu`, `suồng sã`, `chỉn chu`, `cập nhật`, `sáp nhập`, `bám sát`, `rập khuôn`, `kỳ trước`). |
 | `VIS-LEX-002` | `info` | Dịch ngược từ tiếng Anh đã quen dùng (`thư điện tử`, `yêu cầu kéo`, `trang mạng`), chêm tiếng Anh tùy tiện (`booking lịch`, `workaround`) hoặc bê nguyên mã bảng, công thức kỹ thuật vào văn xuôi. | Giữ nguyên từ đã quen dùng (`email`, `pull request`, `web`, `placeholder`), diễn đạt bằng tiếng Việt cho từ chêm tùy tiện và giải thích thuật ngữ theo ngôn ngữ nghiệp vụ. |
 | `VIS-TONE-001` | `warning` | Chào sồn sã (`Anh X ơi,`), dùng thành ngữ hoặc khẩu ngữ công sở suồng sã (`rủi ro sát sườn`, `cố bấm nút`, `trực chiến 24/7`, `tử huyệt`), tự khoe xếp loại hoặc khen xã giao. | Giữ giọng điềm tĩnh, lễ độ chừng mực và bỏ hẳn câu tự khen hoặc khen xã giao. |
 | `VIS-TONE-002` | `warning` | Bê động từ điều tra hình sự, cổ văn hoặc báo chí (`phát lộ`, `phát giác`, `bại lộ`, `vạch trần`, `phơi bày`, `hé lộ`) vào báo cáo, dữ liệu kỹ thuật. Chặn cả cụm kịch tính hóa sự cố hoặc con số (`sập API`, `gây tê liệt`, `khủng hoảng hệ thống`, `vỏn vẹn`, `giậm chân tại chỗ`). | Dùng động từ trung tính (`phát hiện`, `ghi nhận`, `bộc lộ`), mô tả đúng hiện tượng kỹ thuật (`mất kết nối`, `giữ nguyên ở mức`) và bỏ từ bình phẩm số liệu. |
+| `VIS-TONE-003` | `warning` | Khẳng định tuyệt đối (`lỗi thời so với pháp luật`, `trái với pháp luật`, `đối chiếu 100%`) hoặc quy kết động cơ (`cố tình che giấu`, `thiếu trách nhiệm`) vượt quá bằng chứng. | Nêu rõ văn bản hiệu lực, cỡ mẫu kiểm tra và ngoại lệ đã xác minh. |
 | `VIS-STRUCT-001` | `warning` | Tự thuyết minh bố cục hoặc tài liệu (`Để tránh trùng lặp...`, `Bảng dưới đây trình bày...`, `Tài liệu X mô tả chi tiết...`, `ghi lại lý do chọn`), lộ nhãn dàn ý (`Điểm nghẽn:`, `Bước ngoặt tư duy:`) hoặc đếm tuần tự né máy quét. | Xóa câu giải thích bố cục và nhãn dàn ý, nối thẳng mạch nội dung hoặc gộp liên kết vào danh sách. |
-| `VIS-STRUCT-002` | `warning` | Ký tự ẩn, chồng dấu `****`, lỗi `#REF!`, viết `Thiếu -10%`, mũi tên `->`, emoji trang trí và phần trăm dấu chấm `59.9%`. Bao gồm tiêu đề Title Case kiểu Anh, tiêu đề dịch thô (`Cách sử dụng dòng lệnh`, `Bảng nội dung`), mục con đơn độc, lặp từ gần nhau, `alt` ảnh nhồi từ khóa và hộp HTML `01` đến `04` lặp bảng. Kiểm tra cả chú thích `#` cây thư mục quá `10` từ, nháy ngược bọc từ Việt thường, dòng `Tổng cộng` cộng sai và kỷ luật số liệu `.docx`. | Chuẩn hóa dấu phẩy thập phân tiếng Việt, đặt tiêu đề động từ trực tiếp và khử từ lặp sát nhau. Giữ `alt` ảnh cùng chú thích cây thư mục ngắn gọn, đồng thời cộng khớp dòng tổng. Trong báo cáo giám sát, tách riêng tỷ lệ không lỗi và còn lỗi, ghi đủ `Tử số/Mẫu số (%)` và đối soát theo giá trị tuyệt đối. |
+| `VIS-STRUCT-002` | `warning` | Ký tự ẩn, chồng dấu `****`, lỗi `#REF!`, viết `Thiếu -10%`, mũi tên `->`, emoji trang trí và phần trăm dấu chấm `59.9%`. Bao gồm tiêu đề Title Case kiểu Anh, tiêu đề dịch thô (`Cách sử dụng dòng lệnh`, `Bảng nội dung`), mục con đơn độc, lặp từ gần nhau, `alt` ảnh nhồi từ khóa và hộp HTML `01` đến `04` lặp bảng. Kiểm tra thêm chú thích `#` cây thư mục quá `10` từ, nháy ngược bọc từ Việt thường và dòng `Tổng cộng` cộng sai. Rule này cũng rà lặp tóm tắt bảng, trích dẫn cộc lốc, mở đầu ghi chú `"Có vì"` và nguyên tắc số liệu `.docx`. | Chuẩn hóa dấu phẩy thập phân tiếng Việt, đặt tiêu đề động từ trực tiếp và khử từ lặp sát nhau. Giữ `alt` ảnh cùng chú thích cây thư mục ngắn gọn, cộng khớp dòng tổng, bỏ phần tóm tắt lặp bảng và nêu chủ đề kèm số hiệu văn bản. Trong báo cáo giám sát, tách riêng tỷ lệ không lỗi và còn lỗi, ghi đủ `Tử số/Mẫu số (%)` và đối soát theo giá trị tuyệt đối. |
 | `VIS-STRUCT-003` | `info` | Lộ trình giả `G1–G4`, bảng giải thích điều hiển nhiên hoặc kịch bản hù dọa rủi ro, chỉ gắn cờ để rà thủ công. | Xóa bảng sáo rỗng, thay bằng mốc kiểm chứng hoặc điều kiện cụ thể. |
+| `VIS-STRUCT-004` | `warning` | Lọt mã theo dõi hồ sơ nội bộ (`EV-xx`, `WP-xx`, `CL-xx`, `GAP-xx`) hoặc lời tự kể thay thế phương án cũ trong văn bản gửi ngoài. | Gỡ mã nội bộ, dẫn tên biên bản kiểm chứng thực tế và bỏ lời tự kể quá trình soạn thảo. |
 | `VIS-LEN-001` | `error` | Câu văn xuôi hoặc câu trong ô bảng dài quá `35` từ (`45` từ với văn bản pháp lý), báo lỗi ngay trên `scan` và `profile`. Bắt cả câu từ `28` từ nối từ `6` vế dấu phẩy hoặc mở đầu vòng vo (`Việc ...`, `Thông qua việc...`, `Liên quan đến vấn đề...`, `với mục đích nhằm`). Trọng số phạt lũy tiến từ `1,0` lên tới `2,5` theo số từ vượt trần. | Cắt bỏ cụm mở đầu vòng vo và chuyển danh sách dài sang gạch đầu dòng. Tách câu dài thành `2` đến `3` câu ngắn độc lập (`15` đến `25` từ mỗi câu), mỗi câu một chủ thể và một động từ chính. |
 ## Nguồn, độ mạnh và ngoại lệ
 
-Bảng dưới đây ghi rõ trạng thái nguồn cho 19 rule từng thiếu nguồn hoặc mới bổ sung. `source_status=verified` nghĩa là có nguồn công khai. `source_status=missing` nghĩa là chưa xác định được nguồn và không tự gán `internal`.
+Bảng dưới đây ghi rõ trạng thái nguồn cho 23 rule từng thiếu nguồn hoặc mới bổ sung. `source_status=verified` nghĩa là có nguồn công khai. `source_status=missing` nghĩa là chưa xác định được nguồn và không tự gán `internal`.
 
 | STT | Mã quy tắc | `source_status` | `evidence_strength` | Ngoại lệ chính |
 | :---: | :--- | :---: | :---: | :--- |
@@ -94,21 +98,25 @@ Bảng dưới đây ghi rõ trạng thái nguồn cho 19 rule từng thiếu ng
 | 4 | `VIS-RHET-007` | `verified` | `medium` | genuine_contrast, quoted_speech |
 | 5 | `VIS-RHET-008` | `verified` | `strong` | so_lieu_doi_chieu, profile:legal |
 | 6 | `VIS-RHET-009` | `verified` | `medium` | profile:marketing |
-| 7 | `VIS-FMT-006` | `verified` | `medium` | headings, dialogue, poetry, code_block |
-| 8 | `VIS-FMT-007` | `verified` | `medium` | so_lieu_moi_sau_phay, profile:marketing |
-| 9 | `VIS-FMT-008` | `verified` | `medium` | direct_quotes, code_block |
-| 10 | `VIS-STRUCT-003` | `verified` | `medium` | profile:legal, profile:audit_report, code_block |
-| 11 | `VIS-TRANS-006` | `verified` | `medium` | legal_chain_of_title, formal_organization_name |
-| 12 | `VIS-TRANS-007` | `verified` | `medium` | emphatic_spoken_style, quoted_speech |
-| 13 | `VIS-TRANS-008` | `verified` | `medium` | literal_arrival_or_delivery |
-| 14 | `VIS-TRANS-009` | `missing` | `medium` | nested_physical_location_required |
-| 15 | `VIS-TRANS-010` | `missing` | `medium` | legal_term_of_art, academic_classification |
-| 16 | `VIS-TRANS-011` | `verified` | `strong` | profile:legal, profile:audit_report, legal_standard |
-| 17 | `VIS-TRANS-012` | `verified` | `medium` | profile:marketing, direct_quotes |
-| 18 | `VIS-TRANS-013` | `missing` | `medium` | profile:legal, profile:audit_report, direct_quotes |
-| 19 | `VIS-TRANS-014` | `missing` | `medium` | profile:legal, profile:audit_report, code_block |
+| 7 | `VIS-RHET-010` | `verified` | `strong` | direct_quotes, quoted_speech |
+| 8 | `VIS-FMT-006` | `verified` | `medium` | headings, dialogue, poetry, code_block |
+| 9 | `VIS-FMT-007` | `verified` | `medium` | so_lieu_moi_sau_phay, profile:marketing |
+| 10 | `VIS-FMT-008` | `verified` | `medium` | direct_quotes, code_block |
+| 11 | `VIS-STRUCT-003` | `verified` | `medium` | profile:legal, profile:audit_report, code_block |
+| 12 | `VIS-STRUCT-004` | `verified` | `medium` | internal_workpaper, code_block |
+| 13 | `VIS-TONE-003` | `verified` | `strong` | direct_quotes, court_judgment |
+| 14 | `VIS-TRANS-006` | `verified` | `medium` | legal_chain_of_title, formal_organization_name |
+| 15 | `VIS-TRANS-007` | `verified` | `medium` | emphatic_spoken_style, quoted_speech |
+| 16 | `VIS-TRANS-008` | `verified` | `medium` | literal_arrival_or_delivery |
+| 17 | `VIS-TRANS-009` | `missing` | `medium` | nested_physical_location_required |
+| 18 | `VIS-TRANS-010` | `missing` | `medium` | legal_term_of_art, academic_classification |
+| 19 | `VIS-TRANS-011` | `verified` | `strong` | profile:legal, profile:audit_report, legal_standard |
+| 20 | `VIS-TRANS-012` | `verified` | `medium` | direct_quotes |
+| 21 | `VIS-TRANS-013` | `missing` | `medium` | direct_quotes |
+| 22 | `VIS-TRANS-014` | `missing` | `medium` | code_block |
+| 23 | `VIS-TRANS-015` | `verified` | `strong` | direct_quotes, code_block |
 
-Toàn bộ 51 rule hiện có 47 rule `verified` và 4 rule `missing`. Không rule nào được gán `internal` khi chưa có xác nhận nguồn nội bộ thật.
+Toàn bộ 55 rule hiện có 51 rule `verified` và 4 rule `missing`. Không rule nào được gán `internal` khi chưa có xác nhận nguồn nội bộ thật.
 
 ## Bảng dương tính giả cho người đọc
 

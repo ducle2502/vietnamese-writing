@@ -1,12 +1,12 @@
 # Ngân hàng khuôn câu tổng hợp
 
-Tệp này gom hai bộ khuôn câu vào một chỗ: 25 cấu trúc văn AI, 25 cấu trúc dịch thô, 500 khuôn câu và 16 mẫu rà soát tài liệu kỹ thuật. Mỗi mục ghi rõ rule đang bắt hoặc lý do chuyển sang rà thủ công. Khuôn câu dài đặt trong khối mã để không lẫn với văn xuôi.
+Tài liệu tổng hợp 25 cấu trúc văn AI, 25 cấu trúc dịch thô, 500 khuôn câu mẫu và 16 tình huống tài liệu kỹ thuật. Mỗi mục ghi rõ mã quy tắc đang xử lý hoặc chuyển sang rà thủ công. Các khuôn câu đặt trong khối mã để tách khỏi văn xuôi.
 
 ## Phần A. Khuôn câu văn AI
 
-Tệp này gom 25 cấu trúc, 250 khuôn câu và 16 mẫu rà soát từ tài liệu huấn luyện nội bộ. Mỗi mục ghi rõ rule đang bắt hoặc lý do chuyển sang rà thủ công. Khuôn câu dài đặt trong khối mã để không lẫn với văn xuôi.
+Phần này liệt kê 25 cấu trúc đặc trưng, 250 khuôn câu lắp ghép và 16 mẫu lỗi tài liệu kỹ thuật thường gặp.
 
-### 1. Hai mươi lăm cấu trúc AI
+### 1. 25 cấu trúc AI
 
 | Mã | Tên cấu trúc | Rule xử lý |
 | :--- | :--- | :--- |
@@ -36,7 +36,7 @@ Tệp này gom 25 cấu trúc, 250 khuôn câu và 16 mẫu rà soát từ tài 
 | `C24` | Viết hoa Tiêu đề kiểu Tiếng Anh (Title Case) | `VIS-STRUCT-002` |
 | `C25` | Bội thực In đậm, Markdown sống & Emoji | `VIS-STRUCT-002` |
 
-### 2. Hai trăm năm mươi khuôn câu
+### 2. 250 khuôn câu AI
 
 #### 01. Khuôn mở đoạn định nghĩa & đóng khung chủ đề (25 khuôn)
 
@@ -338,7 +338,7 @@ Một điều chắc chắn rằng [X] sẽ còn định hình tương lai lâu 
 Cảm ơn bạn đã đồng hành đến cuối bài viết chuyên sâu này12.
 ```
 
-### 3. Mười sáu mẫu từ tài liệu kỹ thuật
+### 3. 16 mẫu từ tài liệu kỹ thuật
 
 | Mẫu | Dấu hiệu | Cách xử lý |
 | :---: | :--- | :--- |
@@ -365,9 +365,9 @@ Quét tệp sau khi viết bằng `python scripts/vi_scanner.py scan TEP.md --js
 
 ## Phần B. Khuôn câu dịch thô
 
-Tệp này gom 25 cấu trúc, 250 khuôn câu và 12 bộ lọc regex từ tài liệu huấn luyện nội bộ. Khuôn câu dài đặt trong khối mã. Regex chỉ dùng để phát hiện, không tự động sửa.
+Phần này liệt kê 25 cấu trúc cú pháp dịch sát, 250 khuôn câu và 12 bộ lọc biểu thức chính quy đi kèm. Biểu thức chỉ dùng để phát hiện vị trí cần đọc lại, không tự động thay câu.
 
-### 1. Hai mươi lăm cấu trúc dịch thô
+### 1. 25 cấu trúc dịch thô
 
 | Mã | Tên cấu trúc | Rule xử lý |
 | :--- | :--- | :--- |
@@ -397,7 +397,7 @@ Tệp này gom 25 cấu trúc, 250 khuôn câu và 12 bộ lọc regex từ tài
 | `G24` | Hậu tố "Mang tính..." & Bị động chắp dính Hàn – Nhật | `VIS-TRANS-010` |
 | `G25` | Mệnh đề SOV Nhật – Hàn dồn động từ xuống đáy câu | `VIS-TRANS-014` |
 
-### 2. Hai trăm năm mươi khuôn câu
+### 2. 250 khuôn câu dịch thô
 
 #### 01. Cụm Danh từ hóa Sự / Việc / Tính / Cuộc lạm dụng (25 mẫu)
 
@@ -699,7 +699,7 @@ Cuốn sách mà hôm qua ở hiệu sách cạnh ga tàu tôi đã mua rất ha
 Do vì nguyên nhân tuyết rơi dày nên chuyến bay bị hoãn mất rồi (dồn vị ngữ cuối câu)65.
 ```
 
-### 3. Mười hai bộ lọc regex
+### 3. 12 bộ lọc regex
 
 ```text
 RX01  Mở bài đóng khung:        (?i)\b(?:trong\s+bối\s+cảnh|trong\s+kỷ\s+nguyên|giữa\s+làn\s+sóng)\b

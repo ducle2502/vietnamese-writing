@@ -21,8 +21,8 @@ except ImportError:
     _re2_engine = None
     USING_RE2 = False
 
-VERSION = "2.3.0"
-SCHEMA_VERSION = "2.3.0"
+VERSION = "2.4.0"
+SCHEMA_VERSION = "2.4.0"
 
 
 class _RegexMatch(Protocol):

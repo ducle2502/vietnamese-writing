@@ -2,11 +2,20 @@
 
 Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Chưa phát hành]
+## [2.4.0] - 2026-11-20
+
+### Thêm mới (Added)
+
+- Bổ sung `66` cụm từ vựng mới (`61` cụm AI dịch ngầm và `5` cụm dịch đặc tả kỹ thuật) vào [data/vocab.csv](data/vocab.csv) (`2.155` mục) cùng `4` quy tắc (`VIS-TRANS-015`, `VIS-TONE-003`, `VIS-RHET-010`, `VIS-STRUCT-004`) vào [data/grammar.csv](data/grammar.csv) (`55` quy tắc).
+- Thêm bộ khử nổ kép xuyên quy tắc `deduplicate_overlapping_findings` trong [scripts/_vi_extra_rules.py](scripts/_vi_extra_rules.py) và ngoại lệ nghĩa đen cho 7 ẩn dụ ngắn mới.
+- Thêm kiểm tra mật độ đoạn, biến thiên độ dài câu, trùng lặp bảng tóm tắt, trích dẫn cộc lốc và mở đầu cột ghi chú bảng kiểm trong `VIS-STRUCT-002`.
+- Tích hợp quy chuẩn báo cáo kiểm toán 3 lớp, khung 5C, chống nói quá/nói nhẹ và 10 quy tắc viết cột ghi chú bảng kiểm vào [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md).
 
 ### Thay đổi (Changed)
 
-- Chuẩn hóa đầu vào: Agent chuyển mọi tệp nguồn sang `TEN_GOC.raw.md` kèm `TEN_GOC.raw.meta.json` trước khi quét. Bộ chuyển đổi tất định chạy trước, `vision` chỉ dùng khi công cụ thất bại và phải ghi `deterministic=false` cùng `needs_review=true`.
+- Viết lại tự nhiên toàn bộ mặt tiền [README.md](README.md), [SKILL.md](SKILL.md), [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md) và `references/`. Cập nhật ví dụ trước/sau cùng số liệu đồng bộ lên `v2.4.0`.
+- Chuẩn hóa đầu vào: Agent chuyển mọi tệp nguồn sang `TEN_GOC.raw.md` kèm `TEN_GOC.raw.meta.json` trước khi quét. Công cụ chuyển đổi trực tiếp chạy trước, `vision` chỉ dùng khi công cụ thất bại và phải ghi `deterministic=false` cùng `needs_review=true`.
+- Vá 4 lỗ hổng chuẩn tối thiểu chung (`VIS-FMT-008`, `VIS-TRANS-012`, `VIS-TRANS-013`, `VIS-TRANS-014`) về `profiles=all` để mọi nhóm đều đạt mức nền tối thiểu.
 
 ## [2.3.0] - 2026-11-13
 
@@ -33,12 +42,12 @@ Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a
 
 ### Thêm mới (Added)
 
-- Bổ sung lệnh `profile` trong [scripts/vi_scanner.py](scripts/vi_scanner.py). Lệnh mới tính 18 chỉ số nhịp câu (`stylometry`), 12 chỉ số kỷ luật lập luận (`DHDNA v2.0`), phát hiện lệch mẫu số (`ung_vien_lech_mau_so`) và xếp loại 4 kiểu giọng văn chức năng.
+- Bổ sung lệnh `profile` trong [scripts/vi_scanner.py](scripts/vi_scanner.py). Lệnh mới tính 18 chỉ số nhịp câu (`stylometry`), 12 chỉ số nguyên tắc lập luận (`DHDNA v2.0`), phát hiện lệch mẫu số (`ung_vien_lech_mau_so`) và xếp loại 4 kiểu giọng văn chức năng.
 - Bổ sung trình đọc tệp Word `.docx` bằng thư viện chuẩn (`zipfile` + `xml.etree.ElementTree`). Người dùng có thể truyền `--ignore-table-cols` để bỏ qua cột trích lục của bên thứ ba và kiểm tra lỗi sót tiêu đề kỳ trước (`template_title_mismatch`).
-- Mở rộng `VIS-STRUCT-002` và `VIS-TONE-001` để rà kỷ luật số liệu và bằng chứng. Máy quét bắt lỗi gộp mục còn vướng mắc vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian và dùng bù trừ ròng kết luận khớp đúng. Bộ quét cũng chặn lỗi chốt tỷ lệ thiếu `Tử số/Mẫu số` và từ kịch tính hiện trường.
+- Mở rộng `VIS-STRUCT-002` và `VIS-TONE-001` để rà nguyên tắc số liệu và bằng chứng. Máy quét bắt lỗi gộp mục còn vướng mắc vào tỷ lệ hoàn thành, đóng lỗi bằng hướng dẫn trung gian và dùng bù trừ ròng kết luận khớp đúng. Bộ quét cũng chặn lỗi chốt tỷ lệ thiếu `Tử số/Mẫu số` và từ kịch tính hiện trường.
 - Bổ sung quy tắc `VIS-TONE-002` bắt họ động từ điều tra/cổ văn (`phát lộ`, `phát giác`, `bại lộ`, `vạch trần`) và mẫu câu kịch tính hóa sự cố hoặc con số (`sập API`, `vỏn vẹn`, `giậm chân tại chỗ`).
 - Khái quát hóa khung ngữ pháp dịch từng chữ của `VIS-LEX-001` (`hiện thực + <danh từ>`, `khung + <danh từ>`, `hợp đồng/giao kèo + <danh từ>`) và bổ sung họ lỗi chính tả công sở (`cập nhập`, `sát nhập`, `dậm chân`, `xoay sở`, `xuất sứ`).
-- Thêm [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) tổng hợp 4 kiểu giọng văn chức năng, 6 kỷ luật dẫn số liệu và bảng chuyển ngữ quản trị.
+- Thêm [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) tổng hợp 4 kiểu giọng văn chức năng, 6 nguyên tắc dẫn số liệu và bảng chuyển ngữ quản trị.
 
 ### Thay đổi (Changed)
 
@@ -64,7 +73,7 @@ Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a
 - Chuẩn hóa repo thành gói kỹ năng đa nền tảng (`SKILL.md`, `AGENTS.md`, `package.json`, `.claude-plugin/`, `.cursor-plugin/`, `evals/evals.json`).
 - Mở rộng công cụ [scripts/vi_scanner.py](scripts/vi_scanner.py) lên 30 quy tắc chia thành 6 nhóm (`VIS-AI`, `VIS-RHET`, `VIS-FMT`, `VIS-TRANS`, `VIS-CLICHE` cùng nhóm `VIS-LEX`, `VIS-TONE`, `VIS-STRUCT`).
 - Hỗ trợ 7 nhóm văn bản (`general`, `audit_report`, `academic`, `legal`, `marketing`, `social_media`, `translation`) với chế độ quét mặc định `--profile all` xuất đủ 100% tín hiệu kèm danh sách nhóm áp dụng và nhóm không áp dụng.
-- Bổ sung bộ tách riêng vùng không quét (`SemanticMasker`) giữ nguyên tọa độ dòng và cột cho khối code, mã nội dòng, đường dẫn liên kết và câu trích dẫn trong ngoặc kép.
+- Bổ sung bộ tách riêng vùng không quét (`SemanticMasker`) giữ nguyên tọa độ dòng và cột cho khối code, đoạn mã ngắn trong câu, đường dẫn liên kết và câu trích dẫn trong ngoặc kép.
 - Bổ sung lệnh `verify` đối chiếu 6 nhóm dữ kiện gốc (số liệu, phủ định, điều kiện, mức chắc chắn, đường dẫn và nguồn trích dẫn) cùng lệnh `check-maintenance` nhắc lịch rà soát từ mượn định kỳ.
 - Thiết lập quy trình kiểm thử tự động [ci.yml](.github/workflows/ci.yml) trên Ubuntu, macOS và Windows cùng bộ hơn 100 mẫu kiểm thử độc lập tại [tests/test_vi_scanner.py](tests/test_vi_scanner.py).
 

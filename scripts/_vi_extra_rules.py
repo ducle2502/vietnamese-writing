@@ -13,7 +13,7 @@ from _vi_types import Profile
 if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping, Sequence
 
-    from _vi_types import Finding, RuleDefinition, _ScanBuffer
+    from _vi_types import Finding, RuleDefinition, StylometryReport, _ScanBuffer
 
 _ROADMAP_HEADING_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"(?im)^#{1,6}[^\n]*\b(?:tiến\s+độ|lộ\s+trình|cột\s+mốc|milestone)\b[^\n]*$"
@@ -216,17 +216,20 @@ def deduplicate_overlapping_findings(
     return out
 
 
-def _audit_stylometry_extras(rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None) -> list[Finding]:
+def _audit_stylometry_extras(
+    rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None, stylo: StylometryReport | None = None
+) -> list[Finding]:
     if prof not in (None, Profile.AUDIT_REPORT):
         return []
     need_density = prof == Profile.AUDIT_REPORT and len(buf.para_spans) >= 3
     need_cv = buf.word_count >= 100
     if not (need_density or need_cv):
         return []
-    prose_only = "\n".join(
-        ln for ln in buf.masked_full.splitlines() if not (ln.strip().startswith("|") and ln.strip().endswith("|"))
-    )
-    stylo = compute_stylometry(prose_only, max_table_sent=0)
+    if stylo is None:
+        prose_only = "\n".join(
+            ln for ln in buf.masked_full.splitlines() if not (ln.strip().startswith("|") and ln.strip().endswith("|"))
+        )
+        stylo = compute_stylometry(prose_only, max_table_sent=0)
     findings: list[Finding] = []
     anchor = buf.para_spans[0][0] if buf.para_spans else 0
     if need_density and stylo["so_doan"] >= 3 and stylo["cau_trung_binh_doan"] > 2.5:
@@ -388,9 +391,11 @@ def _check_checklist_notes(rule: RuleDefinition, buf: _ScanBuffer) -> list[Findi
     return findings
 
 
-def check_audit_structure_extras(rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None) -> list[Finding]:
+def check_audit_structure_extras(
+    rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None, stylo: StylometryReport | None = None
+) -> list[Finding]:
     """Kiểm tra mật độ đoạn, CV câu, lặp bảng tóm tắt, trích dẫn cộc lốc và mở đầu ghi chú bảng kiểm."""
-    findings = _audit_stylometry_extras(rule, buf, prof)
+    findings = _audit_stylometry_extras(rule, buf, prof, stylo=stylo)
     findings.extend(_check_summary_table_overlap(rule, buf))
     findings.extend(_check_standalone_citations(rule, buf, prof))
     findings.extend(_check_checklist_notes(rule, buf))

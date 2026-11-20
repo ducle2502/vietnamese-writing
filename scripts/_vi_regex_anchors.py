@@ -7,6 +7,37 @@ import re as stdlib_re
 _REGEX_META_CHARS: frozenset[str] = frozenset(".^$*+?{}[]\\|()")
 _REGEX_QUANT_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?:[*+?]\??|\{\d+(?:,\d*)?\}\??)")
 _INLINE_FLAG_PREFIX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"^\(\?[im]+\)")
+_COMMON_ANCHOR_STOPWORDS: frozenset[str] = frozenset(
+    {
+        "trong",
+        "không",
+        "cách",
+        "một",
+        "các",
+        "những",
+        "của",
+        "cho",
+        "với",
+        "được",
+        "này",
+        "đó",
+        "từ",
+        "vì",
+        "khi",
+        "để",
+        "là",
+        "có",
+        "và",
+        "về",
+        "bị",
+        "như",
+        "ở",
+        "ra",
+        "vào",
+        "lên",
+        "xuống",
+    }
+)
 
 
 def safe_lower_preserve_len(text: str) -> str:
@@ -89,10 +120,16 @@ def _split_top_level_pipes(expr: str) -> list[str]:
     return parts
 
 
-def _flush_best_literal(cur_lit: list[str], best_lit: str) -> str:
-    candidate = "".join(cur_lit)
+def _flush_best_literals(cur_lit: list[str], best_rare: str, best_any: str) -> tuple[str, str]:
+    candidate = "".join(cur_lit).strip()
     cur_lit.clear()
-    return candidate if len(candidate) > len(best_lit) else best_lit
+    if not candidate:
+        return best_rare, best_any
+    if candidate not in _COMMON_ANCHOR_STOPWORDS and len(candidate) > len(best_rare):
+        best_rare = candidate
+    if len(candidate) > len(best_any):
+        best_any = candidate
+    return best_rare, best_any
 
 
 def _consume_regex_atom(seq: str, idx: int) -> tuple[str | None, int, bool]:
@@ -113,6 +150,16 @@ def _consume_regex_atom(seq: str, idx: int) -> tuple[str | None, int, bool]:
     return safe_lower_preserve_len(ch), next_i, (next_i > idx + 1)
 
 
+def _is_preferred_group(g_set: set[str], best_group_set: set[str] | None) -> bool:
+    if best_group_set is None:
+        return True
+    g_has_stop = any(tok in _COMMON_ANCHOR_STOPWORDS for tok in g_set)
+    best_has_stop = any(tok in _COMMON_ANCHOR_STOPWORDS for tok in best_group_set)
+    if g_has_stop != best_has_stop:
+        return not g_has_stop
+    return len(g_set) <= len(best_group_set)
+
+
 def _merge_group_anchors(best_group_set: set[str] | None, inner: str) -> set[str] | None:
     if inner.startswith(("?=", "?!", "?<")):
         return best_group_set
@@ -120,13 +167,18 @@ def _merge_group_anchors(best_group_set: set[str] | None, inner: str) -> set[str
     if inner.startswith("?"):
         return best_group_set
     g_set = _extract_anchor_set(inner)
-    if g_set and (best_group_set is None or len(g_set) < len(best_group_set)):
+    if g_set and _is_preferred_group(g_set, best_group_set):
         return g_set
     return best_group_set
 
 
+def _is_valid_anchor_lit(lit: str) -> bool:
+    return len(lit) >= 2 or lit in ("—", ";", "[")
+
+
 def _extract_seq_anchors(seq: str) -> set[str] | None:
-    best_lit = ""
+    best_rare = ""
+    best_any = ""
     best_group_set: set[str] | None = None
     cur_lit: list[str] = []
     idx = 0
@@ -134,11 +186,11 @@ def _extract_seq_anchors(seq: str) -> set[str] | None:
     while idx < n:
         ch = seq[idx]
         if ch == "[":
-            best_lit = _flush_best_literal(cur_lit, best_lit)
+            best_rare, best_any = _flush_best_literals(cur_lit, best_rare, best_any)
             idx, _ = _quantifier_info(seq, _skip_char_class(seq, idx))
             continue
         if ch == "(":
-            best_lit = _flush_best_literal(cur_lit, best_lit)
+            best_rare, best_any = _flush_best_literals(cur_lit, best_rare, best_any)
             close_end = _find_matching_paren(seq, idx)
             next_i, is_opt = _quantifier_info(seq, close_end)
             if not is_opt:
@@ -147,15 +199,17 @@ def _extract_seq_anchors(seq: str) -> set[str] | None:
             continue
         lit_ch, idx, breaks_after = _consume_regex_atom(seq, idx)
         if lit_ch is None:
-            best_lit = _flush_best_literal(cur_lit, best_lit)
+            best_rare, best_any = _flush_best_literals(cur_lit, best_rare, best_any)
         else:
             cur_lit.append(lit_ch)
             if breaks_after:
-                best_lit = _flush_best_literal(cur_lit, best_lit)
-    best_lit = _flush_best_literal(cur_lit, best_lit).strip()
-    if len(best_lit) >= 2 or best_lit in ("—", ";", "["):
-        return {best_lit}
-    return best_group_set
+                best_rare, best_any = _flush_best_literals(cur_lit, best_rare, best_any)
+    best_rare, best_any = _flush_best_literals(cur_lit, best_rare, best_any)
+    if _is_valid_anchor_lit(best_rare):
+        return {best_rare}
+    if best_group_set:
+        return best_group_set
+    return {best_any} if _is_valid_anchor_lit(best_any) else None
 
 
 def _extract_anchor_set(expr: str) -> set[str] | None:

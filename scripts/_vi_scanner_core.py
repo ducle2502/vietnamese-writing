@@ -66,6 +66,8 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
     from pathlib import Path
 
+    from _vi_types import StylometryReport
+
 _BRIDGE_NEGATION_RE = stdlib_re.compile(
     r"(?i)\b(?:chưa\s+đồng nghĩa\s+với|không\s+đồng nghĩa\s+với|"
     r"không\s+có\s+nghĩa\s+là|không\s+phải\s+là\s+hai\s+cực\s+đối\s+lập)\b"
@@ -79,8 +81,6 @@ _AI007_ROLE_LIST_RE = compile_rule_regex(
 _ALGO_RUNNERS: dict[str, Callable[[RuleDefinition, _ScanBuffer, Profile | None], list[Finding]]] = {
     "ALGO:BOLD_COLON_LIST_STREAK_MIN_3": run_bold_colon_list_rule,
     "ALGO:PARAGRAPH_CV_AND_OPENING_MONOTONY": run_monotony_rule,
-    "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK": run_loanword_and_jargon_rule,
-    "ALGO:DOCUMENT_AND_TABLE_HYGIENE": run_document_and_table_hygiene,
     "ALGO:LENGTHY_AND_ROUNDABOUT_SENTENCE": run_lengthy_and_roundabout_rule,
     "ALGO:STACCATO_FRAGMENT_STREAK_MIN_3": run_staccato_fragment_rule,
     "ALGO:FAKE_ROADMAP_AND_OBVIOUS_EXPLAINER": run_fake_roadmap_rule,
@@ -408,11 +408,15 @@ class ViScanner:
         rule: RuleDefinition,
         buf: _ScanBuffer,
         prof: Profile | None,
+        *,
         vocab_hits: Sequence[PhraseHit] = (),
         rev_hits: Sequence[PhraseHit] = (),
+        stylo: StylometryReport | None = None,
     ) -> list[Finding]:
         if rule.regex_or_algorithm == "ALGO:LOANWORD_AND_FOREIGN_TOKEN_CHECK":
             return run_loanword_and_jargon_rule(rule, buf, prof, self.vocab, rev_hits=rev_hits)
+        if rule.regex_or_algorithm == "ALGO:DOCUMENT_AND_TABLE_HYGIENE":
+            return run_document_and_table_hygiene(rule, buf, prof, stylo=stylo)
         algo_runner = _ALGO_RUNNERS.get(rule.regex_or_algorithm)
         if algo_runner is not None:
             return algo_runner(rule, buf, prof)
@@ -452,19 +456,22 @@ class ViScanner:
         )
         buf = build_scan_buffer(text)
         vocab_by_rule, rev_hits = self.vocab.phrase_trie.scan_all(tokenize_prose(buf.masked_prose_lower))
+        prose_only = "\n".join(
+            ln for ln in buf.masked_full.splitlines() if not (ln.strip().startswith("|") and ln.strip().endswith("|"))
+        )
+        stylo = compute_stylometry(prose_only, max_table_sent=max_table_sentence_words(buf.masked_full))
         findings: list[Finding] = []
         for rid, rule in self.rules.items():
             if (active_rule_ids is not None and rid not in active_rule_ids) or (
                 prof is not None and prof not in rule.profiles
             ):
                 continue
-            findings.extend(self._run_rule(rule, buf, prof, vocab_hits=vocab_by_rule.get(rid, ()), rev_hits=rev_hits))
+            findings.extend(
+                self._run_rule(rule, buf, prof, vocab_hits=vocab_by_rule.get(rid, ()), rev_hits=rev_hits, stylo=stylo)
+            )
         findings = deduplicate_overlapping_findings(findings, self.rules)
         findings.sort(key=lambda f: (f.line, f.col, f.rule_id))
         elapsed_ms = round((time.perf_counter() - t0) * 1000, 3)
-        prose_only = "\n".join(
-            ln for ln in buf.masked_full.splitlines() if not (ln.strip().startswith("|") and ln.strip().endswith("|"))
-        )
         return ScanReport(
             schema_version=self.SCHEMA_VERSION,
             scanner_version=self.VERSION,
@@ -482,6 +489,6 @@ class ViScanner:
             maintenance_due=check_loanwords_maintenance()["due_for_quarterly_review"],
             disclaimer=self.DISCLAIMER,
             semantic_invariants_summary={k: len(v) for k, v in SemanticMasker.extract_invariants(text).items()},
-            stylometry=compute_stylometry(prose_only, max_table_sent=max_table_sentence_words(buf.masked_full)),
+            stylometry=stylo,
             findings=findings,
         )

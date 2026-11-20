@@ -15,10 +15,15 @@ from _vi_types import Finding, Profile, RuleDefinition, _ScanBuffer
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from _vi_types import StylometryReport
+
 _PAREN_STRIP_RE = stdlib_re.compile(r"\([^)]*\)")
 _CURRENCY_UNIT_RE = stdlib_re.compile(r"(?i)\b(?:đồng|đ|vnd|tr|triệu|tỷ)\b")
 _PARSE_NUM_RE = stdlib_re.compile(r"^[+-]?\d+(?:[.,]\d+)*$")
 _THOUSAND_DOT_NUM_RE = stdlib_re.compile(r"^[+-]?\d{1,3}(?:\.\d{3})+$")
+_DECOR_EMOJIS = "🚀💡✨🎯🔥📌✅⭐🌟💪🎉👉⚡🔍📊🏆💎🌈"
+_ADMIN_PROFS = ("general", "audit_report", "academic", "legal")
+_COMMON_HYG_PROFS = ("general", "audit_report", "academic", "legal", "translation")
 
 _QUICK_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] | None], ...] = (
     (
@@ -36,7 +41,7 @@ _QUICK_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] 
     (
         stdlib_re.compile(r"->"),
         "Thay mũi tên ASCII `->` trong câu văn xuôi bằng từ nối nhân quả hoặc thứ tự tự nhiên.",
-        ("general", "audit_report", "academic", "legal", "social_media", "translation"),
+        (*_ADMIN_PROFS, "social_media", "translation"),
     ),
     (
         stdlib_re.compile(r"(?m)(?:^[^;\n]*;){2,}"),
@@ -44,9 +49,9 @@ _QUICK_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] 
         ("general", "marketing", "social_media", "translation"),
     ),
     (
-        stdlib_re.compile(r"[🚀💡✨🎯🔥📌✅⭐🌟💪🎉👉⚡🔍📊🏆💎🌈]"),
+        stdlib_re.compile(f"[{_DECOR_EMOJIS}]"),
         "Gỡ emoji trang trí kiểu bài mẫu AI khỏi văn bản chuyên môn/kỹ thuật.",
-        ("general", "audit_report", "academic", "legal", "translation"),
+        _COMMON_HYG_PROFS,
     ),
 )
 
@@ -54,7 +59,7 @@ _VI_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] | N
     (
         stdlib_re.compile(r"\b\d+\.\d+%"),
         "Dùng dấu phẩy cho số thập phân phần trăm trong tiếng Việt (ví dụ: '59,9%' thay vì '59.9%').",
-        ("general", "audit_report", "academic", "legal", "translation"),
+        _COMMON_HYG_PROFS,
     ),
     (
         stdlib_re.compile(r"\([A-Za-zÀ-ỹĐđ0-9\s,+/-]{2,60}=[A-Za-zÀ-ỹĐđ0-9\s,+/%-]{1,60}\)"),
@@ -64,7 +69,7 @@ _VI_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] | N
     (
         stdlib_re.compile(r"(?:“[^”\n]{1,25}”[^.\n]{0,40}){2,}“[^”\n]{1,25}”"),
         "Gỡ dấu ngoặc kép cong '“...”' bọc quanh các từ khóa thông thường không phải lời trích dẫn.",
-        ("general", "audit_report", "academic", "legal", "translation"),
+        _COMMON_HYG_PROFS,
     ),
     (
         stdlib_re.compile(
@@ -77,7 +82,7 @@ _VI_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] | N
             "Tách riêng tỷ lệ hoàn thành không lỗi và tỷ lệ còn lỗi/vướng mắc, "
             "không cộng gộp mục còn lỗi vào chỉ số hoàn thành."
         ),
-        ("general", "audit_report", "academic", "legal"),
+        _ADMIN_PROFS,
     ),
     (
         stdlib_re.compile(
@@ -91,7 +96,7 @@ _VI_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] | N
             "Không tính hoạt động trung gian (nhắc lại, hướng dẫn lại, đang trình, họp bàn) "
             "là đã hoàn thành hoặc đã đóng lỗi khi chưa có đầu ra kiểm chứng."
         ),
-        ("general", "audit_report", "academic", "legal"),
+        _ADMIN_PROFS,
     ),
     (
         stdlib_re.compile(
@@ -103,7 +108,7 @@ _VI_HYGIENE_CHECKS: tuple[tuple[stdlib_re.Pattern[str], str, tuple[str, ...] | N
             "Tổng chênh lệch ròng bằng 0 do bù trừ qua lại không chứng minh dữ liệu khớp đúng ở cấp giao dịch đơn lẻ; "
             "cần đối soát theo tổng giá trị tuyệt đối của chênh lệch."
         ),
-        ("general", "audit_report", "academic", "legal"),
+        _ADMIN_PROFS,
     ),
 )
 
@@ -179,11 +184,21 @@ def _run_pattern_hygiene_checks(
 def _check_prose_and_pct_hygiene(
     rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None, *, has_vi: bool
 ) -> list[Finding]:
-    findings = _run_pattern_hygiene_checks(rule, buf, prof, _QUICK_HYGIENE_CHECKS)
+    prose = buf.masked_prose
+    prose_lower = buf.masked_prose_lower
+    quick_gates = (
+        any(c in prose for c in "\u200b\u200c\u200d\ufeff"),
+        "****" in prose,
+        "#" in prose,
+        "thiếu" in prose_lower,
+        "->" in prose,
+        ";" in prose,
+        any(c in prose for c in _DECOR_EMOJIS),
+    )
+    findings = _run_pattern_hygiene_checks(rule, buf, prof, _QUICK_HYGIENE_CHECKS, gates=quick_gates)
     if not has_vi:
         return findings
 
-    prose_lower = buf.masked_prose_lower
     vi_gates = (
         "%" in buf.masked_prose,
         "=" in buf.masked_prose,
@@ -233,15 +248,8 @@ def _find_orphan_subheading(
         if len(direct_children) == 1:
             child_off, child_txt = direct_children[0]
             if _NUMBERED_SUBHEADING_RE.match(child_txt):
-                return make_finding(
-                    rule,
-                    buf,
-                    child_off,
-                    child_txt,
-                    custom_suggestion=(
-                        f"Mục '{h_txt}' chỉ có duy nhất một mục con '{child_txt}'; nên bỏ cấp tiêu đề con lẻ loi này."
-                    ),
-                )
+                msg = f"Mục '{h_txt}' chỉ có duy nhất một mục con '{child_txt}'; nên bỏ cấp tiêu đề con lẻ loi này."
+                return make_finding(rule, buf, child_off, child_txt, custom_suggestion=msg)
     return None
 
 
@@ -264,31 +272,14 @@ def _check_headings_and_colon_lists(rule: RuleDefinition, buf: _ScanBuffer, *, h
                 and not h_text.isupper()
                 and sum(1 for w in words if w[0].isupper() and not w.isupper()) >= max(4, math.ceil(len(words) * 0.8))
             ):
-                findings.append(
-                    make_finding(
-                        rule,
-                        buf,
-                        offset,
-                        ln.strip(),
-                        custom_suggestion=(
-                            "Chỉ viết hoa chữ cái đầu câu và danh từ riêng trong tiêu đề tiếng Việt, "
-                            "không viết hoa đầu mỗi chữ kiểu tiếng Anh."
-                        ),
-                    )
+                msg = (
+                    "Chỉ viết hoa chữ cái đầu câu và danh từ riêng trong tiêu đề tiếng Việt, "
+                    "không viết hoa đầu mỗi chữ kiểu tiếng Anh."
                 )
+                findings.append(make_finding(rule, buf, offset, ln.strip(), custom_suggestion=msg))
         elif _LIST_BULLET_RE.match(ln) and _COLON_RATIO_TIME_RE.sub("", ln).count(":") >= 2:
-            findings.append(
-                make_finding(
-                    rule,
-                    buf,
-                    offset,
-                    ln.strip()[:100],
-                    custom_suggestion=(
-                        "Không đặt từ 2 dấu hai chấm `:` trở lên trong cùng một mục liệt kê; "
-                        "hãy đưa nhãn phụ vào ngoặc đơn."
-                    ),
-                )
-            )
+            msg = "Không đặt từ 2 dấu hai chấm `:` trở lên trong cùng một mục liệt kê; hãy đưa nhãn phụ vào ngoặc đơn."
+            findings.append(make_finding(rule, buf, offset, ln.strip()[:100], custom_suggestion=msg))
         offset += len(ln)
 
     orphan = _find_orphan_subheading(rule, buf, headings)
@@ -485,7 +476,9 @@ def _check_markup_trees_and_backticks(rule: RuleDefinition, buf: _ScanBuffer, *,
     return findings
 
 
-def run_document_and_table_hygiene(rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None) -> list[Finding]:
+def run_document_and_table_hygiene(
+    rule: RuleDefinition, buf: _ScanBuffer, prof: Profile | None, stylo: StylometryReport | None = None
+) -> list[Finding]:
     has_vi = bool(VI_DIACRITIC_RE.search(buf.masked_prose))
     findings = _check_prose_and_pct_hygiene(rule, buf, prof, has_vi=has_vi)
     findings.extend(check_prose_proximity_echo(rule, buf, prof))
@@ -493,5 +486,5 @@ def run_document_and_table_hygiene(rule: RuleDefinition, buf: _ScanBuffer, prof:
     for tbl in _extract_markdown_table_blocks(buf.raw_text):
         findings.extend(_check_single_markdown_table(rule, buf, tbl))
     findings.extend(_check_markup_trees_and_backticks(rule, buf, has_vi=has_vi))
-    findings.extend(check_audit_structure_extras(rule, buf, prof))
+    findings.extend(check_audit_structure_extras(rule, buf, prof, stylo=stylo))
     return findings

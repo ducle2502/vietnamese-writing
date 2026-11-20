@@ -26,14 +26,18 @@ _safe_lower_preserve_len = safe_lower_preserve_len
 
 _PARA_BREAK_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"\n\s*\n")
 _VI_COMMENT_CHAR_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"[à-ỹđÀ-ỸĐ]")
+_HAS_DIGIT_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"\d")
 _INV_NUMBERS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"\b\d+(?:[.,/]\d+)*%?\b")
-_INV_NEGATIONS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)\b(?:không|chưa|chẳng|chớ|miễn|cấm|phi|vô)\b")
+_INV_NEGATIONS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"\b(?:không|chưa|chẳng|chớ|miễn|cấm|phi|vô)\b")
 _INV_CONDITIONALS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
-    r"(?i)\b(?:nếu|trừ khi|miễn là|trong trường hợp|với điều kiện)\b"
+    r"\b(?:nếu|trừ khi|miễn là|trong trường hợp|với điều kiện)\b"
 )
 _INV_MODALS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
-    r"(?i)\b(?:có thể|phải|bắt buộc|ước tính|khoảng|dự kiến|tối đa|tối thiểu)\b"
+    r"\b(?:có thể|phải|bắt buộc|ước tính|khoảng|dự kiến|tối đa|tối thiểu)\b"
 )
+_INV_NEG_GATES: tuple[str, ...] = ("không", "chưa", "chẳng", "chớ", "miễn", "cấm", "phi", "vô")
+_INV_COND_GATES: tuple[str, ...] = ("nếu", "trừ", "miễn", "trường", "điều")
+_INV_MOD_GATES: tuple[str, ...] = ("thể", "phải", "bắt", "ước", "khoảng", "dự", "tối")
 _INV_CITATIONS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"\([A-ZÀ-ỸĐ][^()\n]{2,50},\s*\d{4}[a-z]?\)|\[\d+(?:,\s*\d+)*\]"
 )
@@ -267,10 +271,12 @@ class SemanticMasker:
     def extract_invariants(cls, text: str) -> dict[str, list[str]]:
         lower_text = safe_lower_preserve_len(text)
         return {
-            "numbers": _INV_NUMBERS_RE.findall(text),
-            "negations": _INV_NEGATIONS_RE.findall(lower_text),
-            "conditionals": _INV_CONDITIONALS_RE.findall(lower_text),
-            "modals": _INV_MODALS_RE.findall(lower_text),
+            "numbers": _INV_NUMBERS_RE.findall(text) if _HAS_DIGIT_RE.search(text) else [],
+            "negations": _INV_NEGATIONS_RE.findall(lower_text) if any(k in lower_text for k in _INV_NEG_GATES) else [],
+            "conditionals": (
+                _INV_CONDITIONALS_RE.findall(lower_text) if any(k in lower_text for k in _INV_COND_GATES) else []
+            ),
+            "modals": _INV_MODALS_RE.findall(lower_text) if any(k in lower_text for k in _INV_MOD_GATES) else [],
             "urls": ([u.split("?utm_source=")[0] for u in cls.BARE_URL_RE.findall(text)] if "://" in text else []),
             "citations": (_INV_CITATIONS_RE.findall(text) if ("(" in text or "[" in text) else []),
             "code_blocks": cls.CODE_BLOCK_RE.findall(text) if "```" in text else [],

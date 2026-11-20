@@ -255,9 +255,12 @@ def check_calque_heading(rule: RuleDefinition, buf: _ScanBuffer, offset: int, ra
 
 
 def _find_tail_echo_in_para(p_start: int, para_text: str) -> tuple[int, int, str] | None:
+    splits = list(_ECHO_SENT_SPLIT_RE.finditer(para_text))
+    if not splits:
+        return None
     pos = 0
     prev_tail = ""
-    for m_sp in [*_ECHO_SENT_SPLIT_RE.finditer(para_text), None]:
+    for m_sp in [*splits, None]:
         seg_end = m_sp.start() if m_sp is not None else len(para_text)
         raw_seg = para_text[pos:seg_end]
         m_bul = _BULLET_STRIP_RE.match(raw_seg)
@@ -282,6 +285,10 @@ def _find_tail_echo_in_para(p_start: int, para_text: str) -> tuple[int, int, str
 
 
 def _find_modifier_echo_in_para(p_start: int, para_text: str) -> tuple[int, int, str] | None:
+    low = safe_lower_preserve_len(para_text)
+    norm_low = low if ("\n" not in low and "  " not in low) else " ".join(low.split())
+    if not any(bg in norm_low for bg in _ECHO_MODIFIER_BIGRAMS):
+        return None
     toks = [(m.group(0).casefold(), m.start(), m.end()) for m in _PROSE_WORD_RE.finditer(para_text)]
     seen_at: dict[str, tuple[int, int]] = {}
     for idx in range(len(toks) - 1):

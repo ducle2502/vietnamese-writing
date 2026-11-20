@@ -159,7 +159,16 @@ def tokenize_prose(lower_text: str) -> TokenizedProse:
     starts = tuple(m.start() for m in matches)
     ends = tuple(m.end() for m in matches)
     has_space = (*(starts[i + 1] > ends[i] for i in range(n - 1)), False)
-    same_para = (*(not _PARA_GAP_RE.search(lower_text, ends[i], starts[i + 1]) for i in range(n - 1)), False)
+    if "\n" not in lower_text:
+        same_para: tuple[bool, ...] = ((True,) * (n - 1)) + (False,)
+    else:
+        same_para = (
+            *(
+                (starts[i + 1] - ends[i] < 2) or not _PARA_GAP_RE.search(lower_text, ends[i], starts[i + 1])
+                for i in range(n - 1)
+            ),
+            False,
+        )
     return TokenizedProse(words, starts, ends, has_space, same_para)
 
 
@@ -399,11 +408,14 @@ def _find_staccato_offset_in_para(p_start: int, para_text: str) -> tuple[int, in
     lines = [ln.strip() for ln in para_text.splitlines() if ln.strip()]
     if len(lines) >= 3 and all(len(ln.split()) < 8 for ln in lines):
         return None
-    masked_para = _PAREN_MASK_RE.sub(lambda m: " " * len(m.group(0)), para_text)
+    masked_para = _PAREN_MASK_RE.sub(lambda m: " " * len(m.group(0)), para_text) if "(" in para_text else para_text
+    splits = list(_STACCATO_SPLIT_RE.finditer(masked_para))
+    if len(splits) < 2:
+        return None
     streak = 0
     streak_off = 0
     pos = 0
-    for m_sp in [*_STACCATO_SPLIT_RE.finditer(masked_para), None]:
+    for m_sp in [*splits, None]:
         seg_end = m_sp.start() if m_sp is not None else len(masked_para)
         seg = masked_para[pos:seg_end].strip()
         wc = len(_STACCATO_WORD_RE.findall(seg))

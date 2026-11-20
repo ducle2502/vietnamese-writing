@@ -37,19 +37,9 @@ _SENT_EXEMPT_PATTERNS: dict[str, stdlib_re.Pattern[str]] = {
     "VIS-RHET-003": _EX_RHET003_RE,
     "VIS-TRANS-001": _EX_TRANS001_RE,
 }
-_LINGUISTIC_EXEMPT_RULES: frozenset[str] = frozenset(
-    {
-        "VIS-AI-003",
-        "VIS-LEX-001",
-        "VIS-RHET-004",
-        "VIS-RHET-005",
-        "VIS-CLICHE-001",
-        "VIS-CLICHE-004",
-        "VIS-TRANS-005",
-        "VIS-TRANS-007",
-        *_SENT_EXEMPT_PATTERNS,
-    }
-)
+_EXEMPT_GROUP_A = ("VIS-AI-003", "VIS-LEX-001", "VIS-RHET-004", "VIS-RHET-005")
+_EXEMPT_GROUP_B = ("VIS-CLICHE-001", "VIS-CLICHE-004", "VIS-TRANS-005", "VIS-TRANS-007")
+_LINGUISTIC_EXEMPT_RULES: frozenset[str] = frozenset({*_EXEMPT_GROUP_A, *_EXEMPT_GROUP_B, *_SENT_EXEMPT_PATTERNS})
 
 _EX_MKT_PRAISE_RE = stdlib_re.compile(r"(?i)\b(?:minh\s+chứng\s+sống\s+động|vai\s+trò\s+then\s+chốt)\b")
 _EX_LEGAL_CLAUSE_RE = stdlib_re.compile(
@@ -111,6 +101,9 @@ _SUBORDINATE_HINGE_RE = stdlib_re.compile(
     r"kết\s+hợp\s+với\s+việc|đồng\s+thời\s+với\s+việc|trong\s+quá\s+trình\s+(?:thực\s+hiện|triển\s+khai)|"
     r"qua\s+đó\s+góp\s+phần|từ\s+đó\s+dẫn\s+đến\s+việc|kéo\s+theo\s+việc)\b"
 )
+_ROUNDABOUT_HEAD_GATES = ("thông", "liên", "xoay", "đối", "cơ", "thực", "nhằm", "mục")
+_ROUNDABOUT_GATES: tuple[str, ...] = (*_ROUNDABOUT_HEAD_GATES, "thể", "phủ", "nhận", "nhấn", "lưu", "đáng")
+_SUB_HINGE_GATES: tuple[str, ...] = ("mặc", "tuy", "việc", "quá", "góp")
 
 
 def _is_direct_slice_exempt(rule_id: str, target_text: str, start: int, end: int) -> bool:
@@ -137,11 +130,8 @@ def is_linguistically_exempt(rule_id: str, target_text: str, start: int, end: in
         return True
     sent = sentence_around(target_text, start, end)
     if rule_id == "VIS-AI-003":
-        return bool(
-            _EX_YEAR_RE.search(sent)
-            and _EX_PCT_RE.search(sent)
-            and not _EX_AI003_GROWTH_RE.search(target_text[start:end])
-        )
+        span = target_text[start:end]
+        return bool(_EX_YEAR_RE.search(sent) and _EX_PCT_RE.search(sent) and not _EX_AI003_GROWTH_RE.search(span))
     pat = _SENT_EXEMPT_PATTERNS.get(rule_id)
     return bool(pat and pat.search(sent))
 
@@ -158,10 +148,8 @@ def is_profile_exempt(rule_id: str, target_text: str, start: int, end: int, prof
     if prof != Profile.LEGAL:
         return False
     pat = _LEGAL_SENT_PATTERNS.get(rule_id)
-    return bool(
-        (_EX_LEGAL_GLOSSARY_RE.search(target_text) if rule_id == "VIS-FMT-001" else False)
-        or (pat and pat.search(sentence_around(target_text, start, end)))
-    )
+    glossary_ok = rule_id == "VIS-FMT-001" and bool(_EX_LEGAL_GLOSSARY_RE.search(target_text))
+    return glossary_ok or bool(pat and pat.search(sentence_around(target_text, start, end)))
 
 
 def _check_paragraph_cv(rule: RuleDefinition, buf: _ScanBuffer) -> Finding | None:
@@ -179,16 +167,14 @@ def _check_paragraph_cv(rule: RuleDefinition, buf: _ScanBuffer) -> Finding | Non
     cv = math.sqrt(sum((x - mean_len) ** 2 for x in lengths) / len(lengths)) / mean_len
     if cv >= rule.threshold.cv_max:
         return None
-    return make_finding(
-        rule,
-        buf,
-        para_spans[0][0],
-        f"[CV={cv:.3f} < {rule.threshold.cv_max} trên {len(para_spans)} đoạn]",
-        custom_suggestion="Thay đổi độ dài câu và đoạn theo mạch ý thực tế, tránh chia đoạn đều như khuôn đúc.",
-    )
+    msg = "Thay đổi độ dài câu và đoạn theo mạch ý thực tế, tránh chia đoạn đều như khuôn đúc."
+    hit = f"[CV={cv:.3f} < {rule.threshold.cv_max} trên {len(para_spans)} đoạn]"
+    return make_finding(rule, buf, para_spans[0][0], hit, custom_suggestion=msg)
 
 
 def _check_consecutive_openers(rule: RuleDefinition, buf: _ScanBuffer) -> Finding | None:
+    if buf.masked_full.count("\n") < 2:
+        return None
     openers: list[tuple[int, str]] = []
     offset = 0
     for ln in buf.masked_full.splitlines(keepends=True):
@@ -203,13 +189,8 @@ def _check_consecutive_openers(rule: RuleDefinition, buf: _ScanBuffer) -> Findin
     for i in range(len(openers) - 2):
         w0 = openers[i][1]
         if w0 == openers[i + 1][1] == openers[i + 2][1]:
-            return make_finding(
-                rule,
-                buf,
-                openers[i][0],
-                f"Lặp từ mở đầu x3: '{w0}'",
-                custom_suggestion="Đổi chủ ngữ mở đầu từng câu thay vì lặp cùng một từ ở 3 câu liên tiếp.",
-            )
+            msg = "Đổi chủ ngữ mở đầu từng câu thay vì lặp cùng một từ ở 3 câu liên tiếp."
+            return make_finding(rule, buf, openers[i][0], f"Lặp từ mở đầu x3: '{w0}'", custom_suggestion=msg)
     return None
 
 
@@ -228,6 +209,8 @@ def _find_rotated_verb_column(body: Sequence[tuple[int, list[str]]]) -> tuple[in
 
 
 def _check_table_verb_rotation(rule: RuleDefinition, buf: _ScanBuffer) -> list[Finding]:
+    if "|" not in buf.raw_text:
+        return []
     findings: list[Finding] = []
     table_rows: list[tuple[int, list[str]]] = []
     offset = 0
@@ -241,18 +224,12 @@ def _check_table_verb_rotation(rule: RuleDefinition, buf: _ScanBuffer) -> list[F
                 rotated = _find_rotated_verb_column(body)
                 if rotated is not None:
                     col_idx, first_words = rotated
-                    findings.append(
-                        make_finding(
-                            rule,
-                            buf,
-                            body[0][0],
-                            f"Xoay vòng động từ đầu cột {col_idx + 1}: {', '.join(first_words[:5])}",
-                            custom_suggestion=(
-                                "Trong bảng kỹ thuật hoặc bảng phân công, bỏ động từ dẫn đầu "
-                                "và ghi thẳng tên tệp, lớp hoặc đầu việc."
-                            ),
-                        )
+                    hit = f"Xoay vòng động từ đầu cột {col_idx + 1}: {', '.join(first_words[:5])}"
+                    msg = (
+                        "Trong bảng kỹ thuật hoặc bảng phân công, bỏ động từ dẫn đầu "
+                        "và ghi thẳng tên tệp, lớp hoặc đầu việc."
                     )
+                    findings.append(make_finding(rule, buf, body[0][0], hit, custom_suggestion=msg))
             table_rows = []
         offset += len(ln)
     return findings
@@ -289,6 +266,7 @@ def _find_foreign_word_finding(
             continue
         if not VI_DIACRITIC_RE.search(sentence_around(buf.masked_prose, m_word.start(), m_word.end())):
             continue
+        raw_tok = buf.raw_text[m_word.start() : m_word.end()]
         if word in vocab.all_allowed_loanwords:
             if prof is None or prof == Profile.AUDIT_REPORT:
                 advice = (
@@ -297,23 +275,11 @@ def _find_foreign_word_finding(
                     else f"Cân nhắc diễn đạt '{word}' bằng tiếng Việt chuẩn trong báo cáo kiểm toán/quản trị."
                 )
                 return make_finding(
-                    rule,
-                    buf,
-                    m_word.start(),
-                    buf.raw_text[m_word.start() : m_word.end()],
-                    custom_suggestion=advice,
-                    override_profiles=("audit_report",),
+                    rule, buf, m_word.start(), raw_tok, custom_suggestion=advice, override_profiles=("audit_report",)
                 )
             continue
-        return make_finding(
-            rule,
-            buf,
-            m_word.start(),
-            buf.raw_text[m_word.start() : m_word.end()],
-            custom_suggestion=(
-                f"Từ tiếng Anh '{word}' chưa nằm trong nhóm từ quen dùng; nên diễn đạt bằng tiếng Việt phù hợp."
-            ),
-        )
+        msg = f"Từ tiếng Anh '{word}' chưa nằm trong nhóm từ quen dùng; nên diễn đạt bằng tiếng Việt phù hợp."
+        return make_finding(rule, buf, m_word.start(), raw_tok, custom_suggestion=msg)
     return None
 
 
@@ -344,15 +310,15 @@ def run_loanword_and_jargon_rule(
     if prof in (None, Profile.AUDIT_REPORT, Profile.SOCIAL_MEDIA):
         m_tech = _RAW_TECH_ID_RE.search(buf.masked_prose)
         if m_tech:
+            raw_tech = buf.raw_text[m_tech.start() : m_tech.end()]
+            msg = "Diễn đạt tên bảng hoặc phép tính kỹ thuật bằng ngôn ngữ nghiệp vụ dễ hiểu cho người đọc."
             findings.append(
                 make_finding(
                     rule,
                     buf,
                     m_tech.start(),
-                    buf.raw_text[m_tech.start() : m_tech.end()],
-                    custom_suggestion=(
-                        "Diễn đạt tên bảng hoặc phép tính kỹ thuật bằng ngôn ngữ nghiệp vụ dễ hiểu cho người đọc."
-                    ),
+                    raw_tech,
+                    custom_suggestion=msg,
                     override_profiles=("audit_report", "social_media"),
                 )
             )
@@ -364,11 +330,14 @@ def run_loanword_and_jargon_rule(
 
 def _prepare_length_prose(buf: _ScanBuffer) -> str:
     """Che ngoặc kép, dòng kẻ bảng, tiêu đề và sơ đồ cây nhưng giữ nguyên độ dài gốc."""
-    masked = SemanticMasker.QUOTED_SPEECH_RE.sub(
-        lambda m: "".join("\n" if ch == "\n" else " " for ch in m.group(0)),
-        buf.masked_full,
+    masked = (
+        SemanticMasker.QUOTED_SPEECH_RE.sub(
+            lambda m: "".join("\n" if ch == "\n" else " " for ch in m.group(0)), buf.masked_full
+        )
+        if ('"' in buf.masked_full or "“" in buf.masked_full)
+        else buf.masked_full
     )
-    if "<br" in buf.raw_text.lower():
+    if "<" in buf.raw_text and "<br" in buf.raw_text.lower():
         chars = list(masked)
         for m_br in _BR_TAG_RE.finditer(buf.raw_text):
             if chars[m_br.start()] == " ":
@@ -405,15 +374,17 @@ def _iter_prose_sentences(prose_buf: str) -> list[tuple[int, str]]:
 
 def _find_roundabout_hit(sent_text: str, wc: int, prof: Profile | None) -> tuple[int, str, bool] | None:
     """Trả về `(offset_trong_cau, nhan_loi, chi_ap_dung_ngoai_phap_ly)` nếu phát hiện cấu trúc vòng vo."""
-    m_rb = _ROUNDABOUT_PHRASE_RE.search(sent_text)
-    if m_rb:
-        raw_frag = " ".join(m_rb.group(0).lstrip(",; ").split())
-        return m_rb.start(), f"cụm dẫn dắt vòng vo '{raw_frag}'", False
-    if prof != Profile.LEGAL:
+    sent_low = sent_text.lower()
+    if any(k in sent_low for k in _ROUNDABOUT_GATES):
+        m_rb = _ROUNDABOUT_PHRASE_RE.search(sent_text)
+        if m_rb:
+            raw_frag = " ".join(m_rb.group(0).lstrip(",; ").split())
+            return m_rb.start(), f"cụm dẫn dắt vòng vo '{raw_frag}'", False
+    if prof != Profile.LEGAL and sent_low.startswith("việc"):
         m_viec = _BLOATED_VIEC_OPENER_RE.match(sent_text)
         if m_viec:
             return 0, "mở câu danh từ hóa cồng kềnh bằng 'Việc ...'", True
-    if wc >= 30:
+    if wc >= 30 and any(k in sent_low for k in _SUB_HINGE_GATES):
         hinges = list(_SUBORDINATE_HINGE_RE.finditer(sent_text))
         if len(hinges) >= 3:
             return hinges[0].start(), f"chồng {len(hinges)} mệnh đề rào đón/phụ thuộc trong một câu", False
@@ -445,7 +416,7 @@ def _evaluate_sentence_bloat(
         return None
     word_limit = 45 if prof == Profile.LEGAL else 35
     over_length = wc > word_limit
-    clause_commas = len(_CLAUSE_COMMA_RE.findall(sent_text))
+    clause_commas = len(_CLAUSE_COMMA_RE.findall(sent_text)) if "," in sent_text else 0
     comma_sprawl = prof != Profile.LEGAL and wc >= 28 and clause_commas >= 5 and (wc / (clause_commas + 1)) >= 4.5
     has_len = over_length or comma_sprawl
     rb_hit = _find_roundabout_hit(sent_text, wc, prof)
@@ -470,15 +441,15 @@ def _evaluate_sentence_bloat(
         reasons.append(rb_hit[1])
 
     hit_off = sent_start + (rb_hit[0] if rb_hit and not has_len else 0)
-    raw_snippet = " ".join(buf.raw_text[hit_off : sent_start + len(sent_text)].split())[:100]
-    exempt_legal = prof is None and wc <= 45 and (rb_hit is None or rb_hit[2])
+    raw_snippet = " ".join(buf.raw_text[hit_off : min(sent_start + len(sent_text), hit_off + 400)].split())[:100]
+    profs = _NON_LEGAL_PROFILES if (prof is None and wc <= 45 and (rb_hit is None or rb_hit[2])) else None
     finding = make_finding(
         rule,
         buf,
         hit_off,
         f"[{wc} từ] {raw_snippet}" if has_len else raw_snippet,
         custom_suggestion=_format_bloat_suggestion(reasons, has_len=has_len, has_rb=rb_hit is not None),
-        override_profiles=_NON_LEGAL_PROFILES if exempt_legal else None,
+        override_profiles=profs,
     )
     finding.weight = weight
     return finding

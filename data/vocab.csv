@@ -2088,3 +2088,69 @@ chậm rãi địa bước,banned_phrase,VIS-TRANS-013,Dùng 'chậm rãi bướ
 nhìn trứ bóng lưng,banned_phrase,VIS-TRANS-013,Dùng 'nhìn theo bóng lưng'.,active,Convert Trung–Việt (G17)
 phủ định đích thái độ,banned_phrase,VIS-TRANS-013,Dùng 'thái độ phủ định'.,active,Convert Trung–Việt (G17)
 đầu năm nay,banned_phrase,VIS-LEX-001,Dùng 'thời buổi này' hoặc 'dạo này'.,active,Convert Trung–Việt (nhóm 10)
+tóm tắt điều hành,banned_phrase,VIS-TRANS-005,Thay bằng Tóm tắt hoặc Tóm tắt báo cáo,active,Tránh dịch thẳng Executive Summary
+tuyên ngôn giọng văn,banned_phrase,VIS-LEX-001,Thay bằng nguyên tắc viết hoặc quy ước văn phong,active,Tránh dịch sát voice manifesto
+tuyên ngôn quản trị,banned_phrase,VIS-LEX-001,Thay bằng nguyên tắc quản trị hoặc cam kết quản trị,active,Tránh dịch sát governance manifesto
+tầng độc giả,banned_phrase,VIS-TRANS-005,Thay bằng nhóm người đọc hoặc lớp người đọc,active,Tránh dịch sát audience tier
+độ cao thông tin,banned_phrase,VIS-TRANS-005,Thay bằng mức độ chi tiết theo người đọc,active,Tránh dịch sát reading altitude
+dải định danh,banned_phrase,VIS-TRANS-005,Thay bằng thông tin phân loại hoặc thông tin đầu mục,active,Tránh dịch sát metadata strip
+khế ước bàn giao,banned_phrase,VIS-TRANS-005,Thay bằng mẫu bàn giao dữ liệu hoặc chuẩn bàn giao,active,Tránh dịch sát handoff contract
+bằng chứng tái lập,banned_phrase,VIS-TRANS-005,Thay bằng bằng chứng đủ để kiểm tra lại,active,Tránh dịch sát reproducible evidence
+tái lập nhận định,banned_phrase,VIS-TRANS-005,Thay bằng kiểm tra lại nhận định,active,Tránh dịch sát reproduce finding
+tự kiểm định,banned_phrase,VIS-LEX-001,Thay bằng tự rà soát hoặc tự kiểm tra,active,Tránh dịch sát self-verification
+tự tuân thủ,banned_phrase,VIS-LEX-001,Thay bằng tự áp dụng đúng chuẩn,active,Tránh dịch sát self-conformance
+ngôn ngữ kinh tế của chủ sở hữu,banned_phrase,VIS-TRANS-005,Thay bằng tác động tài chính trực tiếp,active,Tránh dịch sát owner economic currency
+bảo đảm phủ định,banned_phrase,VIS-TRANS-005,Ghi thẳng mẫu kiểm tra chưa phát hiện tổn thất,active,Tránh dịch sát negative assurance
+phép thử của người đọc phản biện,banned_phrase,VIS-TRANS-005,Thay bằng kiểm tra xem đơn vị có bắt bẻ được không,active,Tránh dịch sát hostile-reader test
+chủ thể tổ chức,banned_phrase,VIS-TRANS-005,Thay bằng đơn vị hoặc bộ phận cụ thể,active,Tránh dịch sát institutional actor
+nhãn bất biến,banned_phrase,VIS-TRANS-005,Thay bằng nhóm phân loại cố định,active,Tránh dịch sát immutable label
+kho đổ dữ liệu,banned_phrase,VIS-LEX-001,Thay bằng nơi chứa dữ liệu thô chưa lọc,active,Khẩu ngữ dịch từ data dump
+tường lửa điều tra,banned_phrase,VIS-RHET-003,Thay bằng tách luồng điều tra riêng,active,Ẩn dụ dịch từ investigation firewall
+đường truyền tác động,banned_phrase,VIS-RHET-003,Thay bằng hệ quả kéo theo,active,Ẩn dụ dịch từ impact transmission channel
+tác động lan truyền,banned_phrase,VIS-RHET-003,Thay bằng hệ quả kéo theo sang các mảng khác,active,Ẩn dụ dịch từ cascading impact
+trục thống nhất,banned_phrase,VIS-RHET-003,Thay bằng mạch nội dung thống nhất,active,Ẩn dụ sáo kiểu AI
+trục xuyên suốt,banned_phrase,VIS-RHET-003,Thay bằng mạch trình bày xuyên suốt,active,Ẩn dụ sáo kiểu AI
+mắt xích lập luận,banned_phrase,VIS-RHET-003,Thay bằng bước lập luận hoặc căn cứ nối tiếp,active,Ẩn dụ dịch từ reasoning chain link
+bàn đạp,banned_phrase,VIS-RHET-003,Nêu thẳng điều kiện hoặc bước tiếp theo,active,Ẩn dụ sáo kiểu AI
+nhịp điệu câu,banned_phrase,VIS-RHET-003,Thay bằng độ dài câu linh hoạt,active,Dịch sát sentence cadence
+điểm chạm,banned_phrase,VIS-RHET-003,Thay bằng điểm tiếp xúc khách hàng hoặc bước giao dịch,active,Ẩn dụ dịch từ touchpoint
+mảnh ghép,banned_phrase,VIS-RHET-003,Thay bằng phần việc hoặc cấu phần,active,Ẩn dụ dịch từ puzzle piece
+nút thắt,banned_phrase,VIS-RHET-003,Thay bằng điểm nghẽn hoặc vướng mắc,active,Ẩn dụ dịch từ bottleneck
+trụ cột,banned_phrase,VIS-RHET-003,Thay bằng nhóm nội dung chính hoặc mảng trọng tâm,active,Ẩn dụ dịch từ pillar
+điểm sáng,banned_phrase,VIS-RHET-003,Thay bằng kết quả tích cực hoặc tiến triển rõ,active,Ẩn dụ báo chí sáo
+chỗ dựa,banned_phrase,VIS-RHET-003,Thay bằng căn cứ hoặc cơ sở đối chiếu,active,Từ ngữ thiếu trang trọng trong báo cáo
+tạo đà,banned_phrase,VIS-RHET-003,Thay bằng thúc đẩy hoặc nêu thẳng mức tăng,active,Ẩn dụ sáo kiểu AI
+đặt nền móng,banned_phrase,VIS-RHET-003,Thay bằng chuẩn bị cơ sở ban đầu,active,Ẩn dụ sáo kiểu AI
+mở ra cơ hội,banned_phrase,VIS-RHET-003,Nêu rõ lợi ích hoặc kết quả cụ thể,active,Cụm rỗng kiểu AI
+bức tranh tổng thể,banned_phrase,VIS-RHET-003,Thay bằng tổng quan hoặc tình hình chung,active,Ẩn dụ dịch từ overall picture
+dưới góc độ,banned_phrase,VIS-LEX-001,Bỏ cụm dẫn và nêu thẳng chủ ngữ với hành động,active,Cụm dẫn dịch từ from the perspective of
+trên phương diện,banned_phrase,VIS-LEX-001,Bỏ cụm dẫn và nêu thẳng nội dung chính,active,Cụm dẫn dịch từ in terms of
+xét về bản chất,banned_phrase,VIS-LEX-001,Bỏ cụm dẫn và nói thẳng kết luận,active,Cụm dẫn dịch từ fundamentally
+dưới lăng kính,banned_phrase,VIS-LEX-001,Bỏ cụm dẫn và nêu thẳng khía cạnh đánh giá,active,Cụm dẫn dịch từ through the lens of
+trong bối cảnh đó,banned_phrase,VIS-LEX-001,Bỏ cụm dẫn hoặc nêu mốc thời gian cụ thể,active,Cụm nối máy móc đầu câu
+nhằm mục đích,banned_phrase,VIS-LEX-001,Rút gọn thành để,active,Cụm từ dài dòng dư thừa
+tối đa hóa,banned_phrase,VIS-LEX-001,Thay bằng tăng tối đa hoặc đạt mức cao nhất,active,Từ ngữ dịch sát maximize
+tối thiểu hóa,banned_phrase,VIS-LEX-001,Thay bằng giảm xuống mức thấp nhất hoặc hạn chế,active,Từ ngữ dịch sát minimize
+mang đến giải pháp,banned_phrase,VIS-CLICHE-001,Nêu rõ giải pháp và kết quả đo được,active,Văn phong quảng cáo rỗng
+góp phần nâng cao,banned_phrase,VIS-CLICHE-001,Thay bằng làm tăng hoặc cải thiện kèm số liệu,active,Văn mẫu hành chính rỗng
+tạo điều kiện thuận lợi,banned_phrase,VIS-CLICHE-001,Nêu rõ hỗ trợ cụ thể và đầu ra kiểm chứng,active,Văn mẫu hành chính rỗng
+đảm bảo tính nhất quán,banned_phrase,VIS-CLICHE-001,Thay bằng giữ thống nhất giữa các mục,active,Danh từ hóa rỗng
+đảm bảo tính toàn vẹn,banned_phrase,VIS-CLICHE-001,Thay bằng giữ nguyên vẹn dữ liệu,active,Danh từ hóa rỗng
+đảm bảo tính minh bạch,banned_phrase,VIS-CLICHE-001,Thay bằng công khai rõ căn cứ và cách tính,active,Danh từ hóa rỗng
+đảm bảo tính chính xác,banned_phrase,VIS-CLICHE-001,Thay bằng đối chiếu đúng số liệu gốc,active,Danh từ hóa rỗng
+đáp ứng kỳ vọng,banned_phrase,VIS-CLICHE-001,Nêu rõ tiêu chí đạt được cụ thể,active,Cụm chung chung kiểu thông cáo
+dẫn dắt sự thay đổi,banned_phrase,VIS-CLICHE-001,Nêu rõ hành động cải cách cụ thể,active,Cụm dịch từ drive change
+duy trì đà tăng trưởng,banned_phrase,VIS-CLICHE-001,Nêu tỷ lệ tăng trưởng cụ thể qua từng kỳ,active,Cụm dịch từ sustain momentum
+đồng hành cùng,banned_phrase,VIS-CLICHE-001,Thay bằng phối hợp với hoặc hỗ trợ trực tiếp,active,Văn phong xã giao thiếu chính xác
+tái cấu trúc toàn diện,banned_phrase,VIS-CLICHE-001,Nêu rõ phần việc sắp xếp lại và phạm vi,active,Cụm phóng đại rỗng
+không cần dài dòng thêm nữa,banned_phrase,VIS-AI-004,Cắt bỏ hoàn toàn câu dẫn này,active,Lời mào đầu kiểu thuyết trình
+dưới đây là những gì bạn cần biết,banned_phrase,VIS-AI-004,Cắt bỏ câu mồi và đi thẳng vào dữ kiện,active,Lời mào đầu dịch sát here is what you need to know
+ở cốt lõi của nó,banned_phrase,VIS-AI-004,Bỏ cụm dẫn và nêu thẳng nguyên nhân gốc,active,Dịch sát at its core
+đó mới thực sự là chiến thắng,banned_phrase,VIS-CLICHE-004,Bỏ câu chốt cảm tính này,active,Câu kết kịch tính kiểu AI
+hãy để điều đó thấm sâu,banned_phrase,VIS-CLICHE-004,Bỏ câu chốt kịch tính này,active,Dịch sát let that sink in
+trở thành một cái bẫy,banned_phrase,VIS-CLICHE-004,Nêu thẳng rủi ro hoặc sai sót phát sinh,active,Triết lý sáo kiểu AI
+yêu cầu tường minh,banned_phrase,VIS-LEX-001,Thay bằng yêu cầu cụ thể hoặc khi người dùng chỉ định rõ,active,Dịch sát explicit instruction
+đường mặc định,banned_phrase,VIS-LEX-001,Thay bằng cách mặc định hoặc bước ưu tiên đầu tiên,active,Dịch sát default path
+nhãn dự phòng,banned_phrase,VIS-LEX-001,Thay bằng nhãn chung hoặc nhãn mặc định,active,Dịch sát fallback label
+mã nội dòng,banned_phrase,VIS-LEX-001,Thay bằng mã trong câu hoặc đoạn mã ngắn,active,Dịch sát inline code
+bóc tách tất định,banned_phrase,VIS-LEX-001,Thay bằng đọc trực tiếp bằng mã hoặc trích xuất trực tiếp không qua AI,active,Dịch sát deterministic extraction

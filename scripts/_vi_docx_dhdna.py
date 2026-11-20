@@ -405,7 +405,7 @@ def _classify_voice_archetype(stylo: StylometryReport, dm: DhdnaVoiceMetrics) ->
             "code": "DIRECT_EXECUTIVE_GATEKEEPER",
             "description_vi": (
                 "Giọng Kiểm toán / Quản trị Trực diện: câu ngắn cô đọng, biên độ nhịp câu rộng, "
-                "mở đoạn bằng kết luận, khóa chặt ranh giới bằng chứng (D12) và cổng điều kiện (D6)."
+                "mở đoạn bằng kết luận, nêu rõ ranh giới bằng chứng (D12) và cổng điều kiện (D6)."
             ),
             "warnings": [],
         }
@@ -452,7 +452,7 @@ def profile_text(
     docx_meta: DocxMetadata | dict[str, Any] | None = None,
     ignore_cols: set[int] | None = None,
 ) -> ProfileReport:
-    """Đo tất định 18 chỉ số nhịp câu (`stylometry`) và 14 chỉ số kỷ luật lập luận / bằng chứng `DHDNA`."""
+    """Đo tất định 18 chỉ số nhịp câu (`stylometry`) và 14 chỉ số lập luận và bằng chứng `DHDNA`."""
     masked_full = SemanticMasker.mask_preserve_offsets(text, mask_quotes=True)
     prose_only_text = "\n".join(
         ln for ln in masked_full.splitlines() if not (ln.strip().startswith("|") and ln.strip().endswith("|"))

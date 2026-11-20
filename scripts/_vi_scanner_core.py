@@ -16,7 +16,7 @@ from _vi_algo_rules import (
     run_monotony_rule,
 )
 from _vi_docx_dhdna import compute_sliding_mattr, compute_stylometry, max_table_sentence_words
-from _vi_extra_rules import run_fake_roadmap_rule, run_sov_review_rule
+from _vi_extra_rules import deduplicate_overlapping_findings, run_fake_roadmap_rule, run_sov_review_rule
 from _vi_hygiene_rules import run_document_and_table_hygiene
 from _vi_masker import (
     SemanticMasker,
@@ -243,7 +243,7 @@ def _build_regex_findings(
 
 
 class ViScanner:
-    """Máy quét câu chữ tiếng Việt v2.3.0 (mặc định `profile="all"` xuất đủ 100% tín hiệu của 7 nhóm)."""
+    """Máy quét câu chữ tiếng Việt v2.4.0 (mặc định `profile="all"` xuất đủ 100% tín hiệu của 7 nhóm)."""
 
     VERSION: ClassVar[str] = VERSION
     SCHEMA_VERSION: ClassVar[str] = SCHEMA_VERSION
@@ -459,6 +459,7 @@ class ViScanner:
             ):
                 continue
             findings.extend(self._run_rule(rule, buf, prof, vocab_hits=vocab_by_rule.get(rid, ()), rev_hits=rev_hits))
+        findings = deduplicate_overlapping_findings(findings, self.rules)
         findings.sort(key=lambda f: (f.line, f.col, f.rule_id))
         elapsed_ms = round((time.perf_counter() - t0) * 1000, 3)
         prose_only = "\n".join(

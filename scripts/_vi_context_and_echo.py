@@ -56,12 +56,20 @@ _DON_BAY_VALID_TAIL_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"(?i)^\s*(?:tài\s+chính|nợ|kinh\s+doanh|hoạt\s+động|tín\s+dụng|vốn|vật\s+lý)\b"
 )
 _LITERAL_METAPHOR_CTX: dict[str, stdlib_re.Pattern[str]] = {
+    "bàn đạp": stdlib_re.compile(r"(?i)\b(?:xe\s+đạp|phanh|ga|côn|đàn\s+piano|máy\s+may|chân)\b"),
     "bệ phóng": stdlib_re.compile(r"(?i)\b(?:tên\s+lửa|vệ\s+tinh|tàu\s+vũ\s+trụ|quân\s+sự|pháo)\b"),
     "chất xúc tác": stdlib_re.compile(r"(?i)\b(?:phản\s+ứng|hóa\s+học|enzyme|nhiệt\s+độ|dung\s+môi|kết\s+tủa)\b"),
     "chèo lái": stdlib_re.compile(r"(?i)\b(?:thuyền|tàu|ghe|xuồng|sông|biển|mái\s+chèo|sóng)\b"),
+    "chỗ dựa": stdlib_re.compile(r"(?i)\b(?:ghế|tựa\s+lưng|giường|tường)\b"),
+    "điểm sáng": stdlib_re.compile(r"(?i)\b(?:x-quang|màn\s+hình|ảnh|pixel|quang\s+học|ánh\s+sáng|kính\s+hiển\s+vi)\b"),
+    "đặt nền móng": stdlib_re.compile(r"(?i)\b(?:xây\s+dựng|đổ\s+móng|công\s+trình|nhà\s+máy|tòa\s+nhà)\b"),
+    "đặt nền móng cho": stdlib_re.compile(r"(?i)\b(?:xây\s+dựng|đổ\s+móng|công\s+trình|nhà\s+máy|tòa\s+nhà)\b"),
+    "mảnh ghép": stdlib_re.compile(r"(?i)\b(?:xếp\s+hình|trò\s+chơi|đồ\s+chơi|puzzle|ghép\s+tranh)\b"),
     "mở khóa": stdlib_re.compile(
         r"(?i)^\s*(?:tài\s+khoản|màn\s+hình|thiết\s+bị|điện\s+thoại|thẻ|cổng|cửa|két|ổ\s+khóa|phiên)\b"
     ),
+    "nút thắt": stdlib_re.compile(r"(?i)\b(?:dây|thừng|buộc|tháo\s+nút|lụa|áo)\b"),
+    "trụ cột": stdlib_re.compile(r"(?i)\b(?:bê\s+tông|kiến\s+trúc|công\s+trình|nhà|cầu|đá|gỗ)\b"),
     "ươm mầm": stdlib_re.compile(r"(?i)\b(?:hạt\s+giống|cây\s+con|vườn\s+ươm|nông\s+nghiệp|gieo\s+trồng|đất)\b"),
 }
 _PHYSICAL_RIGID_CTX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(

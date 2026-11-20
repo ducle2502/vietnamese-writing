@@ -43,7 +43,7 @@ _HARD_INVARIANT_LABELS: tuple[tuple[str, str], ...] = (
     ("conditionals", "Thay đổi từ chỉ điều kiện"),
     ("citations", "Mất hoặc đổi nguồn trích dẫn"),
     ("code_blocks", "Khối mã lệnh bị sửa đổi"),
-    ("inline_code", "Mã nội dòng bị sửa đổi"),
+    ("inline_code", "Đoạn mã ngắn trong câu bị sửa đổi"),
     ("frontmatter", "Frontmatter bị sửa đổi"),
 )
 _STRICT_INVARIANT_LABELS: tuple[tuple[str, str], ...] = (

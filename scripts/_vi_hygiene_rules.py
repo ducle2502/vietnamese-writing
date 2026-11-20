@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from _vi_algo_rules import VI_DIACRITIC_RE
 from _vi_context_and_echo import check_calque_heading, check_prose_proximity_echo
+from _vi_extra_rules import check_audit_structure_extras
 from _vi_masker import SemanticMasker, make_finding
 from _vi_types import Finding, Profile, RuleDefinition, _ScanBuffer
 
@@ -492,4 +493,5 @@ def run_document_and_table_hygiene(rule: RuleDefinition, buf: _ScanBuffer, prof:
     for tbl in _extract_markdown_table_blocks(buf.raw_text):
         findings.extend(_check_single_markdown_table(rule, buf, tbl))
     findings.extend(_check_markup_trees_and_backticks(rule, buf, has_vi=has_vi))
+    findings.extend(check_audit_structure_extras(rule, buf, prof))
     return findings

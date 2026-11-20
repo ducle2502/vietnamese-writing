@@ -143,10 +143,7 @@ def selftest() -> int:
 def _add_scan_and_profile_parsers(sub: Any, profile_choices: Sequence[str]) -> None:
     scan_p = sub.add_parser(
         "scan",
-        help=(
-            "Quét Markdown thô hoặc tệp UTF-8; .docx được bóc tách tất định trước "
-            "(mặc định xuất đủ 100%% các nhóm văn bản)"
-        ),
+        help=("Quét Markdown thô hoặc tệp UTF-8; tệp .docx tự đọc trực tiếp bằng mã (mặc định rà đủ các nhóm văn bản)"),
     )
     scan_p.add_argument("files", metavar="file", nargs="*", default=["-"], help="Một hoặc nhiều tệp hoặc '-' (stdin)")
     scan_p.add_argument("--profile", choices=profile_choices, default="all")
@@ -179,7 +176,7 @@ def build_parser() -> argparse.ArgumentParser:
     ver_p.add_argument("--json", action="store_true")
     ver_p.add_argument("--output", type=Path)
 
-    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 51 quy tắc hiện có")
+    list_p = sub.add_parser("list-rules", help="Liệt kê danh mục 55 quy tắc hiện có")
     list_p.add_argument("--profile", choices=profile_choices, default="all")
     list_p.add_argument("--json", action="store_true")
 

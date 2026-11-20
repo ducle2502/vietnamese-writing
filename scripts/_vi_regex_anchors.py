@@ -194,6 +194,7 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
         "Bỏ khung đính chính 'Thay vì chỉ dựa vào X...' hoặc 'Điều này quan trọng vì...'; nêu thẳng số liệu đối chiếu."
     ),
     "VIS-RHET-009": ("Bỏ câu ba phải, khen nịnh hoặc khoe phủ sóng truyền thông; nêu kết luận và bằng chứng cụ thể."),
+    "VIS-RHET-010": ("Bỏ phản biện giả định hoặc câu triết lý sáo; nêu thẳng số liệu đối chiếu và điều kiện thực tế."),
     "VIS-FMT-007": (
         "Chấm câu ngay sau dữ kiện và bỏ đuôi phân từ 'từ đó khẳng định/góp phần...' nếu không thêm số liệu mới."
     ),
@@ -205,6 +206,10 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
         "Bỏ khung 'đem... giao cho', 'cho ai + V', 'đối với... mà nói', 'bị do...'; đảo về trật tự tiếng Việt."
     ),
     "VIS-TRANS-013": ("Bỏ trợ từ 'đích/địa/đắc' và đảo định ngữ; viết lại theo trật tự danh từ chính trước, phụ sau."),
+    "VIS-TRANS-015": (
+        "Thay cụm danh từ trừu tượng dịch sát ('kỷ luật...', 'hàng rào...', 'cổng...') "
+        "bằng 'nguyên tắc', 'giới hạn kiểm soát' hoặc 'bước kiểm tra'."
+    ),
     "VIS-FMT-002": "Lược bớt từ nối đầu câu lặp lại liên tiếp hoặc gộp các ý cùng chiều thành một câu gọn.",
     "VIS-FMT-006": "Gộp chuỗi câu cụt kiểu khẩu hiệu thành câu hoàn chỉnh có đủ chủ ngữ, vị ngữ và điều kiện.",
     "VIS-TRANS-002": "Giảm mật độ bị động 'được + động từ' trong đoạn; chuyển sang câu chủ động nêu rõ ai làm gì.",
@@ -221,7 +226,14 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
         "Tránh từ ngữ điều tra hình sự, cổ văn hoặc báo chí giật gân; "
         "dùng động từ trung tính ('phát hiện', 'ghi nhận')."
     ),
+    "VIS-TONE-003": (
+        "Tránh khẳng định tuyệt đối hoặc quy kết động cơ khi chưa đủ căn cứ; "
+        "nêu rõ văn bản hiệu lực, cỡ mẫu và ngoại lệ ghi nhận."
+    ),
     "VIS-STRUCT-001": "Xóa lời tự thuyết minh bố cục hoặc nhãn dàn ý nội bộ; đi thẳng vào nội dung phân tích của mục.",
+    "VIS-STRUCT-004": (
+        "Gỡ mã theo dõi nội bộ (EV-xx, WP-xx, CL-xx, GAP-xx) và lời tự kể phương án cũ khỏi văn bản gửi ngoài."
+    ),
 }
 _TONE002_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
     (

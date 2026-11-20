@@ -19,7 +19,8 @@ for _dir in (str(SCRIPTS_DIR), str(TESTS_DIR)):
         sys.path.insert(0, _dir)
 
 from _vi_docx_dhdna import _classify_voice_archetype, profile_text  # noqa: E402
-from fixtures_extra import NEW_RULE_FIXTURES, PRESENTATION_FIXTURES  # noqa: E402
+from _vi_types import ALL_PROFILES  # noqa: E402
+from fixtures_extra import AUDIT_AND_CALQUE_FIXTURES, NEW_RULE_FIXTURES, PRESENTATION_FIXTURES  # noqa: E402
 from vi_scanner import DEFAULT_GRAMMAR_CSV, DEFAULT_VOCAB_CSV, ViScanner  # noqa: E402
 
 if TYPE_CHECKING:
@@ -54,23 +55,31 @@ class TestNewRules(unittest.TestCase):
 
     def test_new_rule_fixtures(self) -> None:
         """Mỗi mẫu dương tính bắt đúng rule đích và mẫu âm tính không bắt nhầm rule đó."""
-        for code, rule_id, profile, expected, text in (*NEW_RULE_FIXTURES, *PRESENTATION_FIXTURES):
+        for code, rule_id, profile, expected, text in (
+            *NEW_RULE_FIXTURES,
+            *PRESENTATION_FIXTURES,
+            *AUDIT_AND_CALQUE_FIXTURES,
+        ):
             rep = self.scanner.scan_text(text, profile=profile)
             hit = any(f.rule_id == rule_id for f in rep.findings)
             self.assertEqual(hit, expected, f"{code} ({rule_id}, {profile}) -> {[f.rule_id for f in rep.findings]}")
 
     def test_all_new_rules_are_loaded_and_active(self) -> None:
-        """Chín rule mới phải có trong bundle, đang bật và có trạng thái nguồn hợp lệ."""
+        """Mười ba rule mới (v2.3.0 đến v2.4.0) phải nạp đủ, bật và hợp lệ."""
         new_ids = {
             "VIS-RHET-008",
             "VIS-RHET-009",
+            "VIS-RHET-010",
             "VIS-FMT-007",
             "VIS-FMT-008",
             "VIS-STRUCT-003",
+            "VIS-STRUCT-004",
+            "VIS-TONE-003",
             "VIS-TRANS-011",
             "VIS-TRANS-012",
             "VIS-TRANS-013",
             "VIS-TRANS-014",
+            "VIS-TRANS-015",
         }
         self.assertTrue(new_ids.issubset(self.scanner.rules))
         for rid in new_ids:
@@ -85,7 +94,7 @@ class TestNewRules(unittest.TestCase):
         self.assertIn("source_status", rows[0])
         statuses = [r["source_status"] for r in rows]
         self.assertEqual(set(statuses), {"verified", "missing"})
-        self.assertEqual(statuses.count("verified"), 47)
+        self.assertEqual(statuses.count("verified"), 51)
         self.assertEqual(statuses.count("missing"), 4)
         for row in rows:
             if not row["source_url"]:
@@ -126,7 +135,7 @@ class TestNewRules(unittest.TestCase):
         """Số mục từ phải khớp bảng đã công bố và không có term trùng."""
         raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
         rows = list(csv.DictReader(io.StringIO(raw)))
-        self.assertEqual(len(rows), 2089)
+        self.assertEqual(len(rows), 2155)
         keys = [" ".join(r["term"].split()).casefold() for r in rows]
         self.assertEqual(len(keys), len(set(keys)))
 
@@ -171,6 +180,183 @@ class TestVoiceArchetypes(unittest.TestCase):
         )
         report = profile_text(doc, label="multi_reader")
         self.assertEqual(report["voice_archetype"]["code"], "MULTI_READER_ASSURANCE")
+
+
+_CALQUE_12_PAIRS: tuple[tuple[set[str], str, str], ...] = (
+    (
+        {"VIS-TRANS-005"},
+        "Xem Tóm tắt điều hành ở trang 1 trước khi đọc phụ lục.",
+        "Xem phần Tóm tắt ở trang 1 trước khi đọc phụ lục.",
+    ),
+    (
+        {"VIS-TRANS-015"},
+        "Báo cáo tuân thủ nghiêm ngặt kỷ luật bằng chứng và hàng rào nghiệp vụ.",
+        "Báo cáo giữ đúng nguyên tắc chứng cứ và giới hạn kiểm soát nghiệp vụ.",
+    ),
+    (
+        {"VIS-TRANS-015"},
+        "Dự án phải vượt qua cổng kiểm định mới được nghiệm thu.",
+        "Dự án phải qua bước kiểm tra bắt buộc mới được nghiệm thu.",
+    ),
+    (
+        {"VIS-LEX-001"},
+        "Cần đánh giá dưới góc độ rủi ro nhằm tối đa hóa hiệu quả.",
+        "Cần đánh giá thẳng mức rủi ro để nâng cao hiệu quả kiểm soát.",
+    ),
+    (
+        {"VIS-TONE-003"},
+        "Chính sách này đã lỗi thời so với pháp luật hiện hành.",
+        "Chính sách này chưa được cập nhật theo thông tư có hiệu lực từ ngày 01/07/2026.",
+    ),
+    (
+        {"VIS-TONE-003"},
+        "Kết quả đối chiếu 100% cho thấy đơn vị cố tình che giấu lỗi.",
+        "Trong 30 hồ sơ chọn kiểm tra thuộc kỳ báo cáo, 6 hồ sơ thiếu biên bản giải trình.",
+    ),
+    (
+        {"VIS-RHET-010"},
+        "Nhiều người có thể cho rằng mức lỗi 3% là nhỏ, nhưng điều này không có nghĩa là hệ thống an toàn.",
+        "Tỷ lệ lỗi là 3% trên tổng mẫu kiểm tra nhưng đều rơi vào giao dịch hạch toán cuối ngày.",
+    ),
+    (
+        {"VIS-RHET-010"},
+        "Bố cục cân đối là ngôn ngữ của niềm tin quản trị.",
+        "Bố cục nhất quán giúp lãnh đạo tra cứu số liệu nhanh hơn.",
+    ),
+    (
+        {"VIS-STRUCT-004", "VIS-RHET-003"},
+        "Đối chiếu WP-04 và EV-19, mục này nêu các mảnh ghép còn thiếu.",
+        "Đối chiếu nhật ký hệ thống ngày 14/11/2026, mục này nêu bốn phần việc còn thiếu.",
+    ),
+    (
+        {"VIS-STRUCT-004"},
+        "Hàm này được bổ sung nhằm thay thế cách tiếp cận cũ dùng hai vòng lặp.",
+        "Hàm dùng bảng băm để tra cứu trực tiếp, giảm độ phức tạp xuống hằng số.",
+    ),
+    (
+        {"VIS-LEX-001", "VIS-CLICHE-001"},
+        "Tổ kiểm toán thực hiện tự kiểm định để đảm bảo tính minh bạch.",
+        "Tổ kiểm toán tự rà soát lại số liệu nhằm công khai rõ căn cứ tính toán.",
+    ),
+    (
+        {"VIS-RHET-003"},
+        "Hệ thống cần một bàn đạp vững chắc để tạo đà bứt phá cuối năm.",
+        "Hệ thống cần hoàn tất kiểm thử tải trước khi mở rộng giao dịch cuối năm.",
+    ),
+)
+
+
+class TestCalquesAndAuditExtras(unittest.TestCase):
+    scanner: ClassVar[ViScanner]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.scanner = ViScanner()
+
+    def test_12_bad_good_calque_pairs(self) -> None:
+        """Đủ 12 cặp câu mẫu Bad -> Good từ đặc tả mới phải bắt đúng lỗi và sửa về 0 lỗi."""
+        for expected_rules, bad, good in _CALQUE_12_PAIRS:
+            found_bad = {f.rule_id for f in self.scanner.scan_text(bad, profile="all").findings}
+            self.assertTrue(expected_rules.issubset(found_bad), f"Thiếu {expected_rules} trong: {bad} ({found_bad})")
+            rep_good = self.scanner.scan_text(good, profile="all")
+            self.assertEqual(rep_good.findings_count, 0, f"Báo nhầm trên câu sửa: {good} -> {rep_good.findings}")
+
+    def test_10_must_not_trigger_and_literal_metaphors(self) -> None:
+        """Đủ 10 ca chống báo nhầm và 7 ẩn dụ dùng theo nghĩa đen vật lý phải sạch 0 lỗi."""
+        clean_cases: tuple[str, ...] = (
+            "Hội đồng kỷ luật lao động quyết định hình thức xử lý kỷ luật nhân sự theo nội quy.",
+            "Công ty đang xử lý vướng mắc liên quan đến hàng rào kỹ thuật thương mại khi xuất khẩu.",
+            "Khu vực công trường đã lắp đặt hàng rào chắn bảo vệ công nhân vào ban đêm.",
+            "Hệ thống đã kết nối cổng thanh toán điện tử và cổng thông tin nội bộ đúng tiến độ.",
+            "Tường lửa mạng đã chặn 140 lượt truy cập trái phép từ địa chỉ ngoài.",
+            "Đường truyền viễn thông tại chi nhánh bị gián đoạn 12 phút lúc 09:15.",
+            "Nhóm kỹ thuật đã tái lập máy chủ dự phòng trong 25 phút sau diễn tập.",
+            "Quy định nội bộ số 12/QĐ-HĐTV đã hết hiệu lực kể từ ngày 01/01/2026 theo Thông tư số 02/2026/TT-NHNN.",
+            "Trong nhật ký thử tải ghi nhận mã lỗi HTTP 504 tại điểm cuối API.",
+            "Luật Doanh nghiệp phân định rõ tư cách pháp nhân của công ty mẹ và công ty con.",
+            "Thợ sửa xe đạp thay bàn đạp và dây phanh trước giờ xuất phát.",
+            "Kỹ sư thi công hai trụ cột bê tông chịu lực cho công trình cầu.",
+            "Nhân viên tháo nút thắt dây thừng buộc kiện hàng trên bến bãi.",
+            "Ghế làm việc có chỗ dựa lưng điều chỉnh độ nghiêng theo chiều cao.",
+            "Ảnh X-quang ghi nhận một điểm sáng nhỏ ở góc trên bên phải màn hình.",
+            "Đội xây dựng đổ bê tông đặt nền móng cho nhà máy mới.",
+            "Trẻ nhỏ chơi trò chơi xếp hình ghép đủ mảnh ghép cuối cùng.",
+        )
+        for text in clean_cases:
+            rep = self.scanner.scan_text(text, profile="all")
+            self.assertEqual(rep.findings_count, 0, f"Báo nhầm: {text} -> {rep.findings}")
+
+    def test_cross_rule_dedup_and_baseline_profiles(self) -> None:
+        """Cụm trùng chuỗi không nổ kép xuyên rule và 8 rule chuẩn tối thiểu chạy đủ trên 7 profile."""
+        for phrase in (
+            "điểm chạm khách hàng",
+            "nhằm mục đích nâng cao",
+            "góp phần nâng cao nhận thức",
+            "tái cấu trúc toàn diện",
+            "ở cốt lõi của nó",
+        ):
+            rep = self.scanner.scan_text(f"Báo cáo nêu rõ {phrase} trong kỳ kiểm tra.", profile="all")
+            non_algo = [
+                f for f in rep.findings if not self.scanner.rules[f.rule_id].regex_or_algorithm.startswith("ALGO:")
+            ]
+            self.assertEqual(len(non_algo), 1, f"Nổ kép trên {phrase!r}: {non_algo}")
+
+        baseline_ids = (
+            "VIS-FMT-008",
+            "VIS-TRANS-012",
+            "VIS-TRANS-013",
+            "VIS-TRANS-014",
+            "VIS-TRANS-015",
+            "VIS-TONE-003",
+            "VIS-RHET-010",
+            "VIS-STRUCT-004",
+        )
+        all_set = frozenset(ALL_PROFILES)
+        for rid in baseline_ids:
+            self.assertEqual(self.scanner.rules[rid].profiles, all_set, f"{rid} chưa phủ đủ 7 profile")
+
+    def test_audit_extras_para_density_cv_and_table_overlap(self) -> None:
+        """Kiểm tra mật độ đoạn, CV câu thấp trên văn bản dài và lặp tóm tắt bảng biểu."""
+        dense_doc = (
+            "Đoạn một có câu thứ nhất. Câu thứ hai ngắn gọn. Câu thứ ba mở rộng.\n\n"
+            "Đoạn hai có câu thứ nhất. Câu thứ hai ngắn gọn. Câu thứ ba mở rộng.\n\n"
+            "Đoạn ba có câu thứ nhất. Câu thứ hai ngắn gọn. Câu thứ ba mở rộng.\n"
+        )
+        audit_hits = [f.matched_text for f in self.scanner.scan_text(dense_doc, profile="audit_report").findings]
+        self.assertTrue(any("câu/đoạn > 2,5" in m for m in audit_hits), audit_hits)
+        gen_hits = [f.matched_text for f in self.scanner.scan_text(dense_doc, profile="general").findings]
+        self.assertFalse(any("câu/đoạn > 2,5" in m for m in gen_hits))
+
+        uniform_30 = "\n\n".join(
+            f"Nhóm kiểm toán ghi nhận mục kiểm tra thứ {i} đã đối chiếu xong chứng từ gốc tại chi nhánh."
+            for i in range(1, 32)
+        )
+        cv_hits = [f.matched_text for f in self.scanner.scan_text(uniform_30, profile="audit_report").findings]
+        self.assertTrue(any("CV câu=" in m for m in cv_hits), cv_hits)
+
+        dup_summary = (
+            "Chi nhánh hoàn thành kiểm tra chứng từ công nợ khách hàng, rà soát quy trình phê duyệt "
+            "giải ngân và đối chiếu số dư tài khoản kho bạc trong quý hai năm nay.\n\n"
+            "| Hạng mục | Kết quả kiểm tra |\n| --- | --- |\n"
+            "| Chứng từ công nợ khách hàng | Chi nhánh hoàn thành kiểm tra trong quý hai |\n"
+            "| Quy trình phê duyệt giải ngân | Rà soát đầy đủ hồ sơ quý hai năm nay |\n"
+            "| Số dư tài khoản kho bạc | Đối chiếu khớp số dư cuối quý hai |\n"
+        )
+        dup_hits = [f.matched_text for f in self.scanner.scan_text(dup_summary, profile="audit_report").findings]
+        self.assertTrue(any("Chi nhánh hoàn thành" in m for m in dup_hits), dup_hits)
+
+    def test_5_spec_calques_trigger_lex001(self) -> None:
+        """Năm cụm dịch spec tiếng Anh mới thêm phải kích hoạt VIS-LEX-001."""
+        samples = (
+            "Chỉ áp dụng khi người dùng có yêu cầu tường minh.",
+            "Bước này là đường mặc định khi đọc dữ liệu.",
+            "Hệ thống trả về nhãn dự phòng khi thiếu dữ kiện.",
+            "Máy quét bỏ qua phần mã nội dòng trong câu văn.",
+            "Công cụ dùng bóc tách tất định để đọc tệp Word.",
+        )
+        for text in samples:
+            hits = {f.rule_id for f in self.scanner.scan_text(text, profile="all").findings}
+            self.assertIn("VIS-LEX-001", hits, f"Bỏ sót VIS-LEX-001 trên: {text}")
 
 
 if __name__ == "__main__":

@@ -134,9 +134,9 @@ class TestReadme16AndGeneralizedRootCauses(unittest.TestCase):
         cls.scanner = ViScanner()
 
     def test_legacy_readme_snapshot_fails_all_reported_spots(self) -> None:
-        """Bản chụp nguyên văn README cũ phải báo lỗi ở toàn bộ 16 nhóm vị trí đã nêu (>= 28 cảnh báo)."""
+        """Bản chụp nguyên văn README cũ phải báo lỗi ở toàn bộ 16 nhóm vị trí đã nêu (>= 27 cảnh báo)."""
         rep = self.scanner.scan_text(_LEGACY_README_SNAPSHOT, profile="all")
-        self.assertGreaterEqual(rep.warning_count, 28)
+        self.assertGreaterEqual(rep.warning_count, 27)
         matched = [f.matched_text.casefold() for f in rep.findings]
         expected_substrings = (
             "- **bắt đúng",

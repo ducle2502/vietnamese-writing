@@ -39,4 +39,20 @@ PRESENTATION_FIXTURES: tuple[BenchmarkFixture, ...] = (
     ("TF-X-25", "VIS-STRUCT-002", "general", True, 'Ảnh minh họa luồng xử lý.\n\n```mermaid\nflowchart LR\n  A -->|Nhãn cạnh rất dài gồm nhiều từ mô tả toàn bộ luồng| B\n```'),
     ("TF-X-26", "VIS-STRUCT-002", "general", False, 'Ảnh minh họa. <img src="a.svg" alt="Sơ đồ luồng dữ liệu - bản 2">'),
 )
+
+AUDIT_AND_CALQUE_FIXTURES: tuple[BenchmarkFixture, ...] = (
+    ("TF-X-27", "VIS-TRANS-015", "audit_report", True, "Báo cáo cần tuân thủ kỷ luật bằng chứng và vượt qua cổng hiệu lực pháp lý."),
+    ("TF-X-28", "VIS-TRANS-015", "general", False, "Hội đồng kỷ luật lao động xử lý kỷ luật nhân sự kết nối cổng thông tin nội bộ."),
+    ("TF-X-29", "VIS-TONE-003", "audit_report", True, "Quy định đã lỗi thời so với pháp luật, đối chiếu 100% cho thấy đơn vị cố tình che giấu."),
+    ("TF-X-30", "VIS-TONE-003", "audit_report", False, "Quy định chưa cập nhật theo Thông tư 02/2026 từ ngày 01/01/2026 và còn 4 ngoại lệ."),
+    ("TF-X-31", "VIS-RHET-010", "general", True, "Nhiều người có thể cho rằng tỷ lệ đạt 89% là đủ tốt nhưng điều này không có nghĩa là an toàn."),
+    ("TF-X-32", "VIS-RHET-010", "general", False, "Kiểm thử đạt 89% nhưng còn 5 lỗi nghiêm trọng nên hệ thống chưa đủ điều kiện vận hành."),
+    ("TF-X-33", "VIS-STRUCT-004", "audit_report", True, "Căn cứ WP-03 và EV-12, báo cáo ghi nhận 4 nhóm ngoại lệ."),
+    ("TF-X-34", "VIS-STRUCT-004", "general", True, "Tài liệu này được lập nhằm thay thế cách tiếp cận cũ về tổng hợp lỗi."),
+    ("TF-X-35", "VIS-STRUCT-004", "audit_report", False, "Căn cứ biên bản nghiệm thu ngày 15/10/2026, tổ kiểm toán ghi nhận 4 nhóm ngoại lệ."),
+    ("TF-X-36", "VIS-STRUCT-002", "audit_report", True, "Theo Thông báo số 123/TB-NHNN, đơn vị chưa gửi hồ sơ đúng hạn."),
+    ("TF-X-37", "VIS-STRUCT-002", "audit_report", False, "Theo Thông báo số 123/TB-NHNN về kiểm tra đối soát ngày 10/11/2026, đơn vị chưa gửi hồ sơ."),
+    ("TF-X-38", "VIS-STRUCT-002", "audit_report", True, "| Mục | Ghi chú |\n| --- | --- |\n| 1 | Có vì sổ rủi ro đã ghi đủ người phụ trách và hạn xử lý. |"),
+    ("TF-X-39", "VIS-STRUCT-002", "audit_report", False, "| Mục | Ghi chú |\n| --- | --- |\n| 1 | Có mốc chuẩn bị nhưng chưa tìm thấy lịch theo giờ trong ngày diễn tập. |"),
+)
 # fmt: on

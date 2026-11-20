@@ -63,8 +63,8 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
         cls.scanner = ViScanner()
 
     def test_semantic_invariants_and_verify_safety(self) -> None:
-        """Mọi ví dụ sửa mẫu trong 51 quy tắc phải giữ nguyên dữ kiện gốc và bắt đúng lỗi mục tiêu."""
-        self.assertEqual(len(self.scanner.rules), 51)
+        """Mọi ví dụ sửa mẫu trong 55 quy tắc phải giữ nguyên dữ kiện gốc và bắt đúng lỗi mục tiêu."""
+        self.assertEqual(len(self.scanner.rules), 55)
         for rule in self.scanner.rules.values():
             if rule.rule_id == "VIS-FMT-005":
                 continue
@@ -292,15 +292,15 @@ class TestCsvCrudAndRowInvariants(unittest.TestCase):
                 ViScanner(vocab_path=bad_vocab, grammar_path=grammar_csv)
 
     def test_vocab_and_grammar_csv_row_count_and_hint_coherence(self) -> None:
-        """Giữ nguyên vẹn 2.089 dòng `vocab.csv`, 51 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
+        """Giữ nguyên vẹn 2.155 dòng `vocab.csv`, 55 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
         vocab_raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
-        self.assertEqual(len(vocab_raw.splitlines()), 2090)
+        self.assertEqual(len(vocab_raw.splitlines()), 2156)
         vocab_rows = list(csv.DictReader(io.StringIO(vocab_raw)))
-        self.assertEqual(len(vocab_rows), 2089)
+        self.assertEqual(len(vocab_rows), 2155)
 
         grammar_raw = DEFAULT_GRAMMAR_CSV.read_text(encoding="utf-8-sig")
         grammar_rows = list(csv.DictReader(io.StringIO(grammar_raw)))
-        self.assertEqual(len(grammar_rows), 51)
+        self.assertEqual(len(grammar_rows), 55)
         self.assertTrue(all(r["status"] == "active" for r in grammar_rows))
         self.assertTrue(all(r["source_status"] in {"verified", "missing", "internal"} for r in grammar_rows))
 

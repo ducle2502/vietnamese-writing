@@ -54,5 +54,9 @@ AUDIT_AND_CALQUE_FIXTURES: tuple[BenchmarkFixture, ...] = (
     ("TF-X-37", "VIS-STRUCT-002", "audit_report", False, "Theo Thông báo số 123/TB-NHNN về kiểm tra đối soát ngày 10/11/2026, đơn vị chưa gửi hồ sơ."),
     ("TF-X-38", "VIS-STRUCT-002", "audit_report", True, "| Mục | Ghi chú |\n| --- | --- |\n| 1 | Có vì sổ rủi ro đã ghi đủ người phụ trách và hạn xử lý. |"),
     ("TF-X-39", "VIS-STRUCT-002", "audit_report", False, "| Mục | Ghi chú |\n| --- | --- |\n| 1 | Có mốc chuẩn bị nhưng chưa tìm thấy lịch theo giờ trong ngày diễn tập. |"),
+    ("TF-X-40", "VIS-TRANS-015", "all", True, "Cảnh báo pháp lý trước 30/11 và các chỉ đạo chính tháng 11/2026."),
+    ("TF-X-41", "VIS-TRANS-015", "audit_report", True, "Bản tin tổng hợp cảnh báo tuân thủ và cảnh báo tài chính quý IV."),
+    ("TF-X-42", "VIS-TRANS-015", "general", False, "Bộ phận kỹ thuật cảnh báo hệ thống có thể quá tải vào cuối tuần."),
+    ("TF-X-43", "VIS-TRANS-015", "general", False, "Đài khí tượng phát tin cảnh báo bão số 3 và cảnh báo sớm lũ quét."),
 )
 # fmt: on

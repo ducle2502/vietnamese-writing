@@ -358,6 +358,33 @@ class TestCalquesAndAuditExtras(unittest.TestCase):
             hits = {f.rule_id for f in self.scanner.scan_text(text, profile="all").findings}
             self.assertIn("VIS-LEX-001", hits, f"Bỏ sót VIS-LEX-001 trên: {text}")
 
+    def test_canh_bao_domain_calque_and_exemptions(self) -> None:
+        """Cụm ghép 'cảnh báo + lĩnh vực' kích hoạt VIS-TRANS-015 nhưng động từ dẫn mệnh đề phải sạch."""
+        bad_cases = (
+            "Cảnh báo pháp lý trước 30/11 và các chỉ đạo chính tháng 11/2026",
+            "Đơn vị gửi cảnh báo tuân thủ và cảnh báo vận hành trong quý IV.",
+            "Cảnh báo bảo mật trước kỳ nâng cấp tháng 11/2026.",
+            "Cảnh báo hệ thống trước 30/11.",
+            "Đơn vị gửi cảnh báo dữ liệu chưa được xác minh.",
+        )
+        for text in bad_cases:
+            findings = [f for f in self.scanner.scan_text(text, profile="all").findings if f.rule_id == "VIS-TRANS-015"]
+            self.assertTrue(findings, f"Bỏ sót VIS-TRANS-015 trên: {text}")
+            self.assertIn("cảnh báo + lĩnh vực", findings[0].suggestion_vi)
+
+        clean_cases = (
+            "Bộ phận kỹ thuật cảnh báo hệ thống có thể quá tải vào cuối tuần.",
+            "Kiểm toán nội bộ đã cảnh báo dữ liệu khách hàng chưa được mã hóa.",
+            "Đoàn kiểm tra cảnh báo quy trình phê duyệt còn lỏng lẻo.",
+            "Giám đốc cảnh báo kế toán trưởng về sai sót chứng từ.",
+            "Ứng dụng tự động đối soát công nợ và gửi cảnh báo đơn trễ hạn.",
+            "Đài khí tượng phát tin cảnh báo bão số 3 và cảnh báo sớm lũ quét.",
+            "Lưu ý pháp lý trước hạn 30/11 và các chỉ đạo trọng tâm tháng 11/2026.",
+        )
+        for text in clean_cases:
+            rep = self.scanner.scan_text(text, profile="all")
+            self.assertEqual(rep.findings_count, 0, f"Báo nhầm trên: {text} -> {rep.findings}")
+
 
 if __name__ == "__main__":
     unittest.main()

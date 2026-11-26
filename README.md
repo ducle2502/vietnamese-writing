@@ -10,7 +10,7 @@
 
 <br>
 
-[![CI](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml/badge.svg)](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-0969da?style=flat-square&labelColor=161b22) ![Rules](https://img.shields.io/badge/rules-55%20%286%20groups%29-3fb950?style=flat-square&labelColor=161b22) ![Vocab](https://img.shields.io/badge/vocab-2.155%20terms-2ea043?style=flat-square&labelColor=161b22) [![License](https://img.shields.io/badge/license-MIT-58a6ff?style=flat-square&labelColor=161b22)](./LICENSE)
+[![CI](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml/badge.svg)](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-0969da?style=flat-square&labelColor=161b22) ![Rules](https://img.shields.io/badge/rules-55%20%286%20groups%29-3fb950?style=flat-square&labelColor=161b22) ![Vocab](https://img.shields.io/badge/vocab-2.197%20terms-2ea043?style=flat-square&labelColor=161b22) [![License](https://img.shields.io/badge/license-MIT-58a6ff?style=flat-square&labelColor=161b22)](./LICENSE)
 
 [Ví dụ](#ví-dụ-trước-và-sau) · [Tổng quan](#tổng-quan) · [Cài đặt nhanh](#cài-đặt-nhanh) · [6 nhóm quy tắc](#6-nhóm-quy-tắc-và-7-ngữ-cảnh-văn-bản) · [Dòng lệnh](#chạy-từ-dòng-lệnh) · [Cấu trúc thư mục](#cấu-trúc-thư-mục) · [Giới hạn phạm vi](#giới-hạn-phạm-vi)
 
@@ -50,7 +50,7 @@ Mặc định lệnh `scan` chạy ở chế độ `all` để giữ chuẩn n�
 
 | Lệnh chính | Công dụng thực tế | Đầu vào hỗ trợ |
 |---|---|---|
-| `scan` | Rà `55` quy tắc và `2.155` mục từ vựng, giữ chuẩn nền chung | Markdown thô, tệp UTF-8 và `.docx` |
+| `scan` | Rà `55` quy tắc và `2.197` mục từ vựng, giữ chuẩn nền chung | Markdown thô, tệp UTF-8 và `.docx` |
 | `profile` | Đo `18` chỉ số nhịp câu, `14` chỉ số lập luận DHDNA và xếp loại giọng văn | Markdown thô, tệp UTF-8 và `.docx` |
 | `verify` | Đối chiếu `6` nhóm dữ kiện gốc trước và sau khi sửa (số liệu, phủ định, điều kiện...) | Cặp tệp gốc và tệp đã sửa |
 | `check-maintenance` | Nhắc lịch rà soát định kỳ danh sách từ tiếng Anh quen dùng (`63` phổ thông, `115` công sở) | Tự đọc từ [data/vocab.csv](data/vocab.csv) |
@@ -124,7 +124,7 @@ python -B -m pytest -v
 |---|---|
 | [SKILL.md](SKILL.md) | Hướng dẫn thao tác chính cho AI Agent. |
 | [AGENTS.md](AGENTS.md) | Quy tắc rút gọn khi làm việc trực tiếp trong repo. |
-| [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.155` mục từ vựng và `55` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở trực tiếp bằng Excel. |
+| [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.197` mục từ vựng và `55` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở trực tiếp bằng Excel. |
 | [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ quét văn bản, đọc thẳng `.docx`, đo giọng văn DHDNA và đối soát dữ kiện gốc. |
 | [references/rule-catalog.md](references/rule-catalog.md) | Bảng tra cứu `55` quy tắc kèm nguồn, ngoại lệ và cách viết lại. |
 | [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) | `4` kiểu giọng chính, `12` chiều DHDNA, quy trình biên tập, khung `5C` và `10` quy tắc viết ghi chú bảng kiểm. |

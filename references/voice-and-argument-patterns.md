@@ -211,7 +211,7 @@ Bảy nhãn bằng chứng dùng thống nhất trong toàn bộ hồ sơ:
 [FACT]      Hiện vật hoặc số liệu đã kiểm chứng.
 [CLAIM]     Lời tự công bố của đơn vị, chưa kiểm chứng độc lập.
 [INFERENCE] Suy luận có căn cứ từ dữ kiện đã nêu.
-[GAP]       Khoảng trống dữ liệu hoặc hồ sơ chưa thu thập.
+[GAP]       Phần dữ liệu còn thiếu hoặc hồ sơ chưa thu thập.
 [RISK]      Hệ quả tiềm ẩn nếu không xử lý.
 [DECISION]  Quyết định hoặc điều kiện do cấp có thẩm quyền ban hành.
 [MÂU THUẪN] Hai nguồn hoặc hai trang nêu số liệu khác nhau.
@@ -264,7 +264,7 @@ SL07  Luồng giao dịch trọng yếu chưa kiểm thử đầu cuối.
 SL08  Kênh số chưa đạt kiểm thử chịu tải.
 SL09  Chưa có kết quả kiểm thử lại của lỗi nghiêm trọng.
 SL10  Chưa đối soát dữ liệu chuyển đổi theo đơn vị.
-SL11  Chưa khóa phạm vi triển khai.
+SL11  Chưa xác định phạm vi triển khai.
 SL12  Thiếu kế hoạch quay lui đã diễn tập.
 SL13  Lỗ hổng phân quyền đặc quyền hoặc mật khẩu trống.
 SL14  Chưa tách nhiệm vụ tạo lập và phê duyệt.
@@ -325,7 +325,7 @@ Một nhận định chuẩn đi theo năm bước:
 1. Nêu trạng thái bằng một câu kết luận.
 2. Dẫn số liệu tử số, mẫu số và tỷ lệ.
 3. Chỉ ra yêu cầu chuẩn hoặc điều kiện phải đạt.
-4. Phân tích nguyên nhân kiểm soát hoặc khoảng trống.
+4. Phân tích nguyên nhân kiểm soát hoặc phần còn thiếu sót.
 5. Chốt hệ quả vận hành và kiến nghị có điều kiện.
 
 ### 7.7. Danh mục kiểm tra trước khi bàn giao
@@ -365,7 +365,7 @@ Trích dẫn văn bản phải ghi rõ chủ đề ngay trong câu (*"theo Thôn
 | Đối chiếu pháp luật | "Quy định hiện đã lỗi thời, hết hiệu lực hoặc trái pháp luật." | "Nội dung quy định cơ bản vẫn phù hợp thực tế vận hành." | Quy định chưa cập nhật theo văn bản hiệu lực từ `[dd/mm]`, chưa khớp Khoản, Điều liên quan. |
 | Không thấy hồ sơ | "Đơn vị bỏ sót hoàn toàn và không thực hiện kiểm thử." | "Hồ sơ đang trong quá trình hoàn thiện thủ tục ký duyệt." | Đơn vị chưa quy định nội dung này, hoặc đến `[dd/mm]` tổ kiểm toán chưa tìm thấy hồ sơ chứng minh. |
 | Phạm vi kiểm tra | "Đối chiếu và đáp ứng 100% toàn bộ tiêu chí pháp luật." | "Cơ bản bám sát các yêu cầu trọng tâm của quy định." | Đã đối chiếu `[A]/[B]` tiêu chí thuộc phạm vi kỳ kiểm toán. Tỷ lệ đạt chỉ phản ánh tập tiêu chí đã chọn. |
-| Quá hạn đóng lỗi | "Đơn vị trì trệ, thiếu trách nhiệm làm dự án thất bại." | "Nhiệm vụ đang tích cực phối hợp, dự kiến sớm hoàn tất." | Nhiệm vụ quá hạn `[N]` ngày. Cập nhật mới dừng ở bước trình duyệt, chưa có văn bản ban hành kiểm chứng. |
+| Quá hạn đóng lỗi | "Đơn vị trì trệ, thiếu trách nhiệm làm dự án thất bại." | "Nhiệm vụ đang tích cực phối hợp, dự kiến sớm hoàn tất." | Nhiệm vụ quá hạn `[N]` ngày. Cập nhật mới dừng ở bước trình phê duyệt, chưa có văn bản ban hành kiểm chứng. |
 | Hai nguồn lệch nhau | "Bộ phận dự án cố ý làm sai lệch số liệu báo cáo." | "Số liệu chênh nhẹ do thời điểm tổng hợp khác nhau." | Hai nguồn cùng kỳ chốt ghi `[A]` và `[B]`. Khi chưa giải trình nguyên nhân lệch, chưa đủ căn cứ kết luận. |
 | Còn lỗi chặn | "Hệ thống chắc chắn sẽ sập khi đưa vào vận hành thật." | "Tiến độ đạt 89%, cơ bản sẵn sàng, chỉ còn vài lưu ý nhỏ." | Kiểm thử đạt `[X]%` nhưng còn `[N]` lỗi nghiêm trọng và chưa đối soát sổ cái. Hệ thống chưa đủ điều kiện vận hành. |
 | Sát mốc vận hành | "Hệ thống hoàn toàn không thể đưa vào vận hành." | "Hệ thống cơ bản đáp ứng kế hoạch, tiếp tục theo dõi thêm." | Đến `[dd/mm]`, chưa đủ cơ sở xác nhận sẵn sàng. Nếu chưa xong điều kiện chặn trước `[dd/mm]`, cần dời mốc. |
@@ -396,5 +396,19 @@ Cột ghi chú trả lời một câu hỏi: **vì sao dòng này được chấ
 | `Chưa có` | Nêu thành phần chưa tìm thấy | "Chưa tìm thấy bằng chứng kiểm tra lại hoặc đóng lỗi." |
 
 Lỗi cần tránh: viết `"Thiếu tài liệu X"` hoặc `"Không có bằng chứng"` khi chưa đọc hết hồ sơ. Không chèn mã bằng chứng hoặc tên trường vào ghi chú, không viết hai đến ba câu và không gọi lệch số liệu chưa rõ phạm vi là `"mâu thuẫn"`.
+
+### 7.10. Biên tập chọn lọc báo cáo giám sát và sách thực hành (`K1–K8`, `G1–G13`)
+
+Khi biên tập báo cáo giám sát kiểm toán (`K1–K8`) và sách thực hành kỹ thuật (`G1–G13`), cần rà kỹ các lỗi thường lọt máy quét tự động dưới đây.
+
+Mở rộng từ rút gọn và đặt đúng chủ thể (`K1`, `K3`, `K4`). Hãy đổi động từ sổ ghi chú sang ngữ pháp đầy đủ ("rà" thành rà soát, "trình duyệt" dạng động từ thành trình phê duyệt, "duyệt" thành thông qua hoặc phê duyệt). Tương tự, đổi "chốt" thành xác định hoặc thống nhất và "vướng" thành vướng mắc. Đưa người hoặc đơn vị chịu trách nhiệm làm chủ ngữ thay cho văn bản hay đầu việc vô tri ("Báo cáo lưu ý...", "đầu việc tự ghi...").
+
+Giữ `CV >= 0,40` bằng câu ngắn đủ chủ–vị (`K2`). Xen kẽ câu `7–10` từ có đủ chủ ngữ và vị ngữ với câu dữ kiện `22–31` từ. Tuyệt đối không chặt câu thành đoạn `4–6` từ cụt chủ ngữ.
+
+Tách thẩm định pháp lý, kiểm bản ghép và hậu kiểm (`K5–K8`). Giữ nguyên mức độ chắc chắn gốc khi sửa câu. Gắn cờ `NEEDS_AUTHOR_DECISION` nếu đổi chữ có nguy cơ làm lệch nghĩa pháp lý hoặc gặp mã viết tắt nội bộ thiếu tên đầy đủ. Quét giải nghĩa chữ viết tắt ngay ở lần xuất hiện đầu tiên trên bản ghép hoàn chỉnh.
+
+Giữ ngữ cảnh đọc lướt và rà ảnh sau biên tập (`K7`, `K8`): ghi đầy đủ tên văn bản quy phạm, đơn vị trọng yếu tài chính và ranh giới thẩm quyền ba tuyến phòng thủ. Kiểm tra chữ tiếng Việt trong ảnh PNG (`matplotlib`, `Pillow`) cùng phân trang PDF sau khi sửa. Lưu ý lệnh `verify` chỉ xuất cảnh báo đối chiếu cực tính khi chuyển từ vựng phủ định ("trái", "sai", "vướng", "thiếu") sang "chưa" hoặc "không".
+
+Tránh đếm số listicle và đồng bộ sách thực hành (`G1–G13`): bỏ số đếm tùy ý trên tiêu đề và không thay máy móc bằng "một số", "những", "các". Chỉ giữ con số khi gắn với giới hạn thật của công cụ hoặc khung cấu trúc cố định. Giữ song hành ngữ pháp trong danh sách, bỏ văn điện tín, đổi cấu trúc mở và kết giữa các phần. Đồng bộ thuật ngữ xuyên suốt bìa, tiêu đề và thân bài, đồng thời đưa ví dụ đầu vào và đầu ra thật cho mọi câu lệnh hoặc prompt.
 
 Giới hạn sử dụng: sổ tay này mô tả lựa chọn văn bản, không phải thước đo phẩm chất cá nhân. Khi chuyển sang thể loại khác, cần hiệu chỉnh lại nhịp câu và mật độ thuật ngữ.

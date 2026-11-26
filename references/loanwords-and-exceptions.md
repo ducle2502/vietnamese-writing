@@ -32,6 +32,9 @@ Lệnh `scripts/vi_scanner.py scan` mặc định xuất đủ tín hiệu của
 | Câu mời gọi `Hãy cùng khám phá`, `Bí quyết không thể bỏ qua` (`VIS-AI-004`, `VIS-CLICHE-004`) | Lọt vào báo cáo quản trị, tài liệu học thuật, pháp lý hoặc bản dịch kỹ thuật. | Bài quảng cáo thương mại (`marketing`) hoặc bài đăng tương tác ngắn trên mạng xã hội (`social_media`) khi đúng giọng thương hiệu. |
 | Động từ gợi sự `hé lộ`, `lộ diện` (`VIS-TONE-002`) | Gắn với báo cáo, kiểm thử, dữ liệu hoặc lỗi kỹ thuật trong văn bản quản trị, học thuật, pháp lý (`"diễn tập hé lộ lỗ hổng"`). | Bài giới thiệu sản phẩm (`marketing`), bài đăng mạng xã hội (`social_media`) hoặc miêu tả vật lý ngoài ngữ cảnh phân tích. |
 | Cụm ghép `cảnh báo + lĩnh vực` (`VIS-TRANS-015`) | Dùng làm cụm danh từ dịch sát (`"cảnh báo pháp lý"`, `"cảnh báo tuân thủ"`, `"cảnh báo tài chính"`). | Động từ `cảnh báo` dẫn mệnh đề hoặc bản tin thiên tai, sự cố cụ thể (*"cảnh báo bão"*, *"cảnh báo hệ thống có thể quá tải"*). |
+| Từ "trình duyệt" (`VIS-TONE-001`) | Dùng như động từ rút gọn trong quy trình phê duyệt ("đang trình duyệt", "bước trình duyệt"). Hãy đổi thành trình phê duyệt hoặc kính trình. | Dùng làm danh từ chỉ phần mềm mở trang web ("trình duyệt web", "mở trình duyệt Chrome"). |
+| Từ "chốt" và "cấp số" (`VIS-TONE-001`, `VIS-LEX-001`) | Dùng với nghĩa khẩu ngữ sổ ghi chú ("chốt ngân sách", "chốt đầu mối", "cấp số tài chính"). Hãy đổi thành xác định, thống nhất hoặc cung cấp số liệu. | Dùng đúng thuật ngữ chuyên ngành hoặc hành chính chuẩn ("chốt kết luận", "chốt số liệu kỳ", "cấp số công văn"). |
+| Cụm "khoảng trống" (`VIS-LEX-001`) | Dùng theo nghĩa trừu tượng dịch sát `gap` ("khoảng trống kiểm soát", "khoảng trống pháp lý", "khoảng trống dữ liệu"). Hãy đổi sang thiếu sót, phần còn thiếu, lỗ hổng kiểm soát hoặc điểm chưa quy định. | Dùng cho không gian vật lý hoặc dàn trang thật có đơn vị hay mốc không gian đi kèm ("chừa khoảng trống 2 cm ở lề trang giấy"). |
 
 ## 3. Ma trận bảy hồ sơ thể loại
 
@@ -60,5 +63,11 @@ Các mục dưới đây là lưu ý biên tập. Chúng không phải lệnh c�
 | một số thay đổi | Giữ nguyên. Tránh ghép thành một số các thay đổi. |
 | phát hành và ban hành | Phát hành dùng cho ấn phẩm hoặc bản cập nhật. Ban hành dùng cho văn bản quy phạm. |
 | soát xét | Dùng rà soát cho hành động kiểm tra lại. Dùng xem lại, phản biện hoặc tham vấn chuyên gia theo đúng sắc thái. |
+| "lượt đầu" | Dùng lần đầu hoặc ngay từ đầu, tránh dịch sát `first turn` theo nghĩa lượt chơi. |
+| "bỏ túi" | Bỏ hoặc đổi thành sổ tay thực hành để tránh sáo ngữ tiếp thị sách in trên tài liệu số. |
+| "nguồn gốc" | Khi chỉ tài liệu chứng minh trong kiểm toán, dùng nguồn tài liệu gốc hoặc hồ sơ gốc. |
+| "đèn xanh, đèn vàng, đèn đỏ" | Khi phân loại mức độ bảo mật dữ liệu, gọi thẳng Công khai, Nội bộ, Mật. |
+| "xuất bản" | Khi triển khai trang web tĩnh hoặc đẩy mã lên máy chủ, dùng đưa lên thay cho dịch sát `publish`. |
+| "gán giá trị 0" | Chỉ dùng trong lập trình. Trong báo cáo kiểm toán cho mục thiếu chứng từ, dùng mặc định tính bằng 0. |
 
 soát xét từng bị dùng như động từ mặc định cho mọi hoạt động review. Cách dùng này đúng khi nói về vai trò hoặc hồ sơ rà soát chính thức, nhưng lặp ở mọi câu sẽ thành giọng dịch và nặng. Hãy chọn động từ theo hành động thật.

@@ -719,3 +719,27 @@ RX12  Cú pháp Trung Hoa:        (?i)\b(?:đem\s+[^.,;]{2,35}\s+(?:giao|đưa|l
 ### 4. Cách dùng
 
 Quét tệp sau khi viết bằng `python scripts/vi_scanner.py scan TEP.md --json`. Đối chiếu mã `G` với rule tương ứng trong [rule-catalog.md](rule-catalog.md). Mẫu chưa có rule phải đưa vào danh sách rà thủ công.
+
+## Phần C. Mẫu rút gọn sổ nội bộ, dịch ngầm và sách thực hành
+
+Phần này tổng hợp các nhóm lỗi mới tích hợp từ khảo sát báo cáo giám sát (`K1–K8`) và bộ sách thực hành (`G1–G13`). Mọi ví dụ lỗi đặt trong khối mã để tách khỏi văn xuôi.
+
+| Nhóm mẫu | Dấu hiệu thường gặp | Quy tắc / Cách xử lý |
+| :--- | :--- | :--- |
+| Kết hợp từ dịch ngầm (`G1`, `G6`, `G11`) | Ghép gượng động từ, thiếu giới từ hoặc lặp nghĩa Việt và Anh. | `VIS-LEX-001`, `VIS-CLICHE-003`, `VIS-RHET-003` |
+| Từ rút gọn sổ nội bộ (`K1`, `K3`, `K4`) | Cắt cụt động từ tác nghiệp, gán hành động cho tài liệu vô tri. | `VIS-TONE-001`, `VIS-TRANS-005`, `VIS-TONE-003` |
+| Nhồi số đếm vs lượng từ rỗng (`G7–G10`) | Đếm số tùy ý ở tiêu đề hoặc nhét "một số", "những", "các" máy móc. | Rà thủ công, chỉ giữ số gắn giới hạn thật của công cụ. |
+| Nhãn ảnh PNG và nhịp câu cụt (`K2`, `K8`) | Chữ vẽ trên ảnh (`matplotlib`, `Pillow`) hoặc câu `4–6` từ thiếu chủ ngữ. | `VIS-FMT-006`, rà chuỗi trong mã vẽ ảnh trước khi xuất PDF. |
+
+```text
+[Kết hợp từ dịch ngầm]  giữ đều thói quen -> giữ thói quen
+[Kết hợp từ dịch ngầm]  chạy thử dry-run  -> chạy thử / chế độ xem trước
+[Kết hợp từ dịch ngầm]  bật tìm web       -> bật tìm kiếm trên web
+[Sổ nội bộ rút gọn]     rà ba mục         -> rà soát ba mục
+[Sổ nội bộ rút gọn]     trình duyệt       -> trình phê duyệt (khi là động từ)
+[Sổ nội bộ rút gọn]     khóa phạm vi      -> xác định phạm vi
+[Nhân hóa vô tri]       Báo cáo lưu ý...  -> KTNB lưu ý...
+[Khẳng định tuyệt đối]  trái luật         -> chưa phù hợp với quy định
+[Tiêu đề listicle]      Bảy khái niệm...  -> Khái niệm cơ bản
+[Câu cụt kéo CV]        Nổi lên ba tồn tại. Cần xử lý ngay. -> KTNB ghi nhận ba tồn tại.
+```

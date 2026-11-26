@@ -91,6 +91,7 @@ class VerifyReport(TypedDict):
     version: str
     passed: bool
     errors: list[str]
+    warnings: list[str]
     changes: dict[str, InvariantDelta]
     before_sha256: str
     after_sha256: str

@@ -254,7 +254,10 @@ def _audit_stylometry_extras(
                 buf,
                 anchor,
                 f"[CV câu={cv:.2f} < 0,35 trên {stylo['so_cau']} câu]",
-                custom_suggestion="Nhịp độ dài câu đều kiểu máy; hãy xen câu chốt ngắn 5–8 từ trước chuỗi số liệu.",
+                custom_suggestion=(
+                    "Nhịp độ dài câu đều kiểu máy; hãy xen câu ngắn 7–10 từ đủ chủ ngữ, vị ngữ "
+                    "trước chuỗi số liệu thay vì cắt câu cụt."
+                ),
                 override_profiles=("audit_report",),
             )
         )

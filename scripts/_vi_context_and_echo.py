@@ -64,6 +64,10 @@ _LITERAL_METAPHOR_CTX: dict[str, stdlib_re.Pattern[str]] = {
     "điểm sáng": stdlib_re.compile(r"(?i)\b(?:x-quang|màn\s+hình|ảnh|pixel|quang\s+học|ánh\s+sáng|kính\s+hiển\s+vi)\b"),
     "đặt nền móng": stdlib_re.compile(r"(?i)\b(?:xây\s+dựng|đổ\s+móng|công\s+trình|nhà\s+máy|tòa\s+nhà)\b"),
     "đặt nền móng cho": stdlib_re.compile(r"(?i)\b(?:xây\s+dựng|đổ\s+móng|công\s+trình|nhà\s+máy|tòa\s+nhà)\b"),
+    "khoảng trống": stdlib_re.compile(
+        r"(?i)\b(?:mét|cm|mm|m2|tòa\s+nhà|bức\s+tường|mặt\s+bằng|sân\s+bãi|"
+        r"chỗ\s+đậu\s+xe|lề\s+trang|trang\s+giấy|giữa\s+hai\s+cột|giữa\s+các\s+dòng|ký\s+tự\s+trắng)\b"
+    ),
     "mảnh ghép": stdlib_re.compile(r"(?i)\b(?:xếp\s+hình|trò\s+chơi|đồ\s+chơi|puzzle|ghép\s+tranh)\b"),
     "mở khóa": stdlib_re.compile(
         r"(?i)^\s*(?:tài\s+khoản|màn\s+hình|thiết\s+bị|điện\s+thoại|thẻ|cổng|cửa|két|ổ\s+khóa|phiên)\b"

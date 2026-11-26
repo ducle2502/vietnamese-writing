@@ -275,7 +275,10 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
     "VIS-TRANS-009": "Bỏ từ chỉ vị trí bị lặp ('ở trong... bên trong'); thay một vế bằng quan hệ sở hữu 'của'.",
     "VIS-TRANS-010": "Thay cụm 'mang tính + danh/tính từ' lặp lại bằng tính từ trực tiếp hoặc chỉ tiêu cụ thể.",
     "VIS-CLICHE-005": "Chỉ giữ một từ chỉ khả năng ('có thể' hoặc 'dự kiến') thay vì ghép chồng nhiều từ rào đón.",
-    "VIS-TONE-001": "Đổi sang giọng văn trung tính, trang trọng phù hợp với văn bản trình duyệt; bỏ từ khẩu ngữ.",
+    "VIS-TONE-001": (
+        "Đổi sang giọng văn trung tính, trang trọng phù hợp với văn bản trình phê duyệt; "
+        "tách động từ rút gọn (rà, chốt, vướng, trình duyệt) thành cụm trang trọng đầy đủ và bỏ từ khẩu ngữ."
+    ),
     "VIS-TONE-002": (
         "Tránh từ ngữ điều tra hình sự, cổ văn hoặc báo chí giật gân; "
         "dùng động từ trung tính ('phát hiện', 'ghi nhận')."
@@ -410,7 +413,10 @@ def _resolve_trans_or_lex_hint(rid: str, low: str) -> str | None:
     elif rid == "VIS-TRANS-005":
         out = next(
             (msg for prefixes, msg in _TRANS005_PREFIX_HINTS if low.startswith(prefixes)),
-            "Không gán hành vi tâm lý ('vô tình', 'bỏ quên', 'tưởng nhầm') cho bảng biểu, con số vô tri.",
+            (
+                "Không gán hành vi chủ động hoặc tâm lý cho tài liệu, bảng biểu, đầu việc vô tri; "
+                "hãy đưa đơn vị hoặc người phụ trách làm chủ ngữ."
+            ),
         )
     elif rid == "VIS-LEX-001":
         out = next(

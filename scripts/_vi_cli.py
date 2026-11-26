@@ -313,6 +313,8 @@ def _cmd_verify(args: argparse.Namespace) -> int:
         print("KẾT QUẢ ĐỐI SOÁT:", "ĐẠT (PASS)" if result["passed"] else "LỆCH DỮ KIỆN (FAIL)")
         for err in result["errors"]:
             print(f"  - {err}")
+        for warn in result["warnings"]:
+            print(f"  [LƯU Ý] {warn}")
         print(result["note"])
     return 0 if result["passed"] else 1
 

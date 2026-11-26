@@ -35,6 +35,8 @@ _INV_CONDITIONALS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
 _INV_MODALS_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"\b(?:có thể|phải|bắt buộc|ước tính|khoảng|dự kiến|tối đa|tối thiểu)\b"
 )
+_LEXICAL_NEG_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"\b(?:trái|sai|vướng|thiếu)\b")
+_SOFT_NEG_TOKENS: frozenset[str] = frozenset({"không", "chưa"})
 _INV_NEG_GATES: tuple[str, ...] = ("không", "chưa", "chẳng", "chớ", "miễn", "cấm", "phi", "vô")
 _INV_COND_GATES: tuple[str, ...] = ("nếu", "trừ", "miễn", "trường", "điều")
 _INV_MOD_GATES: tuple[str, ...] = ("thể", "phải", "bắt", "ước", "khoảng", "dự", "tối")
@@ -349,10 +351,34 @@ def build_scan_buffer(text: str) -> _ScanBuffer:
     )
 
 
+def _detect_lexical_negation_softening(
+    before: str,
+    after: str,
+    inv_b: dict[str, list[str]],
+    inv_a: dict[str, list[str]],
+) -> list[str]:
+    """Cảnh báo khi từ phủ định từ vựng (trái/sai/vướng/thiếu) được diễn đạt lại bằng 'không/chưa'."""
+    neg_removed, neg_added = SemanticMasker.diff_multiset(inv_b["negations"], inv_a["negations"])
+    if neg_removed or not neg_added or any(tok not in _SOFT_NEG_TOKENS for tok in neg_added):
+        return []
+    lex_removed, _ = SemanticMasker.diff_multiset(
+        _LEXICAL_NEG_RE.findall(safe_lower_preserve_len(before)),
+        _LEXICAL_NEG_RE.findall(safe_lower_preserve_len(after)),
+    )
+    if len(neg_added) > len(lex_removed):
+        return []
+    return [
+        f"Chuyển phủ định từ vựng ({', '.join(lex_removed)}) sang phủ định ngữ pháp "
+        f"({', '.join(neg_added)}); cần đối chiếu lại chiều khẳng định/phủ định."
+    ]
+
+
 def verify_text(before: str, after: str) -> VerifyReport:
     inv_b = SemanticMasker.extract_invariants(before)
     inv_a = SemanticMasker.extract_invariants(after)
-    ok, errors = SemanticMasker.validate_invariants(inv_b, inv_a, strict_negations_and_modals=True)
+    warnings = _detect_lexical_negation_softening(before, after, inv_b, inv_a)
+    check_b = {**inv_b, "negations": inv_a["negations"]} if warnings else inv_b
+    ok, errors = SemanticMasker.validate_invariants(check_b, inv_a, strict_negations_and_modals=True)
     deltas: dict[str, InvariantDelta] = {}
     for key, before_items in inv_b.items():
         removed, added = SemanticMasker.diff_multiset(before_items, inv_a[key])
@@ -362,6 +388,7 @@ def verify_text(before: str, after: str) -> VerifyReport:
         "version": VERSION,
         "passed": ok,
         "errors": errors,
+        "warnings": warnings,
         "changes": deltas,
         "before_sha256": hashlib.sha256(before.encode("utf-8")).hexdigest(),
         "after_sha256": hashlib.sha256(after.encode("utf-8")).hexdigest(),

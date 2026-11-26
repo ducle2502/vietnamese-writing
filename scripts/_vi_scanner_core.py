@@ -243,7 +243,7 @@ def _build_regex_findings(
 
 
 class ViScanner:
-    """Máy quét câu chữ tiếng Việt v2.4.0 (mặc định `profile="all"` xuất đủ 100% tín hiệu của 7 nhóm)."""
+    """Máy quét câu chữ tiếng Việt v2.5.0 (mặc định `profile="all"` xuất đủ 100% tín hiệu của 7 nhóm)."""
 
     VERSION: ClassVar[str] = VERSION
     SCHEMA_VERSION: ClassVar[str] = SCHEMA_VERSION

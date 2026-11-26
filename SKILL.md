@@ -9,7 +9,7 @@ license: MIT
 compatibility: Python 3.11+ (chỉ cần khi chạy công cụ scripts/vi_scanner.py)
 metadata:
   author: ducle2502
-  version: "2.4.0"
+  version: "2.5.0"
 ---
 
 # vietnamese-writing

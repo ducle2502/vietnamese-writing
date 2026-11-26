@@ -1,6 +1,6 @@
 {
   "name": "vietnamese-writing",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Viết, biên tập và kiểm tra tiếng Việt tự nhiên theo ngữ cảnh kèm công cụ quét câu chữ và đối soát dữ kiện.",
   "skills": [
     "./"

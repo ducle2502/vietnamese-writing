@@ -2,6 +2,15 @@
 
 Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-11-26
+
+### Thêm mới (Added)
+
+- Bổ sung `42` mục từ vựng từ khảo sát báo cáo giám sát (`K1–K8`), bộ sách thực hành (`G1–G13`) và cụm `"khoảng trống"` vào [data/vocab.csv](data/vocab.csv) (`2.197` mục).
+- Cập nhật `4` quy tắc trong [data/grammar.csv](data/grammar.csv): `VIS-TONE-001` (động từ rút gọn sổ nội bộ), `VIS-TONE-003` (`"trái luật"`, `"sai luật"`), `VIS-TRANS-005` (nhân hóa văn bản, đầu việc) và `VIS-FMT-006` (bật thêm cho `audit_report`).
+- Bổ sung cảnh báo đối chiếu cực tính khi thay thế từ vựng phủ định sang `"chưa"` hoặc `"không"` trong `verify_text` ([scripts/_vi_masker.py](scripts/_vi_masker.py) và [scripts/_vi_cli.py](scripts/_vi_cli.py)).
+- Tích hợp hướng dẫn `K1–K8` và `G1–G13` (nhịp câu `CV`, `NEEDS_AUTHOR_DECISION`, giải nghĩa viết tắt trên bản ghép, chữ trong ảnh PNG và bỏ đếm số máy móc) vào [SKILL.md](SKILL.md) và `references/`.
+
 ## [2.4.0] - 2026-11-20
 
 ### Thêm mới (Added)

@@ -31,6 +31,7 @@ Lệnh `scripts/vi_scanner.py scan` mặc định xuất đủ tín hiệu của
 | Đoạn văn có độ dài đồng đều (`VIS-FMT-005`) | Bài luận hoặc bài chia sẻ chia thành 4 đến 5 đoạn có số câu và số chữ y hệt nhau như đúc khuôn. | Văn bản pháp luật chia theo từng Điều hoặc thuyết minh báo cáo kiểm toán trình bày song song từng khoản mục. |
 | Câu mời gọi `Hãy cùng khám phá`, `Bí quyết không thể bỏ qua` (`VIS-AI-004`, `VIS-CLICHE-004`) | Lọt vào báo cáo quản trị, tài liệu học thuật, pháp lý hoặc bản dịch kỹ thuật. | Bài quảng cáo thương mại (`marketing`) hoặc bài đăng tương tác ngắn trên mạng xã hội (`social_media`) khi đúng giọng thương hiệu. |
 | Động từ gợi sự `hé lộ`, `lộ diện` (`VIS-TONE-002`) | Gắn với báo cáo, kiểm thử, dữ liệu hoặc lỗi kỹ thuật trong văn bản quản trị, học thuật, pháp lý (`"diễn tập hé lộ lỗ hổng"`). | Bài giới thiệu sản phẩm (`marketing`), bài đăng mạng xã hội (`social_media`) hoặc miêu tả vật lý ngoài ngữ cảnh phân tích. |
+| Cụm ghép `cảnh báo + lĩnh vực` (`VIS-TRANS-015`) | Dùng làm cụm danh từ dịch sát (`"cảnh báo pháp lý"`, `"cảnh báo tuân thủ"`, `"cảnh báo tài chính"`). | Động từ `cảnh báo` dẫn mệnh đề hoặc bản tin thiên tai, sự cố cụ thể (*"cảnh báo bão"*, *"cảnh báo hệ thống có thể quá tải"*). |
 
 ## 3. Ma trận bảy hồ sơ thể loại
 

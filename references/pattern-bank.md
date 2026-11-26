@@ -352,7 +352,7 @@ Cảm ơn bạn đã đồng hành đến cuối bài viết chuyên sâu này12
 | 8 | Phóng đại thao tác bình thường trong bảng chức năng và bảng phím tắt. | Ghi đúng thao tác, bỏ tính từ quảng cáo. |
 | 9 | Nhét tính từ quảng cáo rỗng vào tài liệu kỹ thuật. | Thay bằng thông số hoặc mô tả cơ chế. |
 | 10 | Tự phong chức danh tập đoàn và thuật ngữ quản trị dự án cho nhóm nhỏ. | Dùng chức danh thật và phạm vi thật. |
-| 11 | Giảng đạo lý, cảnh báo pháp lý tự phát và bảng giải thích điều hiển nhiên. | Xóa hộp răn đe và bảng hiển nhiên. |
+| 11 | Giảng đạo lý, hộp răn đe pháp lý tự phát và bảng giải thích điều hiển nhiên. | Xóa hộp răn đe và bảng hiển nhiên. |
 | 12 | Nhồi từ khóa, số liệu kiểu SEO vào thuộc tính `alt`. | Giữ `alt` tối đa `8` chữ nêu tên hình. |
 | 13 | Chú thích cây thư mục và nhãn Mermaid viết dài như văn xuôi. | Giữ nhãn tối đa `8` chữ. |
 | 14 | Đặt tên tiêu đề và thanh điều hướng rườm rà kiểu sách giáo khoa. | Dùng tiêu đề ngắn, đúng chức năng mục. |

@@ -60,7 +60,7 @@ Bảng tra cứu nhanh 55 mã quy tắc thuộc 6 nhóm khi đọc kết quả J
 | `VIS-TRANS-012` | `warning` | Cụm cú pháp Trung Hoa dịch cứng (`đem... giao cho`, `cho ai + V`, `đối với... mà nói`, `bị do...`). | Đảo động từ lên trước, bỏ mẫu rào đón và dùng cấu trúc phân công chủ động. |
 | `VIS-TRANS-013` | `info` | Trợ từ `đích/địa/đắc`, đảo định ngữ và bổ ngữ xu hướng còn sót từ bản `convert` Trung–Việt. | Xóa trợ từ, đưa danh từ chính lên trước và viết lại bổ ngữ theo tiếng Việt. |
 | `VIS-TRANS-014` | `info` | Câu dài dồn động từ xuống cuối theo trật tự SOV Nhật–Hàn, chỉ hướng dẫn rà thủ công. | Tách câu hoặc đưa động từ chính lên đầu vế. |
-| `VIS-TRANS-015` | `warning` | Dùng danh từ trừu tượng ghép dịch từ `discipline`, `guardrails` hoặc `gate` (`kỷ luật...`, `hàng rào...`, `cổng kiểm soát/kiểm định`). | Thay bằng `nguyên tắc`, `giới hạn kiểm soát` hoặc `bước kiểm tra bắt buộc`. |
+| `VIS-TRANS-015` | `warning` | Dùng danh từ trừu tượng ghép dịch từ `discipline`, `guardrails`, `gate` hoặc `alert` (`kỷ luật...`, `hàng rào...`, `cổng kiểm soát`, `cảnh báo pháp lý`). | Thay bằng `nguyên tắc`, `giới hạn kiểm soát`, `bước kiểm tra`, `lưu ý pháp lý` hoặc nêu thẳng rủi ro cần xử lý. |
 
 ## Nhóm 5: Sáo ngữ hành chính và câu khách (`BUREAUCRATIC_AND_SEO_CLICHE`)
 

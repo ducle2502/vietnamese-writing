@@ -2154,3 +2154,45 @@ yêu cầu tường minh,banned_phrase,VIS-LEX-001,Thay bằng yêu cầu cụ t
 nhãn dự phòng,banned_phrase,VIS-LEX-001,Thay bằng nhãn chung hoặc nhãn mặc định,active,Dịch sát fallback label
 mã nội dòng,banned_phrase,VIS-LEX-001,Thay bằng mã trong câu hoặc đoạn mã ngắn,active,Dịch sát inline code
 bóc tách tất định,banned_phrase,VIS-LEX-001,Thay bằng đọc trực tiếp bằng mã hoặc trích xuất trực tiếp không qua AI,active,Dịch sát deterministic extraction
+giữ đều thói quen,banned_phrase,VIS-LEX-001,Thay bằng giữ thói quen hoặc duy trì thói quen,active,Kết hợp từ dịch ngầm G1
+giữ chắc quy tắc,banned_phrase,VIS-LEX-001,Thay bằng nhớ kỹ quy tắc hoặc tuân thủ quy tắc,active,Kết hợp từ dịch ngầm G1
+chuẩn hóa gọn sạch,banned_phrase,VIS-LEX-001,Thay bằng hồ sơ đồng nhất hoặc chuẩn hóa thống nhất,active,Kết hợp từ dịch ngầm G1
+rà sạch dữ liệu,banned_phrase,VIS-LEX-001,Thay bằng rà kỹ dữ liệu hoặc lọc sạch dữ liệu lỗi,active,Kết hợp từ dịch ngầm G1
+đọc hiểu bảng tính,banned_phrase,VIS-LEX-001,Thay bằng khảo sát bảng tính hoặc đọc bảng tính,active,Kết hợp từ dịch ngầm G1
+ghi nhận sự thật,banned_phrase,VIS-TRANS-005,Thay bằng ghi đúng nội dung đã thống nhất hoặc ghi đúng thực tế,active,Dịch sát record the facts G1
+mở rộng tư duy,banned_phrase,VIS-CLICHE-001,Thay bằng mở rộng cách làm hoặc áp dụng sang việc khác,active,Khẩu hiệu trừu tượng G1
+đang cầm trên tay,banned_phrase,VIS-CLICHE-004,Thay bằng ĐANG ĐỌC cho tài liệu số hoặc bỏ nếu không phải bản in,active,Nhãn sách in không khớp tài liệu số G2
+cầm tay chỉ việc,banned_phrase,VIS-CLICHE-004,Thay bằng hướng dẫn từng bước,active,Khẩu ngữ quảng cáo G2
+đồ nghề,banned_phrase,VIS-TONE-001,Thay bằng công cụ hoặc tệp mẫu,active,Khẩu ngữ thiếu trang trọng G3
+cổng kiểm tra bắt buộc,banned_phrase,VIS-TRANS-015,Thay bằng bước kiểm tra bắt buộc,active,Dịch sát mandatory gate G3
+mục tiêu đầu ra,banned_phrase,VIS-STRUCT-001,Thay bằng kết quả đạt được hoặc sản phẩm bàn giao,active,Lộ nhãn thiết kế giáo án G4
+bản khóa bố cục,banned_phrase,VIS-LEX-001,Thay bằng bố cục cố định,active,Dịch ghép từ layout lock G6
+khóa chọn chữ,banned_phrase,VIS-LEX-001,Thay bằng chọn đúng phông chữ cố định,active,Dịch ghép từ font lock G6
+khái niệm dùng chung,banned_phrase,VIS-LEX-001,Thay bằng thuật ngữ cơ bản hoặc nguyên lý cơ bản,active,Dịch gượng shared concepts G11
+bật tìm web,banned_phrase,VIS-LEX-001,Thay bằng bật tìm kiếm trên web,active,Thiếu danh từ hóa và giới từ G11
+làm quen màn hình,banned_phrase,VIS-LEX-001,Thay bằng làm quen với giao diện,active,Thiếu giới từ với G11
+khớp chênh lệch,banned_phrase,VIS-LEX-001,Thay bằng đối chiếu tìm chênh lệch,active,Dùng sai từ khớp G11
+chạy thử dry-run,banned_phrase,VIS-CLICHE-003,Thay bằng chạy thử hoặc chạy chế độ xem trước,active,Trùng nghĩa Việt-Anh G11
+phôi mẫu,banned_phrase,VIS-CLICHE-003,Thay bằng phôi văn bản hoặc tệp mẫu,active,Trùng nghĩa phôi và mẫu G11
+tra cứu kèm nguồn gốc,banned_phrase,VIS-LEX-001,Thay bằng tra cứu có trích nguồn,active,Dùng sai nguồn gốc thay trích nguồn G11
+chạm vào thư mục,banned_phrase,VIS-RHET-003,Thay bằng sửa trực tiếp thư mục,active,Ẩn dụ dịch sát touch directory G11
+lưu mốc an toàn,banned_phrase,VIS-RHET-003,Thay bằng tạo commit hoặc lưu phiên bản,active,Ẩn dụ dịch sát safe checkpoint G11
+thực hiện được thao tác,banned_phrase,VIS-CLICHE-002,Bỏ cụm động từ rỗng và dùng thẳng động từ chính,active,Chuỗi động từ rỗng G11
+sửa tay,banned_phrase,VIS-TONE-001,Thay bằng chỉnh sửa thủ công,active,Khẩu ngữ trong báo cáo hoặc tài liệu chuyên môn
+khóa phạm vi,banned_phrase,VIS-LEX-001,Thay bằng xác định phạm vi hoặc cố định phạm vi,active,Dịch ngầm lock scope K1
+khóa danh mục,banned_phrase,VIS-LEX-001,Thay bằng xác lập danh mục hoặc cố định danh mục,active,Dịch ngầm freeze list K1
+mở sổ tuần,banned_phrase,VIS-LEX-001,Thay bằng lập sổ theo dõi hàng tuần,active,Văn nói hành chính K1
+sổ tuần,banned_phrase,VIS-LEX-001,Thay bằng sổ theo dõi hàng tuần,active,Văn nói hành chính K1
+cập nhật tuần,banned_phrase,VIS-LEX-001,Thay bằng cập nhật tiến độ hàng tuần,active,Văn nói hành chính K1
+hạn gửi,banned_phrase,VIS-TONE-001,Thay bằng thời hạn phát hành hoặc thời hạn gửi báo cáo,active,Từ rút gọn sổ nội bộ K1
+lịch sử sửa,banned_phrase,VIS-LEX-001,Thay bằng lịch sử chỉnh sửa,active,Rút gọn cụm danh từ K1
+tiến độ thật,banned_phrase,VIS-TONE-001,Thay bằng tiến độ thực tế,active,Khẩu ngữ thiếu sắc thái phân tích K1
+mới nắm sổ,banned_phrase,VIS-TONE-001,Thay bằng mới tiếp nhận sổ theo dõi,active,Văn nói truyền miệng K1
+vài chỉ đạo,banned_phrase,VIS-TONE-001,Thay bằng một số chỉ đạo hoặc ghi rõ số lượng cụ thể,active,Định lượng ước lệ thiếu chặt chẽ K1
+tự ghi xong,banned_phrase,VIS-TONE-001,Thay bằng tự ghi nhận hoàn thành,active,Khẩu ngữ sổ theo dõi K1
+bậc tự khai,banned_phrase,VIS-LEX-001,Thay bằng trạng thái đơn vị tự khai,active,Dịch ngầm management representation tier K3
+cách viết cứng,banned_phrase,VIS-LEX-001,Thay bằng cách diễn đạt loại trừ tuyệt đối hoặc cách diễn đạt dứt khoát,active,Dịch ngầm hard wording K3
+lưu ý gấp,banned_phrase,VIS-TONE-001,Thay bằng lưu ý khẩn,active,Văn nói hành chính thiếu trang trọng K3
+việc gấp,banned_phrase,VIS-TONE-001,Thay bằng nội dung cấp bách,active,Văn nói hành chính thiếu trang trọng K3
+họp room,reverse_calque,VIS-LEX-002,họp về hạn mức tín dụng,active,Chêm từ lóng ngành ngân hàng (nhóm 14) K3
+khoảng trống,banned_phrase,VIS-LEX-001,"Thay bằng thiếu sót, phần còn thiếu, lỗ hổng kiểm soát hoặc điểm chưa quy định",active,Dịch sát từ gap trong tiếng Anh

@@ -78,6 +78,44 @@ _PHYSICAL_RIGID_CTX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
 _BAO_TOAN_VALID_CTX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"(?i)\b(?:định\s+luật\s+bảo\s+toàn|bảo\s+toàn\s+(?:vốn|năng\s+lượng|khối\s+lượng|động\s+lượng|điện\s+tích))\b"
 )
+_CANH_BAO_CLAUSE_NOUNS: frozenset[str] = frozenset(
+    {
+        "chính sách",
+        "quy định",
+        "quy trình",
+        "hợp đồng",
+        "thuế",
+        "kế toán",
+        "tín dụng",
+        "thanh khoản",
+        "ngân sách",
+        "chi phí",
+        "nhân sự",
+        "chất lượng",
+        "tiến độ",
+        "dự án",
+        "chiến lược",
+        "thị trường",
+        "hệ thống",
+        "dữ liệu",
+        "hạ tầng",
+    }
+)
+_CANH_BAO_LEAD_WORD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)[a-zà-ỹđ0-9]+\s+$")
+_CANH_BAO_NOUN_LEAD_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
+    r"(?i)(?:^|[\s(\[.,;:!?#\-–—/])"
+    r"(?:gửi|phát|nhận|đọc|xem|kèm|có|nêu|đưa\s+ra|ban\s+hành|lập|tạo|mở|bật|tắt|xóa|bỏ|"
+    r"gồm|chứa|gắn|đặt|hiển\s+thị|xuất|trả|trích|ghi|viết|dùng|cấm|tránh|mục|bản|phiếu|"
+    r"tin|thư|email|hộp|dòng|lời|tín\s+hiệu|hồi\s+chuông|thông\s+báo|thông\s+điệp|"
+    r"các|những|một|nhiều|mọi|loại|nhóm|danh\s+sách|về|của|là|như|bằng|qua|theo|và|hoặc|hay|cùng|với)\s+$"
+)
+_CANH_BAO_PERSON_TAIL_RE: stdlib_re.Pattern[str] = stdlib_re.compile(r"(?i)^\s*(?:trưởng|viên)\b")
+_CANH_BAO_CLAUSE_TAIL_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
+    r"(?i)^\s*(?:[a-zà-ỹđ0-9]+\s+){0,3}"
+    r"(?:đã|đang|sẽ|vẫn|chưa|không|cần|phải|có\s+thể|có\s+nguy\s+cơ|có\s+dấu\s+hiệu|"
+    r"có\s+lỗi|có\s+điều\s+khoản|bị|được|sắp|còn|vượt|giảm|tăng|thiếu|lệch|chậm|mất|"
+    r"gặp|gây|phát\s+sinh|tiềm\s+ẩn|tồn\s+tại|quá\s+tải|hết\s+hạn|lỏng\s+lẻo|cạn|căng\s+thẳng)\b"
+)
 
 _EXEMPT_TAIL_BIGRAMS: frozenset[str] = frozenset(
     {
@@ -175,6 +213,24 @@ def is_lex001_context_exempt(target_text: str, start: int, end: int) -> bool:
     if "bảo toàn" in low_hit:
         return bool(_BAO_TOAN_VALID_CTX_RE.search(sent))
     return False
+
+
+def is_trans015_context_exempt(target_text: str, start: int, end: int) -> bool:
+    """Miễn trừ động từ `cảnh báo` dẫn mệnh đề hoặc chỉ đối tượng người trong `VIS-TRANS-015`."""
+    low_hit = " ".join(target_text[start:end].split()).casefold()
+    if not low_hit.startswith("cảnh báo "):
+        return False
+    domain = low_hit.removeprefix("cảnh báo ")
+    if domain not in _CANH_BAO_CLAUSE_NOUNS:
+        return False
+    lead = target_text[max(0, start - 32) : start]
+    if not _CANH_BAO_LEAD_WORD_RE.search(lead) or _CANH_BAO_NOUN_LEAD_RE.search(lead):
+        return False
+    tail = target_text[end : end + 48].split("\n", 1)[0]
+    clause_tail = stdlib_re.split(r"[,.;:!?]", tail, maxsplit=1)[0]
+    if domain == "kế toán" and _CANH_BAO_PERSON_TAIL_RE.match(clause_tail):
+        return True
+    return bool(_CANH_BAO_CLAUSE_TAIL_RE.match(clause_tail))
 
 
 def _check_legacy_homograph(key: str, prose_text: str, start: int, end: int, prof: Profile | None) -> bool | None:

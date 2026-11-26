@@ -6,7 +6,7 @@ import math
 import re as stdlib_re
 from typing import TYPE_CHECKING
 
-from _vi_context_and_echo import is_lex001_context_exempt
+from _vi_context_and_echo import is_lex001_context_exempt, is_trans015_context_exempt
 from _vi_masker import SemanticMasker, make_finding, sentence_around
 from _vi_phrase_matcher import PhraseHit, select_first_reverse_calque, tokenize_prose
 from _vi_rules_data import DEFAULT_VOCAB
@@ -38,7 +38,7 @@ _SENT_EXEMPT_PATTERNS: dict[str, stdlib_re.Pattern[str]] = {
     "VIS-TRANS-001": _EX_TRANS001_RE,
 }
 _EXEMPT_GROUP_A = ("VIS-AI-003", "VIS-LEX-001", "VIS-RHET-004", "VIS-RHET-005")
-_EXEMPT_GROUP_B = ("VIS-CLICHE-001", "VIS-CLICHE-004", "VIS-TRANS-005", "VIS-TRANS-007")
+_EXEMPT_GROUP_B = ("VIS-CLICHE-001", "VIS-CLICHE-004", "VIS-TRANS-005", "VIS-TRANS-007", "VIS-TRANS-015")
 _LINGUISTIC_EXEMPT_RULES: frozenset[str] = frozenset({*_EXEMPT_GROUP_A, *_EXEMPT_GROUP_B, *_SENT_EXEMPT_PATTERNS})
 
 _EX_MKT_PRAISE_RE = stdlib_re.compile(r"(?i)\b(?:minh\s+chứng\s+sống\s+động|vai\s+trò\s+then\s+chốt)\b")
@@ -124,8 +124,9 @@ def is_linguistically_exempt(rule_id: str, target_text: str, start: int, end: in
     """Các trường hợp loại trừ phổ quát về mặt ngôn ngữ học (không gắn tên riêng dự án)."""
     if rule_id not in _LINGUISTIC_EXEMPT_RULES:
         return False
-    if rule_id == "VIS-LEX-001":
-        return is_lex001_context_exempt(target_text, start, end)
+    if rule_id in ("VIS-LEX-001", "VIS-TRANS-015"):
+        fn = is_lex001_context_exempt if rule_id == "VIS-LEX-001" else is_trans015_context_exempt
+        return fn(target_text, start, end)
     if _is_direct_slice_exempt(rule_id, target_text, start, end):
         return True
     sent = sentence_around(target_text, start, end)

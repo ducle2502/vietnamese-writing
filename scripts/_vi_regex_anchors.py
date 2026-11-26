@@ -389,6 +389,15 @@ _TRANS005_PREFIX_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
 )
 
 
+def _resolve_trans015_hint(rid: str, low: str) -> str | None:
+    if rid == "VIS-TRANS-015" and low.startswith("cảnh báo "):
+        return (
+            "Tránh ghép 'cảnh báo + lĩnh vực' theo kiểu dịch từ 'alert' tiếng Anh; "
+            "hãy đổi sang 'lưu ý pháp lý', 'rủi ro ... cần xử lý' hoặc gọi thẳng nguy cơ cụ thể."
+        )
+    return None
+
+
 def _resolve_trans_or_lex_hint(rid: str, low: str) -> str | None:
     out: str | None = None
     if rid == "VIS-TRANS-001":
@@ -443,4 +452,9 @@ def resolve_regex_suggestion(rid: str, matched_text: str) -> str | None:
             out = "Thay cụm vòng vo ('đóng vai trò như là một', 'được xem như là một') bằng động từ 'là' trực tiếp."
         else:
             out = "Thay cụm tán dương chung chung bằng thông số đo đếm được hoặc mô tả chức năng cụ thể."
-    return out or _resolve_trans_or_lex_hint(rid, low) or _RULE_FALLBACK_SUGGESTIONS.get(rid)
+    return (
+        out
+        or _resolve_trans015_hint(rid, low)
+        or _resolve_trans_or_lex_hint(rid, low)
+        or _RULE_FALLBACK_SUGGESTIONS.get(rid)
+    )

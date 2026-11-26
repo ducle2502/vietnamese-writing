@@ -292,11 +292,11 @@ class TestCsvCrudAndRowInvariants(unittest.TestCase):
                 ViScanner(vocab_path=bad_vocab, grammar_path=grammar_csv)
 
     def test_vocab_and_grammar_csv_row_count_and_hint_coherence(self) -> None:
-        """Giữ nguyên vẹn 2.155 dòng `vocab.csv`, 55 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
+        """Giữ nguyên vẹn 2.197 dòng `vocab.csv`, 55 quy tắc `grammar.csv` và chất lượng `replacement_hint`."""
         vocab_raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
-        self.assertEqual(len(vocab_raw.splitlines()), 2156)
+        self.assertEqual(len(vocab_raw.splitlines()), 2198)
         vocab_rows = list(csv.DictReader(io.StringIO(vocab_raw)))
-        self.assertEqual(len(vocab_rows), 2155)
+        self.assertEqual(len(vocab_rows), 2197)
 
         grammar_raw = DEFAULT_GRAMMAR_CSV.read_text(encoding="utf-8-sig")
         grammar_rows = list(csv.DictReader(io.StringIO(grammar_raw)))

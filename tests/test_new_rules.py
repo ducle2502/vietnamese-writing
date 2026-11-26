@@ -21,7 +21,7 @@ for _dir in (str(SCRIPTS_DIR), str(TESTS_DIR)):
 from _vi_docx_dhdna import _classify_voice_archetype, profile_text  # noqa: E402
 from _vi_types import ALL_PROFILES  # noqa: E402
 from fixtures_extra import AUDIT_AND_CALQUE_FIXTURES, NEW_RULE_FIXTURES, PRESENTATION_FIXTURES  # noqa: E402
-from vi_scanner import DEFAULT_GRAMMAR_CSV, DEFAULT_VOCAB_CSV, ViScanner  # noqa: E402
+from vi_scanner import DEFAULT_GRAMMAR_CSV, DEFAULT_VOCAB_CSV, ViScanner, verify_text  # noqa: E402
 
 if TYPE_CHECKING:
     from _vi_types import DhdnaVoiceMetrics, StylometryReport
@@ -135,7 +135,7 @@ class TestNewRules(unittest.TestCase):
         """Số mục từ phải khớp bảng đã công bố và không có term trùng."""
         raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
         rows = list(csv.DictReader(io.StringIO(raw)))
-        self.assertEqual(len(rows), 2155)
+        self.assertEqual(len(rows), 2197)
         keys = [" ".join(r["term"].split()).casefold() for r in rows]
         self.assertEqual(len(keys), len(set(keys)))
 
@@ -384,6 +384,64 @@ class TestCalquesAndAuditExtras(unittest.TestCase):
         for text in clean_cases:
             rep = self.scanner.scan_text(text, profile="all")
             self.assertEqual(rep.findings_count, 0, f"Báo nhầm trên: {text} -> {rep.findings}")
+
+    def test_collocation_and_ktnb_vocab_entries(self) -> None:
+        """Các mục từ mới phải kích hoạt đúng quy tắc và bản viết lại đạt 0 lỗi."""
+        pairs = (
+            ("VIS-LEX-001", "Cần giữ đều thói quen kiểm tra sổ sách.", "Cần duy trì thói quen kiểm tra sổ sách."),
+            (
+                "VIS-CLICHE-004",
+                "Nhóm hướng dẫn cầm tay chỉ việc cho người mới.",
+                "Nhóm hướng dẫn từng bước cho người mới.",
+            ),
+            ("VIS-STRUCT-001", "Bài học cần nêu rõ mục tiêu đầu ra.", "Bài học cần nêu rõ kết quả đạt được."),
+            ("VIS-CLICHE-003", "Kỹ sư chạy thử dry-run trước khi triển khai.", "Kỹ sư chạy thử trước khi triển khai."),
+            ("VIS-LEX-001", "Ban quản lý cần khóa phạm vi dự án.", "Ban quản lý cần xác định phạm vi dự án."),
+            (
+                "VIS-LEX-001",
+                "Báo cáo phân loại theo bậc tự khai của đơn vị.",
+                "Báo cáo phân loại theo trạng thái đơn vị tự khai.",
+            ),
+            ("VIS-TRANS-015", "Quy trình bổ sung cổng kiểm tra bắt buộc.", "Quy trình bổ sung bước kiểm tra bắt buộc."),
+            (
+                "VIS-LEX-002",
+                "Bộ phận tín dụng họp room vào sáng thứ hai.",
+                "Bộ phận tín dụng họp về hạn mức tín dụng sáng thứ hai.",
+            ),
+        )
+        for rule_id, bad, good in pairs:
+            hits = [f for f in self.scanner.scan_text(bad, profile="all").findings if f.rule_id == rule_id]
+            self.assertTrue(hits, f"Thiếu {rule_id} trên: {bad}")
+            if rule_id == "VIS-LEX-002":
+                self.assertIn("tránh chêm từ ngoại lai", hits[0].suggestion_vi.casefold())
+            rep_good = self.scanner.scan_text(good, profile="all")
+            self.assertEqual(rep_good.findings_count, 0, f"Báo nhầm trên: {good} -> {rep_good.findings}")
+
+    def test_verify_text_lexical_negation_softening(self) -> None:
+        """verify_text cảnh báo dịu phủ định từ vựng nhưng vẫn chặn rơi phủ định và đổi động từ khuyết thiếu."""
+        res1 = verify_text("Quy định trái luật và thiếu hồ sơ.", "Quy định chưa phù hợp với quy định và chưa đủ hồ sơ.")
+        self.assertTrue(res1["passed"])
+        self.assertEqual(res1["errors"], [])
+        self.assertEqual(len(res1["warnings"]), 1)
+
+        self.assertFalse(verify_text("Đơn vị không gửi báo cáo.", "Đơn vị gửi báo cáo.")["passed"])
+        self.assertFalse(verify_text("Hồ sơ đạt yêu cầu.", "Hồ sơ chưa đạt yêu cầu.")["passed"])
+        self.assertFalse(verify_text("Đơn vị phải báo cáo đúng hạn.", "Đơn vị cần báo cáo đúng hạn.")["passed"])
+
+    def test_khoang_trong_abstract_vs_physical(self) -> None:
+        """Cụm 'khoảng trống' trừu tượng báo VIS-LEX-001 trên mọi profile, ngữ cảnh vật lý phải sạch."""
+        bad_cases = (
+            "Báo cáo chỉ ra khoảng trống kiểm soát và khoảng trống pháp lý cần lấp đầy.",
+            "Còn tồn tại khoảng trống dữ liệu trong hồ sơ.",
+        )
+        for prof in ("all", "marketing"):
+            for text in bad_cases:
+                findings = self.scanner.scan_text(text, profile=prof).findings
+                hits = [f for f in findings if f.rule_id == "VIS-LEX-001"]
+                self.assertTrue(hits, f"Bỏ sót VIS-LEX-001 ({prof}) trên: {text}")
+        clean = "Cần chừa khoảng trống 2 cm ở lề trang giấy trước khi đóng quyển."
+        rep = self.scanner.scan_text(clean, profile="all")
+        self.assertEqual(rep.findings_count, 0, f"Báo nhầm nghĩa vật lý: {rep.findings}")
 
 
 if __name__ == "__main__":

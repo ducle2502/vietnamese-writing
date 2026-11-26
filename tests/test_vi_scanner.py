@@ -401,8 +401,12 @@ class TestViScannerSupersetAndDocx(unittest.TestCase):
             0,
         )
         self.assertEqual(
-            self.scanner.scan_text(new_rule_samples[4][1], profile="audit_report").findings_count,
+            self.scanner.scan_text(new_rule_samples[4][1], profile="legal").findings_count,
             0,
+        )
+        self.assertIn(
+            "VIS-FMT-006",
+            {f.rule_id for f in self.scanner.scan_text(new_rule_samples[4][1], profile="audit_report").findings},
         )
         self.assertEqual(
             self.scanner.scan_text(

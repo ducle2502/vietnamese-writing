@@ -409,6 +409,41 @@ Tách thẩm định pháp lý, kiểm bản ghép và hậu kiểm (`K5–K8`).
 
 Giữ ngữ cảnh đọc lướt và rà ảnh sau biên tập (`K7`, `K8`): ghi đầy đủ tên văn bản quy phạm, đơn vị trọng yếu tài chính và ranh giới thẩm quyền ba tuyến phòng thủ. Kiểm tra chữ tiếng Việt trong ảnh PNG (`matplotlib`, `Pillow`) cùng phân trang PDF sau khi sửa. Lưu ý lệnh `verify` chỉ xuất cảnh báo đối chiếu cực tính khi chuyển từ vựng phủ định ("trái", "sai", "vướng", "thiếu") sang "chưa" hoặc "không".
 
-Tránh đếm số listicle và đồng bộ sách thực hành (`G1–G13`): bỏ số đếm tùy ý trên tiêu đề và không thay máy móc bằng "một số", "những", "các". Chỉ giữ con số khi gắn với giới hạn thật của công cụ hoặc khung cấu trúc cố định. Giữ song hành ngữ pháp trong danh sách, bỏ văn điện tín, đổi cấu trúc mở và kết giữa các phần. Đồng bộ thuật ngữ xuyên suốt bìa, tiêu đề và thân bài, đồng thời đưa ví dụ đầu vào và đầu ra thật cho mọi câu lệnh hoặc prompt.
+Tránh đếm số listicle và đồng bộ sách thực hành (`G1–G13`): bỏ số đếm tùy ý trên tiêu đề và không thay máy móc bằng "một số", "những", "các". Chỉ giữ con số khi gắn với giới hạn thật của công cụ hoặc khung cấu trúc cố định. Giữ song hành ngữ pháp trong danh sách, bỏ văn điện tín, đổi cấu trúc mở và kết giữa các phần. Đồng bộ thuật ngữ xuyên suốt bìa, tiêu đề và thân bài, đồng thời đưa ví dụ đầu vào và đầu ra thật cho mọi câu lệnh hoặc `prompt`.
+
+### 7.11. Vòng đọc lạnh bằng `subagent` theo vai người đọc
+
+Đạt `0` lỗi trên `vi_scanner.py` mới là Bước 1 về hình thức. Với tài liệu từ `300` từ trở lên, hoặc bất kỳ văn bản `audit_report`, `legal` hay tài liệu gửi lãnh đạo, đối tác, Agent bắt buộc chạy Bước 2. Miễn bước này cho hội thoại hoặc email ngắn dưới `150` từ.
+
+Ở Bước 2, Agent mở song song `2` đến `3` `subagent` ở ngữ cảnh mới, chỉ cấp bản thảo hoàn chỉnh và vai người đọc. Không gửi lịch sử chỉnh sửa hay kết quả quét để tránh thiên lệch xác nhận. Mỗi vai chấm bản thảo trên `4` trục dưới đây:
+
+| Trục đánh giá | Câu hỏi kiểm tra bắt buộc |
+| :--- | :--- |
+| Tự nhiên ngôn ngữ | Đọc thành tiếng có chỗ nào khựng, dịch ngầm, rập khuôn hay lẫn khẩu ngữ sổ ghi chú không? |
+| Khả năng hiểu nhanh | Đọc lướt 30 giây có thấy ngay kết luận, nghĩa viết tắt và hành động tiếp theo không? |
+| Tính nhất quán | Số liệu, mẫu số, thuật ngữ, đơn vị và xưng hô có khớp nhau giữa tiêu đề, thân bài, bảng và phụ lục không? |
+| Không thể hiểu sai | Có câu nào hiểu được theo hai nghĩa, lệch thẩm quyền, rơi điều kiện hay khẳng định vượt bằng chứng không? |
+
+Chọn `2` đến `3` vai phù hợp theo thể loại từ bảng dưới đây:
+
+| Nhóm văn bản | Vai `subagent` đọc lạnh khuyến nghị |
+| :--- | :--- |
+| `audit_report` | Lãnh đạo phê duyệt đọc 30 giây, Pháp chế hoặc đơn vị bị kiểm tra soi kẽ hở và Biên tập viên đọc thành tiếng. |
+| `general` và tài liệu kỹ thuật | Người mới làm theo hướng dẫn, Chuyên gia nghiệp vụ rà tính chính xác và Biên tập viên đọc thành tiếng. |
+| `legal` | Pháp chế bên đối tác tìm câu hai nghĩa và Người trực tiếp thực thi nghĩa vụ theo văn bản. |
+| `academic` | Phản biện cùng ngành soi phạm vi chứng cứ và Độc giả ngoài chuyên ngành hẹp kiểm tra độ rõ thuật ngữ. |
+| `translation` | Người đọc tiếng Việt chưa từng xem bản gốc và Chuyên gia ngành đối chiếu thuật ngữ chuyên môn. |
+| `marketing` và `social_media` | Khách hàng mục tiêu đọc lướt trên điện thoại và Người kiểm tra cam kết số liệu thực tế. |
+
+Dùng nguyên khuôn giao việc dưới đây cho từng `subagent`, thay phần trong ngoặc vuông bằng vai và bản thảo cụ thể:
+
+```text
+Bạn đóng vai [TÊN VAI NGƯỜI ĐỌC]. Chỉ đọc bản thảo dưới đây như một tài liệu độc lập, không suy đoán bối cảnh ngoài văn bản.
+Đánh giá trên 4 trục: (1) Tự nhiên ngôn ngữ khi đọc thành tiếng, (2) Khả năng hiểu nhanh trong 30 giây, (3) Tính nhất quán số liệu và thuật ngữ, (4) Điểm có thể bị hiểu sai hoặc lệch thẩm quyền.
+Cấm khen xã giao hay nhận xét chung chung. Chỉ trả về bảng gồm 5 cột: Mức độ (BLOCKER hoặc MINOR) | Vị trí | Trích dẫn nguyên văn | Trục lỗi | Cách sửa đề xuất.
+Nếu không có lỗi đáng kể, ghi đúng một dòng: KHÔNG CÓ BLOCKER.
+```
+
+Agent chính xử lý triệt để mọi `BLOCKER`, sau đó chạy lại `scan` và `verify` trước khi bàn giao bản cuối. Nếu công cụ đang chạy không hỗ trợ `subagent`, tự rà tuần tự từng vai theo đúng `4` trục trên.
 
 Giới hạn sử dụng: sổ tay này mô tả lựa chọn văn bản, không phải thước đo phẩm chất cá nhân. Khi chuyển sang thể loại khác, cần hiệu chỉnh lại nhịp câu và mật độ thuật ngữ.

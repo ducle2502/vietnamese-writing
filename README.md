@@ -48,6 +48,8 @@ Công cụ không cấm từ Hán - Việt một cách máy móc. Thay vào đó
 
 Mặc định lệnh `scan` chạy ở chế độ `all` để giữ chuẩn nền tối thiểu trên mọi loại văn bản. Khi người dùng chỉ định `--profile`, công cụ lọc bớt các ngoại lệ hợp lệ theo thể loại như câu bị động theo quy ước trong hợp đồng hay bài báo khoa học. Khi quét, vùng mã nguồn, đường dẫn URL và trích dẫn trong ngoặc kép tự động được bỏ qua mà không lệch số dòng, số cột.
 
+Đạt `0` lỗi trên máy quét mới chỉ hoàn thành Bước 1 về tầng hình thức. Với tài liệu từ `300` từ trở lên hoặc văn bản `audit_report`, `legal` gửi ra ngoài, Agent phải chạy thêm Bước 2. Ở bước này, Agent mở `2` đến `3` `subagent` đọc lạnh theo vai người đọc để chấm trên `4` trục (tự nhiên ngôn ngữ, dễ hiểu, nhất quán, không thể hiểu sai).
+
 | Lệnh chính | Công dụng thực tế | Đầu vào hỗ trợ |
 |---|---|---|
 | `scan` | Rà `55` quy tắc và `2.197` mục từ vựng, giữ chuẩn nền chung | Markdown thô, tệp UTF-8 và `.docx` |
@@ -127,7 +129,7 @@ python -B -m pytest -v
 | [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.197` mục từ vựng và `55` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở trực tiếp bằng Excel. |
 | [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ quét văn bản, đọc thẳng `.docx`, đo giọng văn DHDNA và đối soát dữ kiện gốc. |
 | [references/rule-catalog.md](references/rule-catalog.md) | Bảng tra cứu `55` quy tắc kèm nguồn, ngoại lệ và cách viết lại. |
-| [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) | `4` kiểu giọng chính, `12` chiều DHDNA, quy trình biên tập, khung `5C` và `10` quy tắc viết ghi chú bảng kiểm. |
+| [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) | `4` kiểu giọng chính, `12` chiều DHDNA, quy trình 2 bước đọc lạnh `subagent`, khung `5C` và `10` quy tắc viết ghi chú bảng kiểm. |
 | [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) | Quy trình cập nhật từ mượn tiếng Anh và ma trận ngoại lệ của `7` ngữ cảnh văn bản. |
 | [references/pattern-bank.md](references/pattern-bank.md) | Ngân hàng `50` cấu trúc, `500` khuôn câu AI hoặc dịch thô và `12` bộ lọc regex. |
 | [evals/evals.json](evals/evals.json) | Bộ kịch bản kiểm tra hành vi biên tập thực tế của Agent. |

@@ -75,9 +75,11 @@ Mỗi bản chuyển đi kèm `TEN_GOC.raw.meta.json`:
 
 Khi phải dùng nhánh `vision`, ghi `converter=vision`, `deterministic=false`, `needs_review=true` và báo người dùng kiểm tra lại số liệu trước khi kết luận. Lệnh `verify` chỉ dùng đáng tin cậy khi tệp gốc đã chuyển trực tiếp ở bước 1. Riêng `.docx`, hai lệnh `scan` và `profile` tự đọc trực tiếp từ tệp Word.
 
-## Tự quét, lập hồ sơ và đối soát dữ kiện
+## Quy trình kiểm duyệt 2 bước trước khi bàn giao
 
-Sau khi viết mới hoặc nhận `TEN_GOC.raw.md`, luôn chạy [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi bàn giao (trừ câu trả lời hội thoại ngắn 1 đến 2 câu):
+### Bước 1: Tự quét, lập hồ sơ và đối soát dữ kiện
+
+Sau khi viết mới hoặc nhận `TEN_GOC.raw.md`, luôn chạy [scripts/vi_scanner.py](scripts/vi_scanner.py) trước khi sang Bước 2 (trừ câu trả lời hội thoại ngắn 1 đến 2 câu):
 
 ```bash
 # Quét chuẩn nền chung trên toàn bộ 7 nhóm (mặc định)
@@ -93,7 +95,22 @@ python scripts/vi_scanner.py profile TEN_GOC.raw.md --ignore-table-cols 2,3 --js
 python scripts/vi_scanner.py verify TEN_GOC.raw.md BAN_SUA.md
 ```
 
-Ở lượt quét đầu tiên, `scan` mặc định rà ở chế độ `all` để bảo đảm chuẩn tối thiểu chung, kèm sẵn `applicable_profiles`, `exempt_profiles` và gợi ý `suggestion_vi`. Lỗi vượt ngưỡng độ dài câu (`VIS-LEN-001`) bắt buộc tách câu về `0` lỗi trên mọi loại tài liệu. Với các tín hiệu khác, dựa vào ngữ cảnh thực tế của người đọc để quyết định sửa hay giữ, chỉ thêm `--profile` khi người dùng chỉ định riêng.
+Ở lượt quét đầu tiên, `scan` mặc định rà ở chế độ `all` để bảo đảm chuẩn tối thiểu chung, kèm sẵn `applicable_profiles`, `exempt_profiles` và gợi ý `suggestion_vi`. Lỗi vượt ngưỡng độ dài câu (`VIS-LEN-001`) bắt buộc tách câu về `0` lỗi trên mọi loại tài liệu. Đạt `0` lỗi máy quét chỉ mới xong tầng hình thức, chưa đủ để bàn giao tài liệu dài hoặc văn bản gửi ra ngoài.
+
+### Bước 2: Đọc lạnh bằng `subagent` theo vai người đọc
+
+Bắt buộc chạy Bước 2 cho văn bản từ `300` từ trở lên, và ở mọi độ dài đối với `audit_report`, `legal` hoặc tài liệu gửi lãnh đạo, đối tác, khách hàng. Miễn bước này cho hội thoại hoặc email ngắn dưới `150` từ.
+
+Gọi song song `2` đến `3` `subagent` ở ngữ cảnh mới để đọc lạnh. Chỉ đưa bản thảo hoàn chỉnh kèm vai người đọc, không đưa lịch sử chỉnh sửa hay kết quả máy quét. Chọn vai người đọc và khuôn giao việc tại [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md), rồi chấm trên `4` trục dưới đây:
+
+| Trục đánh giá | Trọng tâm kiểm tra khi đọc lạnh |
+| :--- | :--- |
+| Tự nhiên ngôn ngữ | Đọc thành tiếng xem câu có khựng, dịch ngầm, rập khuôn hay khẩu ngữ sổ nội bộ không. |
+| Khả năng hiểu nhanh | Đọc lướt 30 giây xem người đọc có nắm ngay kết luận, thuật ngữ, chữ viết tắt và việc cần làm không. |
+| Tính nhất quán | Đối chiếu số liệu, mẫu số, thuật ngữ, đơn vị và xưng hô giữa tiêu đề, thân bài, bảng biểu và phụ lục. |
+| Không thể hiểu sai | Soi câu hai nghĩa, lệch ranh giới thẩm quyền, rơi điều kiện hoặc khẳng định vượt bằng chứng. |
+
+Mỗi `subagent` chỉ trả danh sách `BLOCKER` và `MINOR` kèm trích dẫn nguyên văn và cách sửa, cấm khen xã giao. Agent chính sửa sạch toàn bộ `BLOCKER`, chạy lại `scan` cùng `verify` rồi mới bàn giao. Nếu công cụ đang dùng không hỗ trợ `subagent`, Agent tự rà tuần tự từng vai trên đủ `4` trục.
 
 Tra cứu thêm tại bốn tệp tham chiếu: [references/rule-catalog.md](references/rule-catalog.md), [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md), [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) và [references/pattern-bank.md](references/pattern-bank.md). Khi sửa trên văn bản có sẵn, luôn giữ lại `TEN_GOC.raw.md` để chạy `verify` đối chiếu dữ kiện. Lệnh này kiểm tra con số, từ phủ định, điều kiện, mức chắc chắn, đường dẫn và nguồn trích dẫn. Khi bàn giao, trả thẳng bản hoàn thiện và không kèm bảng điểm hay lời kể quy trình trừ khi người dùng hỏi.
 

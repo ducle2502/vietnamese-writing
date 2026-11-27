@@ -386,7 +386,7 @@ def _check_checklist_notes(rule: RuleDefinition, buf: _ScanBuffer) -> list[Findi
                         bad_cell[:80],
                         custom_suggestion=(
                             "Ô ghi chú bảng kiểm không mở bằng 'Có vì / Một phần vì / Chưa có vì'; "
-                            "hãy đi thẳng vào lý do trong một câu."
+                            "hãy nêu rõ lý do trong một câu."
                         ),
                     )
                 )

@@ -73,9 +73,19 @@ _LITERAL_METAPHOR_CTX: dict[str, stdlib_re.Pattern[str]] = {
         r"(?i)^\s*(?:tài\s+khoản|màn\s+hình|thiết\s+bị|điện\s+thoại|thẻ|cổng|cửa|két|ổ\s+khóa|phiên)\b"
     ),
     "nút thắt": stdlib_re.compile(r"(?i)\b(?:dây|thừng|buộc|tháo\s+nút|lụa|áo)\b"),
+    "soi chiếu": stdlib_re.compile(
+        r"(?i)\b(?:hành\s+lý|sân\s+bay|hải\s+quan|an\s+ninh|x-quang|kiện\s+hàng|hàng\s+hóa)\b"
+    ),
     "trụ cột": stdlib_re.compile(r"(?i)\b(?:bê\s+tông|kiến\s+trúc|công\s+trình|nhà|cầu|đá|gỗ)\b"),
     "ươm mầm": stdlib_re.compile(r"(?i)\b(?:hạt\s+giống|cây\s+con|vườn\s+ươm|nông\s+nghiệp|gieo\s+trồng|đất)\b"),
 }
+_PHYSICAL_STRAIGHT_CTX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
+    r"(?i)\b(?:mét|km|ngã\s+tư|ngã\s+ba|rẽ\s+(?:trái|phải)|đường\s+thẳng|phía\s+trước|"
+    r"ra\s+(?:sân|đường|vườn|biển|hành\s+lang|mặt\s+phố))\b"
+)
+_PHYSICAL_LOCK_CTX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
+    r"(?i)\b(?:cửa|tủ|két|xe|phòng|cổng\s+nhà|ổ\s+khóa|van|ốc|bu\s+lông)\b"
+)
 _PHYSICAL_RIGID_CTX_RE: stdlib_re.Pattern[str] = stdlib_re.compile(
     r"(?i)\b(?:ốc\s+vít|bu\s+lông|bê\s+tông|khớp\s+nối|bản\s+lề|trục|vật\s+liệu|nền\s+đất|khung\s+sắt|vách)\b"
 )
@@ -210,13 +220,18 @@ def is_lex001_context_exempt(target_text: str, start: int, end: int) -> bool:
     """Kiểm tra ngữ cảnh hợp lệ cho các nhánh biểu thức chính quy của `VIS-LEX-001`."""
     sent = sentence_around(target_text, start, end)
     low_hit = " ".join(target_text[start:end].split()).casefold()
+    pattern: stdlib_re.Pattern[str] | None = None
     if "thực chứng" in low_hit:
-        return bool(stdlib_re.search(r"(?i)\b(?:chủ\s+nghĩa|triết\s+học|trường\s+phái)\s+thực\s+chứng\b", sent))
-    if low_hit.endswith(" cứng"):
-        return bool(_PHYSICAL_RIGID_CTX_RE.search(sent))
-    if "bảo toàn" in low_hit:
-        return bool(_BAO_TOAN_VALID_CTX_RE.search(sent))
-    return False
+        pattern = stdlib_re.compile(r"(?i)\b(?:chủ\s+nghĩa|triết\s+học|trường\s+phái)\s+thực\s+chứng\b")
+    elif low_hit.endswith(" cứng"):
+        pattern = _PHYSICAL_RIGID_CTX_RE
+    elif low_hit.endswith(" thẳng"):
+        pattern = _PHYSICAL_STRAIGHT_CTX_RE
+    elif low_hit in ("khóa chặt", "khoá chặt"):
+        pattern = _PHYSICAL_LOCK_CTX_RE
+    elif "bảo toàn" in low_hit:
+        pattern = _BAO_TOAN_VALID_CTX_RE
+    return bool(pattern.search(sent)) if pattern is not None else False
 
 
 def is_trans015_context_exempt(target_text: str, start: int, end: int) -> bool:

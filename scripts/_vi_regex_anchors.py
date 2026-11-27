@@ -234,25 +234,27 @@ def _extract_regex_anchors(pattern: str) -> tuple[str, ...]:
 
 _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
     "VIS-AI-003": "Cắt bỏ cụm mở màn 'Trong bối cảnh/kỷ nguyên...'; mở câu trực tiếp bằng chủ thể và số liệu chính.",
-    "VIS-AI-004": "Bỏ câu dẫn dắt hoặc tự hỏi tự đáp kiểu văn mẫu; nêu thẳng luận điểm hoặc kết quả chính.",
+    "VIS-AI-004": "Bỏ câu dẫn dắt hoặc tự hỏi tự đáp kiểu văn mẫu; nêu rõ luận điểm hoặc kết quả chính.",
     "VIS-AI-005": "Cắt bỏ lời kết hứa hẹn tương lai chung chung; khép lại bằng kết quả thực tế hoặc bước tiếp theo.",
-    "VIS-AI-006": "Bỏ câu mở đầu 'Hãy thử tưởng tượng/hình dung...'; đi thẳng vào tình huống thực tế hoặc số liệu.",
+    "VIS-AI-006": "Bỏ câu mở đầu 'Hãy thử tưởng tượng/hình dung...'; vào trực tiếp tình huống thực tế hoặc số liệu.",
     "VIS-AI-007": "Bỏ câu gom mọi nhóm người đọc 'Dù bạn là...'; nêu trực tiếp công dụng hoặc đối tượng sử dụng chính.",
-    "VIS-RHET-001": "Bỏ cấu trúc 'Không chỉ là X, mà còn là Y'; nêu thẳng chức năng hoặc tác động thực tế.",
+    "VIS-RHET-001": "Bỏ cấu trúc 'Không chỉ là X, mà còn là Y'; nêu rõ chức năng hoặc tác động thực tế.",
     "VIS-RHET-002": "Thay cụm tán dương phóng đại bằng tác động thực tế hoặc con số đo kiểm được.",
-    "VIS-RHET-004": "Bỏ khung liệt kê hai đầu mút 'Từ [A] cho đến [B], tất cả đều...'; gọi tên thẳng đối tượng.",
+    "VIS-RHET-004": "Bỏ khung liệt kê hai đầu mút 'Từ [A] cho đến [B], tất cả đều...'; gọi rõ từng đối tượng.",
     "VIS-RHET-005": "Nêu rõ tên tổ chức, tác giả và năm công bố, hoặc bỏ cụm 'Các chuyên gia/Nhiều nghiên cứu'.",
-    "VIS-RHET-006": "Bỏ khung nâng tầm 'Hơn cả X, đây là Y' / 'Không phải X, mà chính là Y'; mô tả thẳng chức năng.",
-    "VIS-RHET-007": "Giảm lặp khung 'Tưởng chừng/Thoạt nhìn..., nhưng...'; trình bày thẳng sự việc và số liệu.",
+    "VIS-RHET-006": (
+        "Bỏ khung nâng tầm 'Hơn cả X, đây là Y' / 'Không phải X, mà chính là Y'; mô tả trực tiếp chức năng."
+    ),
+    "VIS-RHET-007": "Giảm lặp khung 'Tưởng chừng/Thoạt nhìn..., nhưng...'; trình bày rõ sự việc và số liệu.",
     "VIS-RHET-008": (
-        "Bỏ khung đính chính 'Thay vì chỉ dựa vào X...' hoặc 'Điều này quan trọng vì...'; nêu thẳng số liệu đối chiếu."
+        "Bỏ khung đính chính 'Thay vì chỉ dựa vào X...' hoặc 'Điều này quan trọng vì...'; nêu rõ số liệu đối chiếu."
     ),
     "VIS-RHET-009": ("Bỏ câu ba phải, khen nịnh hoặc khoe phủ sóng truyền thông; nêu kết luận và bằng chứng cụ thể."),
-    "VIS-RHET-010": ("Bỏ phản biện giả định hoặc câu triết lý sáo; nêu thẳng số liệu đối chiếu và điều kiện thực tế."),
+    "VIS-RHET-010": ("Bỏ phản biện giả định hoặc câu triết lý sáo; nêu rõ số liệu đối chiếu và điều kiện thực tế."),
     "VIS-FMT-007": (
         "Chấm câu ngay sau dữ kiện và bỏ đuôi phân từ 'từ đó khẳng định/góp phần...' nếu không thêm số liệu mới."
     ),
-    "VIS-FMT-008": "Bỏ câu hỏi mồi một chữ và nối thẳng hai mệnh đề thành câu đủ chủ ngữ, vị ngữ.",
+    "VIS-FMT-008": "Bỏ câu hỏi mồi một chữ và nối trực tiếp hai mệnh đề thành câu đủ chủ ngữ, vị ngữ.",
     "VIS-TRANS-011": (
         "Bỏ 'bị/được' trước động từ trung tính; dùng câu trung tính hoặc chủ động theo cách nói tiếng Việt."
     ),
@@ -287,7 +289,7 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
         "Tránh khẳng định tuyệt đối hoặc quy kết động cơ khi chưa đủ căn cứ; "
         "nêu rõ văn bản hiệu lực, cỡ mẫu và ngoại lệ ghi nhận."
     ),
-    "VIS-STRUCT-001": "Xóa lời tự thuyết minh bố cục hoặc nhãn dàn ý nội bộ; đi thẳng vào nội dung phân tích của mục.",
+    "VIS-STRUCT-001": "Xóa lời tự thuyết minh bố cục hoặc nhãn dàn ý nội bộ; vào trực tiếp nội dung phân tích của mục.",
     "VIS-STRUCT-004": (
         "Gỡ mã theo dõi nội bộ (EV-xx, WP-xx, CL-xx, GAP-xx) và lời tự kể phương án cũ khỏi văn bản gửi ngoài."
     ),
@@ -295,11 +297,11 @@ _RULE_FALLBACK_SUGGESTIONS: dict[str, str] = {
 _TONE002_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
     (
         ("vỏn vẹn",),
-        "Bỏ từ bình phẩm cảm tính 'vỏn vẹn'; ghi thẳng con số kèm 'chỉ đạt' hoặc 'chỉ có'.",
+        "Bỏ từ bình phẩm cảm tính 'vỏn vẹn'; ghi rõ con số kèm 'chỉ đạt' hoặc 'chỉ có'.",
     ),
     (
         ("dậm chân", "giậm chân"),
-        "Tránh thành ngữ 'giậm chân tại chỗ/ở mức' (và lỗi 'dậm chân'); ghi thẳng 'chưa tăng' hoặc 'giữ nguyên ở mức'.",
+        "Tránh thành ngữ 'giậm chân tại chỗ/ở mức' (và lỗi 'dậm chân'); ghi rõ 'chưa tăng' hoặc 'giữ nguyên ở mức'.",
     ),
     (
         ("sập ",),
@@ -325,7 +327,7 @@ _LEX001_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
     ),
     (
         ("khung ",),
-        "Tránh dịch từng chữ 'framework/frame/harness' thành 'khung ...'; nêu thẳng quy trình, bộ mã hoặc giao diện.",
+        "Tránh dịch từng chữ 'framework/frame/harness' thành 'khung ...'; nêu rõ quy trình, bộ mã hoặc giao diện.",
     ),
     (
         ("hợp đồng ", "giao kèo "),
@@ -344,6 +346,21 @@ _LEX001_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
         "Tránh khẩu ngữ dịch sát 'chặn/khóa/ép/gắn cứng'; dùng 'báo lỗi ngay', 'từ chối ngay' hoặc 'ghi cố định'.",
     ),
     (
+        (" thẳng", "thẳng vào"),
+        "Tránh ghép gượng từ 'thẳng' kiểu văn AI ('nói thẳng', 'ghi nhận thẳng', 'nêu thẳng'); "
+        "bỏ chữ 'thẳng' hoặc dùng 'trực tiếp', 'rõ ràng'.",
+    ),
+    (
+        ("khóa ", "khoá "),
+        "Tránh lạm dụng động từ 'khóa' kiểu dịch 'lock/freeze' ('khóa số liệu', 'khóa ranh giới'); "
+        "dùng 'cố định', 'xác định rõ' hoặc 'thống nhất'.",
+    ),
+    (
+        ("neo ", "nén ", "siết ", "đóng khung", "bóc tách", "giải phẫu"),
+        "Tránh động từ cơ học/y khoa làm màu ('neo', 'nén', 'siết', 'đóng khung', 'bóc tách', 'giải phẫu'); "
+        "dùng 'phân tích', 'tách' hoặc 'xác định'.",
+    ),
+    (
         ("dịch sát", " sát"),
         "Không cắt cụt từ nối ('bị động dịch sát', 'sửa sát'); viết rõ 'câu bị động dịch từng chữ', 'bám sát'.",
     ),
@@ -357,7 +374,7 @@ _LEX001_SUBSTR_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
     ),
     (
         ("che chắn", "bảo toàn"),
-        "Tránh dịch thô 'masking/invariant' thành 'che chắn vùng', 'đối soát bảo toàn'; mô tả thẳng thao tác.",
+        "Tránh dịch thô 'masking/invariant' thành 'che chắn vùng', 'đối soát bảo toàn'; mô tả trực tiếp thao tác.",
     ),
     (
         ("lối ", "lửng lơ"),
@@ -396,7 +413,7 @@ def _resolve_trans015_hint(rid: str, low: str) -> str | None:
     if rid == "VIS-TRANS-015" and low.startswith("cảnh báo "):
         return (
             "Tránh ghép 'cảnh báo + lĩnh vực' theo kiểu dịch từ 'alert' tiếng Anh; "
-            "hãy đổi sang 'lưu ý pháp lý', 'rủi ro ... cần xử lý' hoặc gọi thẳng nguy cơ cụ thể."
+            "hãy đổi sang 'lưu ý pháp lý', 'rủi ro ... cần xử lý' hoặc gọi rõ nguy cơ cụ thể."
         )
     return None
 
@@ -443,11 +460,11 @@ def resolve_regex_suggestion(rid: str, matched_text: str) -> str | None:
         )
     elif rid == "VIS-AI-001":
         if "mô hình ngôn ngữ" in low or "language model" in low:
-            out = "Xóa câu tự xưng là mô hình ngôn ngữ AI và đi thẳng vào nội dung chính."
+            out = "Xóa câu tự xưng là mô hình ngôn ngữ AI và vào trực tiếp nội dung chính."
         elif any(k in low for k in ("thuộc quyền", "phạm vi được phép", "phòng lab", "sự cho phép")):
             out = "Bỏ câu rào đón đạo đức/pháp lý tự phát nếu tài liệu không yêu cầu cảnh báo tuân thủ riêng."
         else:
-            out = "Xóa câu chào mời, khen ngợi hoặc kết thúc xã giao kiểu chatbot; đi thẳng vào nội dung chính."
+            out = "Xóa câu chào mời, khen ngợi hoặc kết thúc xã giao kiểu chatbot; vào trực tiếp nội dung chính."
     elif rid == "VIS-AI-002":
         out = (
             "Xóa tham số theo dõi nguồn chatbot ('?utm_source=...') khỏi đường dẫn."

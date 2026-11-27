@@ -19,7 +19,7 @@ Phần này liệt kê 25 cấu trúc đặc trưng, 250 khuôn câu lắp ghép
 | `C07` | Hội chứng né tránh từ "Là" & "Có" (Copula Avoidance) | `VIS-CLICHE-002` |
 | `C08` | Quy tắc Số 3 cưỡng bức (Compulsive Rule of Three) | `VIS-FMT-004` |
 | `C09` | Dải phổ bao quát giả tạo (False Ranges) | `VIS-RHET-004` |
-| `C10` | Lạm dụng dấu gạch ngang dài (Formulaic Em-Dash —) | `VIS-FMT-003` |
+| `C10` | Lạm dụng dấu gạch ngang dài (Formulaic Em-Dash `—`) | `VIS-FMT-003` |
 | `C11` | Danh sách Bullet In đậm + Hai chấm (Bold-Colon Listitis) | `VIS-FMT-001` |
 | `C12` | Nhịp câu cụt giả triết lý (Staccato Fragments) | `VIS-FMT-006`, `VIS-FMT-008` |
 | `C13` | Câu hỏi 1 chữ tự biên tự diễn (Fake-Suspense Q&A) | `VIS-FMT-008` |

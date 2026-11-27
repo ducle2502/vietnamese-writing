@@ -44,7 +44,7 @@ Bản viết lại dưới đây đạt `0` lỗi trên máy quét và giữ ngu
 
 ## Tổng quan
 
-Công cụ không cấm từ Hán - Việt một cách máy móc. Thay vào đó, 55 quy tắc chỉ ra câu rào đón kiểu chatbot, câu bị động dịch từng chữ (*"được thực hiện bởi"*), danh từ hóa nặng nề và danh sách đóng khuôn. Mọi câu dài quá `35` từ (`45` từ với văn bản pháp lý, tính cả ô bảng) đều báo lỗi đỏ ngay lập tức.
+Công cụ không cấm từ Hán - Việt một cách máy móc. Thay vào đó, `55` quy tắc (`16` mức `error`, `39` mức `warning`, không còn `info`) rà câu rào đón, bị động dịch từng chữ, danh từ hóa và dấu gạch ngang dài (`—`). Mọi câu quá `35` từ (`45` từ với văn bản pháp lý, tính cả ô bảng) cùng `15` lỗi hình thức rõ ràng đều báo `error` ngay lập tức.
 
 Mặc định lệnh `scan` chạy ở chế độ `all` để giữ chuẩn nền tối thiểu trên mọi loại văn bản. Khi người dùng chỉ định `--profile`, công cụ lọc bớt các ngoại lệ hợp lệ theo thể loại như câu bị động theo quy ước trong hợp đồng hay bài báo khoa học. Khi quét, vùng mã nguồn, đường dẫn URL và trích dẫn trong ngoặc kép tự động được bỏ qua mà không lệch số dòng, số cột.
 

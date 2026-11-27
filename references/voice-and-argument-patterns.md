@@ -125,9 +125,9 @@ Khung `VEC` khóa bốn thông tin tối thiểu trước khi viết.
 
 | Thành phần | Câu hỏi phải trả lời | Ví dụ |
 | :--- | :--- | :--- |
-| `V` — Vai trò | Ai viết và chịu trách nhiệm nội dung? | Chuyên viên kiểm soát nội bộ viết cho Ban điều hành. |
-| `E` — Bằng chứng | Dữ kiện nào bắt buộc phải giữ? | Số liệu, ngày tháng, điều kiện, tên nguồn. |
-| `C` — Cấu trúc | Người đọc cần kết luận gì trước? | Kết luận trước, bằng chứng sau, kiến nghị cuối. |
+| `V` (Vai trò) | Ai viết và chịu trách nhiệm nội dung? | Chuyên viên kiểm soát nội bộ viết cho Ban điều hành. |
+| `E` (Bằng chứng) | Dữ kiện nào bắt buộc phải giữ? | Số liệu, ngày tháng, điều kiện, tên nguồn. |
+| `C` (Cấu trúc) | Người đọc cần kết luận gì trước? | Kết luận trước, bằng chứng sau, kiến nghị cuối. |
 
 ### 6.4. Master Prompt 6 tầng
 

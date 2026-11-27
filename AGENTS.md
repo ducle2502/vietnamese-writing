@@ -5,8 +5,8 @@
 ## Nguyên tắc sử dụng
 
 1. Mặc định chạy `scan` ở chế độ `all` để rà đủ chuẩn nền tối thiểu, dùng `profile` như gợi ý theo thể loại và chỉ truyền `--profile <tên_nhóm>` khi người dùng chỉ định riêng. Xác định rõ người đọc và quan hệ xưng hô trước khi viết hoặc sửa. Không tự ý sửa lại khi người dùng chỉ dán văn bản để hỏi nội dung.
-2. Đưa kết luận và số liệu lên đầu câu hoặc đầu đoạn. Ưu tiên chủ thể chỉ người hoặc đơn vị cụ thể đi với động từ trực tiếp. Giữ mỗi câu văn xuôi và ô bảng tối đa `35` từ (`45` từ với văn bản pháp lý). Hễ vượt ngưỡng, cả `scan` lẫn `profile` báo lỗi ngay và bắt buộc tách câu trước khi bàn giao.
-3. Bảo toàn nguyên vẹn số liệu, ngày tháng, từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn.
+2. Đưa kết luận và số liệu lên đầu câu hoặc đầu đoạn. Ưu tiên chủ thể chỉ người hoặc đơn vị cụ thể đi với động từ trực tiếp. Giữ mỗi câu văn xuôi và ô bảng tối đa `35` từ (`45` từ với văn bản pháp lý). Hễ vượt ngưỡng hoặc dùng dấu gạch ngang dài (`—`, `--`, ` – ` nối mệnh đề), `scan` báo `error` ngay và bắt buộc sửa trước khi bàn giao.
+3. Bảo toàn nguyên vẹn số liệu, ngày tháng, từ phủ định, từ chỉ điều kiện, từ chỉ mức độ chắc chắn, đường dẫn, khối mã lệnh và nguồn trích dẫn. Toàn bộ `55` quy tắc chỉ dùng `2` mức `error` và `warning` (không còn `info`).
 4. Tránh 5 lỗi sửa quá tay: đếm tuần tự, hạ giọng suồng sã, tự bịa từ, rơi mức chắc chắn và xoay vòng động từ đầu ô bảng.
 5. Hoàn tất Bước 1 bằng `vi_scanner.py` chưa đủ để bàn giao văn bản từ `300` từ trở lên, báo cáo `audit_report`, văn bản `legal` hoặc tài liệu gửi lãnh đạo, đối tác. Hãy chạy Bước 2: mở `2` đến `3` `subagent` đọc lạnh theo từng vai người đọc trên `4` trục (tự nhiên ngôn ngữ, dễ hiểu, nhất quán, không thể hiểu sai) và sửa hết `BLOCKER` trước khi bàn giao.
 

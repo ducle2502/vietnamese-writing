@@ -101,6 +101,8 @@ def print_scan_report(report: ScanReport, label: str) -> None:
         print(f"  Khớp: {f.matched_text!r}")
         print(f"  Vấn đề: {f.description_vi}")
         print(f"  Hướng sửa: {f.suggestion_vi}")
+    if report.next_step:
+        print(f"\n{report.next_step}")
     print(f"\n{report.disclaimer}")
 
 

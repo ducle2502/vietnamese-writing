@@ -23,6 +23,20 @@ except ImportError:
 
 VERSION = "2.5.0"
 SCHEMA_VERSION = "2.5.0"
+STAKEHOLDER_REVIEW_MIN_WORDS = 300
+STAKEHOLDER_REVIEW_PROFILES: frozenset[str] = frozenset({"audit_report", "legal"})
+STAKEHOLDER_REVIEW_NOTE = (
+    "BƯỚC 2 (BẮT BUỘC): 0 lỗi máy quét chỉ là tầng hình thức. "
+    "Mở 2-3 subagent đọc lạnh theo vai người đọc để chấm 4 trục "
+    "(tự nhiên ngôn ngữ, dễ hiểu, nhất quán, không thể hiểu sai), sửa hết BLOCKER rồi mới bàn giao."
+)
+
+
+def build_stakeholder_next_step(word_count: int, profile: str, findings_count: int) -> str | None:
+    """Nhắc mở vòng đọc lạnh bằng subagent theo vai người đọc khi đã qua tầng máy quét."""
+    if findings_count == 0 and (word_count >= STAKEHOLDER_REVIEW_MIN_WORDS or profile in STAKEHOLDER_REVIEW_PROFILES):
+        return STAKEHOLDER_REVIEW_NOTE
+    return None
 
 
 class _RegexMatch(Protocol):
@@ -296,6 +310,7 @@ class ScanReport:
     semantic_invariants_summary: dict[str, int]
     stylometry: StylometryReport | dict[str, Any] = field(default_factory=dict)
     findings: list[Finding] = field(default_factory=list)
+    next_step: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

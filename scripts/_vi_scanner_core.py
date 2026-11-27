@@ -59,6 +59,7 @@ from _vi_types import (
     _CompiledRegex,
     _RegexMatch,
     _ScanBuffer,
+    build_stakeholder_next_step,
     compile_rule_regex,
 )
 
@@ -491,4 +492,5 @@ class ViScanner:
             semantic_invariants_summary={k: len(v) for k, v in SemanticMasker.extract_invariants(text).items()},
             stylometry=stylo,
             findings=findings,
+            next_step=build_stakeholder_next_step(buf.word_count, "all" if prof is None else prof.value, len(findings)),
         )

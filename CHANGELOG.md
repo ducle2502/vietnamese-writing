@@ -2,6 +2,13 @@
 
 Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2026-11-27
+
+### Thêm mới (Added)
+
+- Bổ sung quy trình kiểm duyệt 2 bước kèm vòng đọc lạnh `2–3` `subagent` theo vai người đọc tại [SKILL.md](SKILL.md), [AGENTS.md](AGENTS.md) và [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md). Mỗi vai chấm bản thảo trên `4` trục: tự nhiên ngôn ngữ, hiểu nhanh, nhất quán và không thể hiểu sai.
+- Thêm trường `next_step` vào đầu ra JSON và dòng nhắc `BƯỚC 2 (BẮT BUỘC)` trong [scripts/vi_scanner.py](scripts/vi_scanner.py). Nhắc nhở này bật khi văn bản đạt `0` lỗi và có từ `300` từ trở lên hoặc thuộc nhóm `audit_report`, `legal`.
+
 ## [2.5.0] - 2026-11-26
 
 ### Thêm mới (Added)

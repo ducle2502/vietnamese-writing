@@ -20,12 +20,12 @@ Khi cập nhật hai danh sách trên, áp dụng ba tiêu chí chọn từ:
 
 ## 2. Các trường hợp hợp lệ không được sửa máy móc
 
-Lệnh `scripts/vi_scanner.py scan` mặc định xuất đủ tín hiệu của cả 7 nhóm văn bản. Lỗi câu dài `VIS-LEN-001` không có ngoại lệ. Với các tín hiệu còn lại, hãy đối chiếu kỹ từng ngữ cảnh trong bảng dưới đây trước khi quyết định sửa hay giữ nguyên câu gốc:
+Lệnh `scripts/vi_scanner.py scan` mặc định xuất đủ tín hiệu ở cả 7 nhóm. Quy tắc độ dài `VIS-LEN-001` áp dụng đồng bộ. Với các nhóm còn lại, hãy đối chiếu theo bảng sau:
 
 | Tín hiệu máy quét báo | Khi nào cần sửa | Khi nào phải giữ nguyên |
 | :--- | :--- | :--- |
 | Cụm `được thực hiện`, `được áp dụng`, `được sử dụng` (`VIS-TRANS-002`) | Bài viết phổ thông, bản dịch hoặc mạng xã hội lặp lại dày đặc chữ `được` làm câu trì trệ, thiếu chủ thể. | Báo cáo kiểm toán (`audit_report`), bài báo khoa học (`academic`) và văn bản pháp quy (`legal`) dùng câu khuyết chủ thể theo chuẩn nghề nghiệp (*"Cuộc kiểm toán được thực hiện theo..."*). |
-| Cụm danh từ `việc thực hiện của`, `sự thay đổi của` (`VIS-TRANS-003`) | Câu văn thường có thể viết thẳng bằng động từ (*"vì thị trường giảm"* thay cho *"do sự sụt giảm của thị trường"*). | Điều khoản hợp đồng hoặc luật định (`legal`) cần gọi tên hành vi pháp lý làm chủ ngữ (*"Việc thực hiện của các bên theo Điều 288..."*). |
+| Cụm danh từ `việc thực hiện của`, `sự thay đổi của` (`VIS-TRANS-003`) | Câu văn thường có thể viết trực tiếp bằng động từ (*"vì thị trường giảm"* thay cho *"do sự sụt giảm của thị trường"*). | Điều khoản hợp đồng hoặc luật định (`legal`) cần gọi tên hành vi pháp lý làm chủ ngữ (*"Việc thực hiện của các bên theo Điều 288..."*). |
 | Danh sách `- **Nhãn:** Nội dung` (`VIS-FMT-001`) | Mọi gạch đầu dòng trong bài đăng hoặc cột phải của bảng đều gắn nhãn in đậm rập khuôn. | Điều khoản *"Giải thích từ ngữ"* trong hợp đồng (`legal`) hoặc bảng chú giải thuật ngữ. |
 | Mẫu câu `không đơn thuần là X, mà còn là Y` (`VIS-RHET-001`) | Dùng để khen ngợi phóng đại sáo rỗng (*"không đơn thuần là phần mềm, mà còn là cuộc cách mạng"*). | Phân định hai nghĩa vụ tài chính hoặc pháp lý có thật kèm viện dẫn Điều, Khoản cụ thể (*"không đơn thuần là tiền đặt cọc, mà còn là khoản thanh toán đợt 1 theo Điều 4.2"*). |
 | Đoạn văn có độ dài đồng đều (`VIS-FMT-005`) | Bài luận hoặc bài chia sẻ chia thành 4 đến 5 đoạn có số câu và số chữ y hệt nhau như đúc khuôn. | Văn bản pháp luật chia theo từng Điều hoặc thuyết minh báo cáo kiểm toán trình bày song song từng khoản mục. |
@@ -35,6 +35,8 @@ Lệnh `scripts/vi_scanner.py scan` mặc định xuất đủ tín hiệu của
 | Từ "trình duyệt" (`VIS-TONE-001`) | Dùng như động từ rút gọn trong quy trình phê duyệt ("đang trình duyệt", "bước trình duyệt"). Hãy đổi thành trình phê duyệt hoặc kính trình. | Dùng làm danh từ chỉ phần mềm mở trang web ("trình duyệt web", "mở trình duyệt Chrome"). |
 | Từ "chốt" và "cấp số" (`VIS-TONE-001`, `VIS-LEX-001`) | Dùng với nghĩa khẩu ngữ sổ ghi chú ("chốt ngân sách", "chốt đầu mối", "cấp số tài chính"). Hãy đổi thành xác định, thống nhất hoặc cung cấp số liệu. | Dùng đúng thuật ngữ chuyên ngành hoặc hành chính chuẩn ("chốt kết luận", "chốt số liệu kỳ", "cấp số công văn"). |
 | Cụm "khoảng trống" (`VIS-LEX-001`) | Dùng theo nghĩa trừu tượng dịch sát `gap` ("khoảng trống kiểm soát", "khoảng trống pháp lý", "khoảng trống dữ liệu"). Hãy đổi sang thiếu sót, phần còn thiếu, lỗ hổng kiểm soát hoặc điểm chưa quy định. | Dùng cho không gian vật lý hoặc dàn trang thật có đơn vị hay mốc không gian đi kèm ("chừa khoảng trống 2 cm ở lề trang giấy"). |
+| Động từ `khóa` hoặc chữ `thẳng` ghép dư (`VIS-LEX-001`) | Ghép gượng kiểu văn AI cho khái niệm trừu tượng (như nối `thẳng` sau động từ nói, hay `khóa` với số liệu). Bỏ chữ dư hoặc dùng xác định rõ. | Nghĩa vật lý như đường thẳng, bay thẳng, đi thẳng 200 mét. Hoặc nghiệp vụ thật như khóa sổ kế toán, khóa tài khoản, khóa chặt cửa phòng. |
+| Động từ cơ học hoặc y khoa làm màu (`VIS-LEX-001`, `VIS-RHET-003`) | Gắn cho văn bản, lập luận (như `neo`, `nén`, `siết`, `đóng khung`, `bóc tách`, `soi chiếu`, `giải phẫu` thay cho phân tích). | Ngữ cảnh an ninh, xây dựng hay y tế thật như máy soi chiếu hành lý, bóc tách khối lượng. Hoặc giải phẫu bệnh, nén tệp ảnh, siết tín dụng. |
 
 ## 3. Ma trận bảy hồ sơ thể loại
 
@@ -43,7 +45,7 @@ Mặc định lệnh `scan` chạy ở chế độ `all` để giữ chuẩn n�
 | Hồ sơ | Quy tắc siết chặt | Quy tắc bỏ qua hoặc nâng ngưỡng |
 | :--- | :--- | :--- |
 | `general` | Kích hoạt toàn bộ nhóm AI, tu từ và dịch thô. | Cho phép một cụm `một cách` và 1 đến 2 từ nối đầu câu mỗi đoạn. |
-| `audit_report` | Siết nhóm phóng đại, dẫn nguồn không tên, khẩu hiệu rỗng và rào đón chồng lớp. | Bỏ qua bị động quy ước và độ đều đoạn trong thuyết minh báo cáo. |
+| `audit_report` | Chặn chặt nhóm phóng đại, dẫn nguồn không tên, khẩu hiệu rỗng và rào đón chồng lớp. | Bỏ qua bị động quy ước và độ đều đoạn trong thuyết minh báo cáo. |
 | `academic` | Siết nhóm AI, tu từ và mở bài kiểu SEO. | Bỏ qua danh từ hóa thuật ngữ và bị động khách quan. |
 | `legal` | Siết lỗi chatbot, phóng đại, bị động dịch từng chữ và rào đón chồng lớp. | Bỏ qua khẩu hiệu chỉ đạo, danh từ hóa quyền nghĩa vụ và bảng giải thích từ ngữ. |
 | `marketing` | Chặn lỗi chatbot, ẩn dụ sáo rỗng và toàn bộ nhóm dịch thô. | Cho phép lời mời khám phá, bộ ba tính từ và mở bài câu khách. |
@@ -66,7 +68,7 @@ Các mục dưới đây là lưu ý biên tập. Chúng không phải lệnh c�
 | "lượt đầu" | Dùng lần đầu hoặc ngay từ đầu, tránh dịch sát `first turn` theo nghĩa lượt chơi. |
 | "bỏ túi" | Bỏ hoặc đổi thành sổ tay thực hành để tránh sáo ngữ tiếp thị sách in trên tài liệu số. |
 | "nguồn gốc" | Khi chỉ tài liệu chứng minh trong kiểm toán, dùng nguồn tài liệu gốc hoặc hồ sơ gốc. |
-| "đèn xanh, đèn vàng, đèn đỏ" | Khi phân loại mức độ bảo mật dữ liệu, gọi thẳng Công khai, Nội bộ, Mật. |
+| "đèn xanh, đèn vàng, đèn đỏ" | Khi phân loại mức độ bảo mật dữ liệu, gọi rõ Công khai, Nội bộ, Mật. |
 | "xuất bản" | Khi triển khai trang web tĩnh hoặc đẩy mã lên máy chủ, dùng đưa lên thay cho dịch sát `publish`. |
 | "gán giá trị 0" | Chỉ dùng trong lập trình. Trong báo cáo kiểm toán cho mục thiếu chứng từ, dùng mặc định tính bằng 0. |
 

@@ -27,7 +27,7 @@ Mỗi quy tắc mới trong [scripts/vi_scanner.py](scripts/vi_scanner.py) cần
 
 ## 3. Quy trình cập nhật từ vựng và quy tắc trên CSV
 
-Toàn bộ từ vựng và quy tắc nằm tại [data/vocab.csv](data/vocab.csv) và [data/grammar.csv](data/grammar.csv) (chuẩn `UTF-8 BOM` mở thẳng trong Microsoft Excel không lỗi dấu tiếng Việt):
+Toàn bộ từ vựng và quy tắc nằm tại [data/vocab.csv](data/vocab.csv) và [data/grammar.csv](data/grammar.csv) (chuẩn `UTF-8 BOM` mở trực tiếp trong Microsoft Excel không lỗi dấu tiếng Việt):
 
 1. Thêm, sửa, tắt (`status=disabled`) hoặc xóa từ mượn (`loanword_universal`, `loanword_workplace`), cụm dịch ngược hoặc chêm từ ngoại lai (`reverse_calque`) và cụm văn mẫu (`banned_phrase`) trong [data/vocab.csv](data/vocab.csv). Mọi dòng `reverse_calque` và `banned_phrase` phải kèm gợi ý sửa ngắn gọn, khớp lỗi ở cột `replacement_hint`.
 2. Bật hoặc tắt quy tắc, chỉnh trọng số, nhóm áp dụng hay thêm regex mới trong [data/grammar.csv](data/grammar.csv). Khi cập nhật bảng CSV bằng công cụ tự động, ghi qua Python với `encoding="utf-8-sig"` để giữ nguyên 3 byte BOM.
@@ -43,5 +43,5 @@ ruff format --check scripts tests
 mypy scripts tests
 python -B scripts/vi_scanner.py selftest
 python -B -m pytest -v
-python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md .github/PULL_REQUEST_TEMPLATE.md references/rule-catalog.md references/voice-and-argument-patterns.md references/loanwords-and-exceptions.md references/pattern-bank.md --fail-on any --json
+python -B scripts/vi_scanner.py scan SKILL.md AGENTS.md README.md CONTRIBUTING.md CHANGELOG.md .github/PULL_REQUEST_TEMPLATE.md references/rule-catalog.md references/voice-and-argument-patterns.md references/loanwords-and-exceptions.md references/pattern-bank.md references/sentence-craft-and-syntax.md --fail-on any --json
 ```

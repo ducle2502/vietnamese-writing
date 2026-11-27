@@ -10,7 +10,7 @@
 
 <br>
 
-[![CI](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml/badge.svg)](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-0969da?style=flat-square&labelColor=161b22) ![Rules](https://img.shields.io/badge/rules-55%20%286%20groups%29-3fb950?style=flat-square&labelColor=161b22) ![Vocab](https://img.shields.io/badge/vocab-2.197%20terms-2ea043?style=flat-square&labelColor=161b22) [![License](https://img.shields.io/badge/license-MIT-58a6ff?style=flat-square&labelColor=161b22)](./LICENSE)
+[![CI](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml/badge.svg)](https://github.com/ducle2502/vietnamese-writing/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-0969da?style=flat-square&labelColor=161b22) ![Rules](https://img.shields.io/badge/rules-55%20%286%20groups%29-3fb950?style=flat-square&labelColor=161b22) ![Vocab](https://img.shields.io/badge/vocab-2.230%20terms-2ea043?style=flat-square&labelColor=161b22) [![License](https://img.shields.io/badge/license-MIT-58a6ff?style=flat-square&labelColor=161b22)](./LICENSE)
 
 [Ví dụ](#ví-dụ-trước-và-sau) · [Tổng quan](#tổng-quan) · [Cài đặt nhanh](#cài-đặt-nhanh) · [6 nhóm quy tắc](#6-nhóm-quy-tắc-và-7-ngữ-cảnh-văn-bản) · [Dòng lệnh](#chạy-từ-dòng-lệnh) · [Cấu trúc thư mục](#cấu-trúc-thư-mục) · [Giới hạn phạm vi](#giới-hạn-phạm-vi)
 
@@ -52,12 +52,12 @@ Mặc định lệnh `scan` chạy ở chế độ `all` để giữ chuẩn n�
 
 | Lệnh chính | Công dụng thực tế | Đầu vào hỗ trợ |
 |---|---|---|
-| `scan` | Rà `55` quy tắc và `2.197` mục từ vựng, giữ chuẩn nền chung | Markdown thô, tệp UTF-8 và `.docx` |
+| `scan` | Rà `55` quy tắc và `2.230` mục từ vựng, giữ chuẩn nền chung | Markdown thô, tệp UTF-8 và `.docx` |
 | `profile` | Đo `18` chỉ số nhịp câu, `14` chỉ số lập luận DHDNA và xếp loại giọng văn | Markdown thô, tệp UTF-8 và `.docx` |
 | `verify` | Đối chiếu `6` nhóm dữ kiện gốc trước và sau khi sửa (số liệu, phủ định, điều kiện...) | Cặp tệp gốc và tệp đã sửa |
 | `check-maintenance` | Nhắc lịch rà soát định kỳ danh sách từ tiếng Anh quen dùng (`63` phổ thông, `115` công sở) | Tự đọc từ [data/vocab.csv](data/vocab.csv) |
 
-Với tài liệu không phải Markdown, Agent chuyển trước sang `TEN_GOC.raw.md` bằng `markitdown`, `liteparse`, `docling` hoặc `pandoc`. Phương án đọc ảnh `vision` chỉ dùng khi công cụ trực tiếp thất bại và phải gắn cờ `needs_review=true` vào tệp metadata. Riêng tệp Word `.docx`, `scan` và `profile` đọc thẳng nội dung qua thư viện chuẩn, hỗ trợ bỏ cột trích lục ngoài (`--ignore-table-cols`), phát hiện lệch tiêu đề kỳ trước (`template_title_mismatch`) và cảnh báo trôi mẫu số giữa các trang.
+Với tài liệu không phải Markdown, Agent chuyển trước sang `TEN_GOC.raw.md` bằng `markitdown`, `liteparse`, `docling` hoặc `pandoc`. Phương án đọc ảnh `vision` chỉ dùng khi công cụ trực tiếp thất bại và phải gắn cờ `needs_review=true` vào tệp metadata. Riêng tệp Word `.docx`, `scan` và `profile` đọc trực tiếp nội dung qua thư viện chuẩn và hỗ trợ bỏ cột trích lục ngoài (`--ignore-table-cols`). Công cụ cũng phát hiện lệch tiêu đề kỳ trước (`template_title_mismatch`) và cảnh báo trôi mẫu số giữa các trang.
 
 ## Cài đặt nhanh
 
@@ -98,7 +98,7 @@ Bảng tra cứu đầy đủ từng quy tắc kèm ví dụ câu lỗi và các
 
 ## Chạy từ dòng lệnh
 
-Chuyển tệp nguồn sang `TEN_GOC.raw.md` trước khi quét, riêng `.docx` truyền thẳng vào lệnh `scan` hoặc `profile`:
+Chuyển tệp nguồn sang `TEN_GOC.raw.md` trước khi quét, riêng `.docx` truyền trực tiếp vào lệnh `scan` hoặc `profile`:
 
 ```bash
 # 1. Quét chuẩn nền chung trên toàn bộ 7 nhóm văn bản (mặc định)
@@ -126,12 +126,13 @@ python -B -m pytest -v
 |---|---|
 | [SKILL.md](SKILL.md) | Hướng dẫn thao tác chính cho AI Agent. |
 | [AGENTS.md](AGENTS.md) | Quy tắc rút gọn khi làm việc trực tiếp trong repo. |
-| [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.197` mục từ vựng và `55` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở trực tiếp bằng Excel. |
-| [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ quét văn bản, đọc thẳng `.docx`, đo giọng văn DHDNA và đối soát dữ kiện gốc. |
+| [data/vocab.csv](data/vocab.csv) · [data/grammar.csv](data/grammar.csv) | Bảng `2.230` mục từ vựng và `55` quy tắc ngữ pháp chuẩn `UTF-8 BOM`, mở trực tiếp bằng Excel. |
+| [scripts/vi_scanner.py](scripts/vi_scanner.py) | Công cụ quét văn bản, đọc trực tiếp `.docx`, đo giọng văn DHDNA và đối soát dữ kiện gốc. |
 | [references/rule-catalog.md](references/rule-catalog.md) | Bảng tra cứu `55` quy tắc kèm nguồn, ngoại lệ và cách viết lại. |
 | [references/voice-and-argument-patterns.md](references/voice-and-argument-patterns.md) | `4` kiểu giọng chính, `12` chiều DHDNA, quy trình 2 bước đọc lạnh `subagent`, khung `5C` và `10` quy tắc viết ghi chú bảng kiểm. |
 | [references/loanwords-and-exceptions.md](references/loanwords-and-exceptions.md) | Quy trình cập nhật từ mượn tiếng Anh và ma trận ngoại lệ của `7` ngữ cảnh văn bản. |
 | [references/pattern-bank.md](references/pattern-bank.md) | Ngân hàng `50` cấu trúc, `500` khuôn câu AI hoặc dịch thô và `12` bộ lọc regex. |
+| [references/sentence-craft-and-syntax.md](references/sentence-craft-and-syntax.md) | Quy tắc cấu trúc `C–V` nội tại, biến đổi câu, `5` phép liên kết, chọn từ 2 trục và bộ từ rác AI mới. |
 | [evals/evals.json](evals/evals.json) | Bộ kịch bản kiểm tra hành vi biên tập thực tế của Agent. |
 | [tests/](tests/) | Bộ kiểm thử `pytest` gồm `100+` mẫu đối chứng, hồi quy, giới hạn mã nguồn và tự kiểm tài liệu. |
 | [pyproject.toml](pyproject.toml) | Cấu hình `mypy`, `ruff` và giới hạn độ dài mã nguồn `[tool.code_limits]`. |
@@ -141,7 +142,7 @@ python -B -m pytest -v
 
 - Kết quả từ [scripts/vi_scanner.py](scripts/vi_scanner.py) chỉ đánh dấu chỗ câu chữ gượng gạo, sáo rỗng hoặc dịch sát cần đọc lại. Không dùng công cụ để kết luận văn bản do con người hay AI viết.
 - Mục tiêu là tiếng Việt gọn rõ, đúng người đọc và nguyên vẹn dữ kiện gốc. Công cụ không tự chèn lỗi chính tả hay biến dạng văn phong để lách trình dò tự động.
-- Khi người dùng dán hợp đồng, báo cáo hoặc tài liệu chỉ để hỏi nội dung bên trong, Agent giữ nguyên văn bản đó và trả lời thẳng câu hỏi.
+- Khi người dùng dán hợp đồng, báo cáo hoặc tài liệu chỉ để hỏi nội dung bên trong, Agent giữ nguyên văn bản đó và trả lời trực tiếp câu hỏi.
 
 ## Giấy phép
 

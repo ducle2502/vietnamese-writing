@@ -38,7 +38,7 @@ Phần này liệt kê 25 cấu trúc đặc trưng, 250 khuôn câu lắp ghép
 
 ### 2. 250 khuôn câu AI
 
-#### 01. Khuôn mở đoạn định nghĩa & đóng khung chủ đề (25 khuôn)
+#### 01. Khuôn mở đoạn định nghĩa & dẫn nhập chủ đề (25 khuôn)
 
 ```text
 Trong bối cảnh [X] ngày càng phát triển, [Y] đã trở thành...
@@ -347,7 +347,7 @@ Cảm ơn bạn đã đồng hành đến cuối bài viết chuyên sâu này12
 | 3 | Hộp tóm tắt `01–04` lặp lại bảng chi tiết ngay bên dưới. | Giữ một tầng trình bày, xóa hộp lặp. |
 | 4 | Tự bịa mục so sánh với công cụ lớn và mục "khi nào chọn công cụ khác". | Xóa mục không có dữ liệu kiểm chứng. |
 | 5 | Tự bịa bảng tiến độ `G1–G4` sáo rỗng. | Xóa bảng, thay bằng mốc số liệu thực tế. |
-| 6 | Xoay vòng động từ đồng nghĩa ở đầu ô bảng để lách cờ lặp từ. | Bỏ động từ dẫn đầu, ghi thẳng tên tệp hoặc lớp. |
+| 6 | Xoay vòng động từ đồng nghĩa ở đầu ô bảng để lách cờ lặp từ. | Bỏ động từ dẫn đầu, ghi rõ tên tệp hoặc lớp. |
 | 7 | Dịch can thuật ngữ lập trình sang cụm tiếng Việt kỳ dị. | Dùng từ quen thuộc của lập trình viên hoặc giữ nguyên thuật ngữ. |
 | 8 | Phóng đại thao tác bình thường trong bảng chức năng và bảng phím tắt. | Ghi đúng thao tác, bỏ tính từ quảng cáo. |
 | 9 | Nhét tính từ quảng cáo rỗng vào tài liệu kỹ thuật. | Thay bằng thông số hoặc mô tả cơ chế. |

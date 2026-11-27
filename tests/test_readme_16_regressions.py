@@ -136,7 +136,7 @@ class TestReadme16AndGeneralizedRootCauses(unittest.TestCase):
     def test_legacy_readme_snapshot_fails_all_reported_spots(self) -> None:
         """Bản chụp nguyên văn README cũ phải báo lỗi ở toàn bộ 16 nhóm vị trí đã nêu (>= 27 cảnh báo)."""
         rep = self.scanner.scan_text(_LEGACY_README_SNAPSHOT, profile="all")
-        self.assertGreaterEqual(rep.warning_count, 27)
+        self.assertGreaterEqual(rep.error_count + rep.warning_count, 27)
         matched = [f.matched_text.casefold() for f in rep.findings]
         expected_substrings = (
             "- **bắt đúng",
@@ -174,7 +174,11 @@ class TestReadme16AndGeneralizedRootCauses(unittest.TestCase):
             sample_file = Path(tmp) / "case.md"
             for case_id, text in _USER_16_CASES:
                 rep = self.scanner.scan_text(text, profile="general")
-                self.assertGreaterEqual(rep.warning_count, 1, f"Mẫu {case_id} không sinh warning: {rep.findings}")
+                self.assertGreaterEqual(
+                    rep.error_count + rep.warning_count,
+                    1,
+                    f"Mẫu {case_id} không sinh lỗi/cảnh báo: {rep.findings}",
+                )
                 sample_file.write_text(text + "\n", encoding="utf-8")
                 with contextlib.redirect_stdout(io.StringIO()):
                     rc = main(["scan", str(sample_file), "--profile", "general", "--fail-on", "warning"])
@@ -184,7 +188,7 @@ class TestReadme16AndGeneralizedRootCauses(unittest.TestCase):
         """Các biến thể cùng họ gốc lỗi phải bị bắt và các ngữ cảnh chuyên môn hợp lệ phải sạch lỗi."""
         for variant in _GENERALIZED_VARIANTS:
             rep = self.scanner.scan_text(variant, profile="general")
-            self.assertGreaterEqual(rep.warning_count, 1, f"Bỏ lọt biến thể tổng quát: {variant}")
+            self.assertGreaterEqual(rep.error_count + rep.warning_count, 1, f"Bỏ lọt biến thể tổng quát: {variant}")
 
         for prof, clean_text in _CLEAN_COUNTERFACTUALS:
             rep = self.scanner.scan_text(clean_text, profile=prof)

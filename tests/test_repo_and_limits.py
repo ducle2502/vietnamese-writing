@@ -153,6 +153,42 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
             parsed = json.loads(out_json.read_text(encoding="utf-8"))
             self.assertIn("4 trục", parsed["next_step"])
 
+    def test_em_dash_and_zero_info_severity_policy(self) -> None:
+        """Dấu gạch ngang dài bị chặn mức error trên cả 7 nhóm và không còn quy tắc info nào."""
+        self.assertEqual(self.scanner.rules["VIS-FMT-003"].severity.value, "error")
+        bad_dashes = (
+            "Dự án này — đã duyệt — hoàn tất.",
+            "Dự án—đã xong.",
+            "Dự án— đã xong.",
+            "Dự án —đã xong.",
+            "Dự án —, hoàn tất.",
+            "Dự án này – vốn đã duyệt – đạt 90%.",
+            "| `V` — Vai trò | Người viết |",
+        )
+        for sample in bad_dashes:
+            for prof in ("all", "general", "marketing", "social_media"):
+                rep = self.scanner.scan_text(sample, profile=prof)
+                self.assertGreaterEqual(rep.error_count, 1, f"Bỏ lọt ({prof}): {sample}")
+                self.assertIn("VIS-FMT-003", {f.rule_id for f in rep.findings})
+
+        clean_dashes = (
+            "— Tôi không ngờ ông ấy lại rời đi sớm.",
+            "Tuyến Bắc – Nam và từ Hán – Việt.",
+            "Giai đoạn 2025–2026 có 7–10 nhóm.",
+            "Thủ kho lập phiếu nhập – xuất đúng hạn.",
+        )
+        for sample in clean_dashes:
+            self.assertEqual(self.scanner.scan_text(sample, profile="all").findings_count, 0, sample)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            for idx, txt in enumerate(
+                ("Dự án — đã xong.", "Nàng đích biểu tình.", "Dùng phôi mẫu cũ.", "Chi phí thấp. Kết quả? Đạt chuẩn.")
+            ):
+                p = Path(tmp) / f"err_{idx}.md"
+                p.write_text(txt + "\n", encoding="utf-8")
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(main(["scan", str(p), "--fail-on", "error"]), 1, txt)
+
     def test_algorithms_data_structures_and_docx_xml_safety(self) -> None:
         """Kiểm tra tìm kiếm nhị phân dòng/cột, cửa sổ trượt MATTR, bộ lọc neo regex và chặn XML XXE."""
         self.assertEqual((len(UNIVERSAL_NATURALIZED_LOANWORDS), len(WORKPLACE_TECH_LOANWORDS)), (63, 115))
@@ -339,6 +375,8 @@ class TestCsvCrudAndRowInvariants(unittest.TestCase):
         self.assertEqual(len(grammar_rows), 55)
         self.assertTrue(all(r["status"] == "active" for r in grammar_rows))
         self.assertTrue(all(r["source_status"] in {"verified", "missing", "internal"} for r in grammar_rows))
+        sev = [r["severity"] for r in grammar_rows]
+        self.assertEqual((sev.count("error"), sev.count("warning"), sev.count("info")), (16, 39, 0))
 
         seen_terms: set[str] = set()
         bad_meta_re = re.compile(r":\s|[()+]|[\u4e00-\u9fff]|[\u0400-\u04ff]")

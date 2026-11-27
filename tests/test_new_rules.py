@@ -135,7 +135,7 @@ class TestNewRules(unittest.TestCase):
         """Số mục từ phải khớp bảng đã công bố và không có term trùng."""
         raw = DEFAULT_VOCAB_CSV.read_text(encoding="utf-8-sig")
         rows = list(csv.DictReader(io.StringIO(raw)))
-        self.assertEqual(len(rows), 2197)
+        self.assertEqual(len(rows), 2230)
         keys = [" ".join(r["term"].split()).casefold() for r in rows]
         self.assertEqual(len(keys), len(set(keys)))
 
@@ -201,7 +201,7 @@ _CALQUE_12_PAIRS: tuple[tuple[set[str], str, str], ...] = (
     (
         {"VIS-LEX-001"},
         "Cần đánh giá dưới góc độ rủi ro nhằm tối đa hóa hiệu quả.",
-        "Cần đánh giá thẳng mức rủi ro để nâng cao hiệu quả kiểm soát.",
+        "Cần đánh giá trực tiếp mức rủi ro để nâng cao hiệu quả kiểm soát.",
     ),
     (
         {"VIS-TONE-003"},
@@ -442,6 +442,37 @@ class TestCalquesAndAuditExtras(unittest.TestCase):
         clean = "Cần chừa khoảng trống 2 cm ở lề trang giấy trước khi đóng quyển."
         rep = self.scanner.scan_text(clean, profile="all")
         self.assertEqual(rep.findings_count, 0, f"Báo nhầm nghĩa vật lý: {rep.findings}")
+
+    def test_ai_slop_thang_khoa_siblings_and_tvth_vocab(self) -> None:
+        """Bắt cụm rác AI (* thẳng, khóa trừu tượng, neo/nén/siết/bóc tách, dẫn dắt) và lỗi chính âm mới."""
+        bad_cases = (
+            ("VIS-LEX-001", "Báo cáo nói thẳng và ghi nhận thẳng ba tồn tại."),
+            ("VIS-LEX-001", "Nhóm phân tích đi thẳng vào vấn đề để nêu thẳng số liệu."),
+            ("VIS-LEX-001", "Tài liệu khóa số liệu, khóa ranh giới và khóa chặt điều kiện."),
+            ("VIS-LEX-001", "Bản thảo neo bằng chứng, nén nhận định và siết câu chữ."),
+            ("VIS-LEX-001", "Bài viết đóng khung vấn đề, bóc tách vấn đề và giải phẫu cấu trúc."),
+            ("VIS-RHET-003", "Nhóm phân tích soi chiếu dữ liệu và dùng con dao hai lưỡi để gói trọn nội dung."),
+            ("VIS-AI-004", "Thành thật mà nói, điều thú vị là mấu chốt nằm ở chỗ chi phí."),
+            ("VIS-TONE-001", "Quy trình chuẩn chỉnh cần được áp dụng ngay."),
+            ("VIS-RHET-002", "Sự thật phũ phàng là lập luận sắc lẹm này chưa có số liệu."),
+            ("VIS-LEX-001", "Lớp đã khuyên góp bằng chí lực nhưng gặp bất chắc nên năng xuất giảm."),
+            ("VIS-LEX-001", "Hai nhóm kết cấu với nhau dù anh ấy rất là năng lực."),
+            ("VIS-CLICHE-003", "Doanh nghiệp không ngừng ngày một cải tiến quy trình."),
+        )
+        for rid, text in bad_cases:
+            hits = [f for f in self.scanner.scan_text(text, profile="all").findings if f.rule_id == rid]
+            self.assertTrue(hits, f"Bỏ sót {rid} trên: {text}")
+        clean_cases = (
+            "Đoạn đường thẳng và tuyến bay thẳng Hà Nội giúp rút ngắn thời gian.",
+            "Người đi bộ đi thẳng 200 mét rồi rẽ trái tại ngã tư.",
+            "Kế toán khóa sổ kế toán cuối kỳ và khóa tài khoản người dùng nghỉ việc.",
+            "Nhân viên khóa chặt cửa phòng và dùng máy soi chiếu hành lý tại sân bay.",
+            "Kỹ sư bóc tách khối lượng công trình, bác sĩ giải phẫu bệnh và nén tệp ảnh PNG.",
+            "Ngân hàng siết tín dụng bất động sản trong quý II năm 2026.",
+        )
+        for clean in clean_cases:
+            rep = self.scanner.scan_text(clean, profile="all")
+            self.assertEqual(rep.findings_count, 0, f"Báo nhầm ngoại lệ: {clean} -> {rep.findings}")
 
 
 if __name__ == "__main__":

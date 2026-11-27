@@ -2,6 +2,18 @@
 
 Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.0] - 2026-11-27
+
+### Thêm mới (Added)
+
+- Thêm tệp [references/sentence-craft-and-syntax.md](references/sentence-craft-and-syntax.md) hướng dẫn sửa lỗi nòng cốt `C–V`, tương hợp từ loại và dấu câu nội tại. Tài liệu cũng bổ sung bốn phép biến đổi câu, năm phép liên kết, chọn từ hai trục và kỹ thuật nghị luận.
+- Mở rộng quy tắc `VIS-LEX-001` cùng `33` mục mới trong [data/vocab.csv](data/vocab.csv) (`2.230` mục) để bắt bảy lỗi chính âm và từ rác AI. Nhóm này gồm đuôi *thẳng*, động từ *khóa* trừu tượng, động từ cơ học và cụm dẫn làm màu.
+- Bổ sung ngoại lệ ngữ cảnh vật lý, kế toán, y tế và an ninh tại [scripts/_vi_context_and_echo.py](scripts/_vi_context_and_echo.py) cùng bộ kiểm thử tại [tests/test_new_rules.py](tests/test_new_rules.py).
+
+### Thay đổi (Changed)
+
+- Dọn sạch cách diễn đạt lặp chữ *thẳng* và động từ *khóa* trừu tượng trong gợi ý sửa lỗi ([scripts/_vi_regex_anchors.py](scripts/_vi_regex_anchors.py), [data/vocab.csv](data/vocab.csv)) và toàn bộ `11` tệp `.md` của kho mã.
+
 ## [2.7.0] - 2026-11-27
 
 ### Thay đổi (Changed)

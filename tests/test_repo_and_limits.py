@@ -116,6 +116,42 @@ class TestScannerSafetyAndRepoQuality(unittest.TestCase):
             self.assertEqual(rc, 0)
             parsed = json.loads(out_json.read_text(encoding="utf-8"))
             self.assertEqual((parsed["profile"], parsed["findings_count"]), ("all", 0))
+            self.assertIsNone(parsed["next_step"])
+
+    def test_stakeholder_next_step_trigger_conditions(self) -> None:
+        """Nhắc mở vòng đọc lạnh subagent khi qua Bước 1 với văn bản >= 300 từ hoặc audit/legal."""
+        short_clean = "Đơn vị đã hoàn thành đối chiếu 120 hồ sơ giải ngân đúng hạn ngày 10/11/2026.\n"
+        self.assertIsNone(self.scanner.scan_text(short_clean, profile="all").next_step)
+        self.assertIsNone(self.scanner.scan_text(short_clean, profile="general").next_step)
+        for critical_prof in ("audit_report", "legal"):
+            rep_crit = self.scanner.scan_text(short_clean, profile=critical_prof)
+            self.assertEqual(rep_crit.findings_count, 0)
+            self.assertIsNotNone(rep_crit.next_step)
+
+        long_clean = " ".join([short_clean.strip()] * 22) + "\n"
+        rep_long = self.scanner.scan_text(long_clean, profile="all")
+        self.assertEqual(rep_long.findings_count, 0)
+        self.assertIsNotNone(rep_long.next_step)
+        assert rep_long.next_step is not None
+        self.assertIn("subagent", rep_long.next_step)
+        self.assertIn("4 trục", rep_long.next_step)
+
+        dirty_long = f"Chắc chắn rồi! Dưới đây là phân tích.\n{long_clean}"
+        rep_dirty = self.scanner.scan_text(dirty_long, profile="all")
+        self.assertGreater(rep_dirty.findings_count, 0)
+        self.assertIsNone(rep_dirty.next_step)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            sample = Path(tmp) / "long_clean.md"
+            sample.write_text(long_clean, encoding="utf-8")
+            out_json = Path(tmp) / "long_report.json"
+            buf_out = io.StringIO()
+            with contextlib.redirect_stdout(buf_out):
+                rc = main(["scan", str(sample), "--output", str(out_json)])
+            self.assertEqual(rc, 0)
+            self.assertIn("BƯỚC 2 (BẮT BUỘC)", buf_out.getvalue())
+            parsed = json.loads(out_json.read_text(encoding="utf-8"))
+            self.assertIn("4 trục", parsed["next_step"])
 
     def test_algorithms_data_structures_and_docx_xml_safety(self) -> None:
         """Kiểm tra tìm kiếm nhị phân dòng/cột, cửa sổ trượt MATTR, bộ lọc neo regex và chặn XML XXE."""

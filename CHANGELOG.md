@@ -2,6 +2,14 @@
 
 Tệp này ghi lại các thay đổi chính của dự án theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) và quy tắc đánh số phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2026-11-27
+
+### Thay đổi (Changed)
+
+- Xóa sạch mức `info` khỏi `55` quy tắc hoạt động trong [data/grammar.csv](data/grammar.csv). Chuyển `13` lỗi cấu trúc rõ sang `error` (`16` quy tắc) và `10` quy tắc ngữ cảnh sang `warning` (`39` quy tắc).
+- Mở rộng quy tắc `VIS-FMT-003` (`error`) cho toàn bộ `7` nhóm văn bản để chặn `—`, `--` và cặp dấu ` – ` nối mệnh đề ngoài lời thoại. Giữ nguyên cụm viết hoa (`Bắc – Nam`), cặp đối xứng (`nhập – xuất`) và khoảng số (`7–10`).
+- Sửa cơ chế tách lời thoại trong [scripts/_vi_scanner_core.py](scripts/_vi_scanner_core.py) dựa trên văn bản gốc và bổ sung hỗ trợ mỏ neo `–` tại [scripts/_vi_regex_anchors.py](scripts/_vi_regex_anchors.py). Cập nhật đồng bộ [SKILL.md](SKILL.md), [AGENTS.md](AGENTS.md), [README.md](README.md) và bộ kiểm thử.
+
 ## [2.6.0] - 2026-11-27
 
 ### Thêm mới (Added)

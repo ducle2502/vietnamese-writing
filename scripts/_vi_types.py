@@ -21,8 +21,8 @@ except ImportError:
     _re2_engine = None
     USING_RE2 = False
 
-VERSION = "2.6.0"
-SCHEMA_VERSION = "2.6.0"
+VERSION = "2.7.0"
+SCHEMA_VERSION = "2.7.0"
 STAKEHOLDER_REVIEW_MIN_WORDS = 300
 STAKEHOLDER_REVIEW_PROFILES: frozenset[str] = frozenset({"audit_report", "legal"})
 STAKEHOLDER_REVIEW_NOTE = (

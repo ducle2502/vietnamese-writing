@@ -186,7 +186,8 @@ def _select_triggered_matches(
 def _prepare_rule_target_text(rid: str, buf: _ScanBuffer) -> str:
     target_text = buf.masked_no_code if rid == "VIS-AI-002" else buf.masked_prose
     if rid == "VIS-FMT-003" and "—" in target_text:
-        return "\n".join((" " * len(ln)) if ln.lstrip().startswith("—") else ln for ln in target_text.splitlines())
+        pairs = zip(buf.raw_text.splitlines(), target_text.splitlines(), strict=True)
+        return "\n".join((" " * len(ln)) if r.lstrip().startswith("—") else ln for r, ln in pairs)
     if rid == "VIS-FMT-004" and "," in target_text:
         return _DECIMAL_COMMA_RE.sub(".", target_text)
     return target_text

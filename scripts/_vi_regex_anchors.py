@@ -173,7 +173,7 @@ def _merge_group_anchors(best_group_set: set[str] | None, inner: str) -> set[str
 
 
 def _is_valid_anchor_lit(lit: str) -> bool:
-    return len(lit) >= 2 or lit in ("—", ";", "[")
+    return len(lit) >= 2 or lit in ("—", "–", ";", "[")
 
 
 def _extract_seq_anchors(seq: str) -> set[str] | None:
@@ -436,7 +436,10 @@ def resolve_regex_suggestion(rid: str, matched_text: str) -> str | None:
         out = (
             "Tránh nối vế câu bằng dấu chấm phẩy kiểu tiếng Anh; hãy tách thành câu riêng hoặc dùng dấu phẩy."
             if ";" in low
-            else "Tránh chèn dấu gạch ngang dài để ngắt ý kiểu tiếng Anh; hãy dùng dấu phẩy, ngoặc đơn hoặc tách câu."
+            else (
+                "Tránh dùng dấu gạch ngang dài ('—', '--') hoặc gạch ngang nối mệnh đề (' – ') kiểu tiếng Anh; "
+                "hãy dùng dấu phẩy, ngoặc đơn hoặc tách câu."
+            )
         )
     elif rid == "VIS-AI-001":
         if "mô hình ngôn ngữ" in low or "language model" in low:
